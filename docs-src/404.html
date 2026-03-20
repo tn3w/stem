@@ -4,88 +4,50 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="robots" content="noindex" />
+        <link rel="stylesheet" href="styles/theme.css" />
+        <link rel="stylesheet" href="styles/main.css" />
         <title>404 — Lost in the Onion Layers | stem-rs</title>
         <style>
-            :root {
-                --background: #09090b;
-                --background-elevated: #18181b;
-                --border: #27272a;
-                --text: #fafafa;
-                --text-secondary: #a1a1aa;
-                --text-muted: #52525b;
-                --accent: #a78bfa;
-                --accent-hover: #c4b5fd;
-                --purple-dark: #7c3aed;
-                --purple-medium: #a78bfa;
-                --purple-light: #ddd6fe;
-                --red: #ef4444;
-            }
-
-            @media (prefers-color-scheme: light) {
-                :root {
-                    --background: #fafafa;
-                    --background-elevated: #ffffff;
-                    --border: #e4e4e7;
-                    --text: #18181b;
-                    --text-secondary: #52525b;
-                    --text-muted: #a1a1aa;
-                    --accent: #7c3aed;
-                    --accent-hover: #6d28d9;
-                }
-            }
-
-            * {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-            }
-
             body {
-                font-family:
-                    system-ui,
-                    -apple-system,
-                    sans-serif;
-                background: var(--background);
-                color: var(--text);
+                font-family: var(--font-sans);
+                background: var(--color-bg);
+                color: var(--color-text);
                 min-height: 100vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 2rem;
+                padding: var(--space-8);
                 text-align: center;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
             }
 
             .error-code {
-                font-family: 'JetBrains Mono', 'Fira Code', monospace;
+                font-family: var(--font-mono);
                 font-size: 10rem;
                 font-weight: 700;
                 line-height: 1;
-                margin-bottom: 1.5rem;
-                background: linear-gradient(
-                    135deg,
-                    var(--purple-dark),
-                    var(--purple-medium),
-                    var(--purple-light)
-                );
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
+                margin-bottom: var(--space-6);
+                color: var(--color-text);
             }
 
             h1 {
-                font-size: 2rem;
-                font-weight: 600;
-                margin-bottom: 1rem;
+                font-family: var(--font-display);
+                font-size: var(--text-3xl);
+                font-weight: 700;
+                letter-spacing: -0.03em;
+                color: var(--color-text);
+                margin-bottom: var(--space-4);
             }
 
             .brand {
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 0.75rem;
+                font-family: var(--font-mono);
+                font-size: var(--text-xs);
                 font-weight: 500;
-                margin-top: 2.5rem;
+                margin-top: var(--space-10);
                 display: inline-flex;
                 align-items: center;
-                gap: 0.75rem;
+                gap: var(--space-3);
             }
 
             .brand::before,
@@ -93,59 +55,62 @@
                 content: '';
                 width: 3rem;
                 height: 1px;
-                background: linear-gradient(90deg, transparent, var(--border));
+                background: linear-gradient(
+                    90deg, transparent,
+                    var(--color-border)
+                );
             }
 
             .brand::after {
-                background: linear-gradient(90deg, var(--border), transparent);
+                background: linear-gradient(
+                    90deg,
+                    var(--color-border),
+                    transparent
+                );
             }
 
             .brand a {
-                color: var(--text-muted);
+                color: var(--color-text-muted);
                 text-decoration: none;
-                background: linear-gradient(135deg, var(--purple-dark), var(--purple-medium));
-                -webkit-background-clip: text;
-                background-clip: text;
-                -webkit-text-fill-color: transparent;
-                transition: opacity 0.2s;
+                transition: color var(--duration-fast);
             }
 
             .brand a:hover {
-                opacity: 0.7;
+                color: var(--color-text);
             }
 
             p {
-                font-size: 1.125rem;
-                color: var(--text-secondary);
+                font-size: var(--text-lg);
+                color: var(--color-text-secondary);
                 max-width: 440px;
-                margin: 0 auto 2rem;
-                line-height: 1.6;
+                margin: 0 auto var(--space-8);
+                line-height: var(--leading-relaxed);
             }
 
             .circuit {
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 0.875rem;
-                color: var(--text);
-                background: var(--background-elevated);
-                border: 1px solid var(--border);
-                border-radius: 6px;
-                padding: 0.75rem 1.25rem;
-                margin-bottom: 2rem;
+                font-family: var(--font-mono);
+                font-size: var(--text-sm);
+                color: var(--color-text);
+                background: var(--color-bg-elevated);
+                border: 1px solid var(--color-border);
+                border-radius: var(--radius);
+                padding: var(--space-3) var(--space-5);
+                margin-bottom: var(--space-8);
                 display: inline-flex;
                 align-items: center;
-                gap: 0.5rem;
+                gap: var(--space-2);
             }
 
             .circuit svg {
                 width: 14px;
                 height: 14px;
-                color: var(--accent);
+                color: var(--color-text-muted);
                 flex-shrink: 0;
             }
 
             .actions {
                 display: flex;
-                gap: 1rem;
+                gap: var(--space-4);
                 justify-content: center;
                 flex-wrap: wrap;
             }
@@ -153,34 +118,36 @@
             .button {
                 display: inline-flex;
                 align-items: center;
-                gap: 0.5rem;
-                padding: 0.75rem 1.5rem;
-                font-size: 0.875rem;
+                gap: var(--space-2);
+                padding: var(--space-3) var(--space-6);
+                font-size: var(--text-sm);
                 font-weight: 500;
-                border-radius: 8px;
+                border-radius: var(--radius-lg);
                 text-decoration: none;
-                transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+                transition: all var(--duration)
+                    var(--ease-out);
             }
 
             .button-primary {
-                background: var(--accent);
-                color: white;
+                background: var(--color-text);
+                color: var(--color-bg);
+                border: 1px solid var(--color-text);
             }
 
             .button-primary:hover {
-                background: var(--accent-hover);
-                transform: translateY(-2px);
+                background: #fff;
+                color: #000;
             }
 
             .button-secondary {
-                background: var(--background-elevated);
-                color: var(--text);
-                border: 1px solid var(--border);
+                background: var(--color-bg-elevated);
+                color: var(--color-text);
+                border: 1px solid var(--color-border);
             }
 
             .button-secondary:hover {
-                border-color: var(--accent);
-                color: var(--accent);
+                color: var(--color-text);
+                border-color: var(--color-border-hover);
             }
 
             .background-circuits {
@@ -190,12 +157,12 @@
                 width: 100%;
                 height: 100%;
                 pointer-events: none;
-                opacity: 0.03;
+                opacity: 0.04;
                 z-index: -1;
             }
 
             .circuit-line {
-                stroke: var(--purple-light);
+                stroke: var(--color-text);
                 stroke-width: 1;
                 fill: none;
                 stroke-dasharray: 8 4;
@@ -210,12 +177,12 @@
 
             #game-trigger {
                 cursor: pointer;
-                color: var(--accent);
-                transition: all 0.2s;
+                color: var(--color-text-secondary);
+                transition: all var(--duration-fast);
             }
 
             #game-trigger:hover {
-                text-shadow: 0 0 8px var(--accent);
+                color: var(--color-text);
             }
 
             #game-overlay {
@@ -234,51 +201,60 @@
             }
 
             #game-canvas {
-                border: 1px solid var(--border);
-                border-radius: 8px;
-                background: var(--background);
+                border: 1px solid var(--color-border);
+                border-radius: var(--radius-lg);
+                background: var(--color-bg);
                 max-width: 100%;
                 touch-action: none;
             }
 
             #game-ui {
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 0.875rem;
-                color: var(--text-secondary);
-                margin-bottom: 1rem;
+                font-family: var(--font-mono);
+                font-size: var(--text-sm);
+                color: var(--color-text-secondary);
+                margin-bottom: var(--space-4);
                 display: flex;
-                gap: 2rem;
+                gap: var(--space-8);
             }
 
             #game-ui span {
-                color: var(--accent);
+                color: var(--color-text);
             }
 
             #game-close {
                 position: absolute;
-                top: 1.5rem;
-                right: 1.5rem;
+                top: var(--space-6);
+                right: var(--space-6);
                 background: none;
-                border: 1px solid var(--border);
-                border-radius: 6px;
-                color: var(--text-muted);
-                padding: 0.5rem 1rem;
+                border: 1px solid var(--color-border);
+                border-radius: var(--radius);
+                color: var(--color-text-muted);
+                padding: var(--space-2) var(--space-4);
                 cursor: pointer;
                 font-family: inherit;
-                font-size: 0.75rem;
-                transition: all 0.2s;
+                font-size: var(--text-xs);
+                transition: all var(--duration-fast);
             }
 
             #game-close:hover {
-                border-color: var(--accent);
-                color: var(--accent);
+                border-color: var(--color-border-hover);
+                color: var(--color-text);
             }
 
             #game-instructions {
-                font-size: 0.75rem;
-                color: var(--text-muted);
-                margin-top: 1rem;
-                font-family: 'JetBrains Mono', monospace;
+                font-size: var(--text-xs);
+                color: var(--color-text-muted);
+                margin-top: var(--space-4);
+                font-family: var(--font-mono);
+            }
+
+            @media (max-width: 640px) {
+                .error-code {
+                    font-size: 6rem;
+                }
+                h1 {
+                    font-size: var(--text-2xl);
+                }
             }
         </style>
     </head>
@@ -383,10 +359,10 @@
             const PACKETS_PER_SPEED_LEVEL = 10;
 
             const colors = {
-                packet: '#a78bfa',
+                packet: '#ededed',
                 tracker: '#ef4444',
-                relay: '#7c3aed',
-                particle: '#c4b5fd',
+                relay: '#999',
+                particle: '#777',
             };
 
             const elements = {
@@ -556,7 +532,7 @@
 
             function getBackgroundColor() {
                 return getComputedStyle(document.documentElement)
-                    .getPropertyValue('--background')
+                    .getPropertyValue('--color-bg')
                     .trim();
             }
 
