@@ -53,6 +53,7 @@ jobs:
     needs: [check-version, tests, docs]
     if: needs.check-version.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
     permissions:
+      contents: read
       id-token: write
     steps:
       - uses: actions/checkout@v4
@@ -63,13 +64,14 @@ jobs:
       - name: Get crates.io token via Trusted Publishing
         id: token
         run: |
+          set -euo pipefail
           OIDC_TOKEN=$(curl -fsSL \
             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=crates.io" | jq -r '.value')
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=crates.io" | jq -re '.value')
           CRATES_TOKEN=$(curl -fsSL -X POST \
-            https://crates.io/api/v1/trusted_publishing/github_actions/token \
+            https://crates.io/api/v1/trusted_publishing/tokens \
             -H "Content-Type: application/json" \
-            -d "{\"jwt\": \"$OIDC_TOKEN\"}" | jq -r '.token')
+            -d "{\"jwt\": \"$OIDC_TOKEN\"}" | jq -re '.token')
           echo "::add-mask::$CRATES_TOKEN"
           echo "token=$CRATES_TOKEN" >> $GITHUB_OUTPUT
 
