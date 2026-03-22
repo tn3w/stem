@@ -73,7 +73,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::protocol::{ParsedLine, ControlLine, format_command};
+//! use stem::protocol::{ParsedLine, ControlLine, format_command};
 //!
 //! // Parse a response line
 //! let line = ParsedLine::parse("250 OK").unwrap();
@@ -129,7 +129,7 @@ use crate::Error;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::protocol::ParsedLine;
+/// use stem::protocol::ParsedLine;
 ///
 /// // Parse a success response
 /// let line = ParsedLine::parse("250 OK").unwrap();
@@ -200,7 +200,7 @@ impl ParsedLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::protocol::ParsedLine;
+    /// use stem::protocol::ParsedLine;
     ///
     /// // Parse with CRLF (as received from socket)
     /// let line = ParsedLine::parse("250 OK\r\n").unwrap();
@@ -254,7 +254,7 @@ impl ParsedLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::protocol::ParsedLine;
+    /// use stem::protocol::ParsedLine;
     ///
     /// let final_line = ParsedLine::parse("250 OK").unwrap();
     /// assert!(final_line.is_final());
@@ -274,7 +274,7 @@ impl ParsedLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::protocol::ParsedLine;
+    /// use stem::protocol::ParsedLine;
     ///
     /// let cont_line = ParsedLine::parse("250-version=0.4.7.1").unwrap();
     /// assert!(cont_line.is_continuation());
@@ -295,7 +295,7 @@ impl ParsedLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::protocol::ParsedLine;
+    /// use stem::protocol::ParsedLine;
     ///
     /// let data_line = ParsedLine::parse("250+getinfo").unwrap();
     /// assert!(data_line.is_data());
@@ -340,7 +340,7 @@ impl ParsedLine {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::protocol::ControlLine;
+/// use stem::protocol::ControlLine;
 ///
 /// // Parse space-separated values
 /// let mut line = ControlLine::new("hello world test");
@@ -382,7 +382,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::protocol::ControlLine;
+    /// use stem::protocol::ControlLine;
     ///
     /// let line = ControlLine::new("key=value other=data");
     /// assert!(!line.is_empty());
@@ -401,7 +401,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::protocol::ControlLine;
+    /// use stem::protocol::ControlLine;
     ///
     /// let mut line = ControlLine::new("hello world");
     /// assert_eq!(line.remainder(), "hello world");
@@ -417,7 +417,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::protocol::ControlLine;
+    /// use stem::protocol::ControlLine;
     ///
     /// let mut line = ControlLine::new("hello");
     /// assert!(!line.is_empty());
@@ -438,7 +438,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::protocol::ControlLine;
+    /// use stem::protocol::ControlLine;
     ///
     /// let line = ControlLine::new("\"quoted\" unquoted");
     /// assert!(line.is_next_quoted());
@@ -463,7 +463,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::protocol::ControlLine;
+    /// use stem::protocol::ControlLine;
     ///
     /// let line = ControlLine::new("key=value");
     /// assert!(line.is_next_mapping(None, false));
@@ -500,7 +500,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::protocol::ControlLine;
+    /// use stem::protocol::ControlLine;
     ///
     /// let line = ControlLine::new("mykey=myvalue");
     /// assert_eq!(line.peek_key(), Some("mykey"));
@@ -541,7 +541,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::protocol::ControlLine;
+    /// use stem::protocol::ControlLine;
     ///
     /// // Unquoted values
     /// let mut line = ControlLine::new("hello world");
@@ -610,7 +610,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::protocol::ControlLine;
+    /// use stem::protocol::ControlLine;
     ///
     /// // Simple mapping
     /// let mut line = ControlLine::new("key=value other=data");
@@ -727,7 +727,7 @@ fn unescape_string(s: &str) -> String {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::protocol::format_command;
+/// use stem::protocol::format_command;
 ///
 /// // Command without arguments
 /// let cmd = format_command("AUTHENTICATE", &[]);
@@ -772,7 +772,7 @@ pub fn format_command(command: &str, args: &[&str]) -> String {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::protocol::quote_string;
+/// use stem::protocol::quote_string;
 ///
 /// // Simple string
 /// assert_eq!(quote_string("hello"), "\"hello\"");
@@ -789,7 +789,7 @@ pub fn format_command(command: &str, args: &[&str]) -> String {
 /// original string:
 ///
 /// ```rust
-/// use stem_rs::protocol::{quote_string, ControlLine};
+/// use stem::protocol::{quote_string, ControlLine};
 ///
 /// let original = "hello\nworld";
 /// let quoted = quote_string(original);

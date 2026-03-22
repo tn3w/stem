@@ -22,7 +22,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::util::{is_valid_fingerprint, is_valid_nickname, is_valid_hidden_service_address};
+//! use stem::util::{is_valid_fingerprint, is_valid_nickname, is_valid_hidden_service_address};
 //!
 //! // Validate a relay fingerprint
 //! assert!(is_valid_fingerprint("9695DFC35FFEB861329B9F1AB04C46397020CE31"));
@@ -62,7 +62,7 @@
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_fingerprint;
+/// use stem::util::is_valid_fingerprint;
 ///
 /// // Valid fingerprints (case-insensitive)
 /// assert!(is_valid_fingerprint("9695DFC35FFEB861329B9F1AB04C46397020CE31"));
@@ -76,14 +76,14 @@
 /// # This Compiles But Is Wrong
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_fingerprint;
+/// use stem::util::is_valid_fingerprint;
 ///
 /// // Don't include the "$" prefix - that's for fingerprint references
 /// let with_prefix = "$9695DFC35FFEB861329B9F1AB04C46397020CE31";
 /// assert!(!is_valid_fingerprint(with_prefix)); // Returns false!
 ///
 /// // Use is_valid_fingerprint_with_prefix for prefixed fingerprints
-/// use stem_rs::util::is_valid_fingerprint_with_prefix;
+/// use stem::util::is_valid_fingerprint_with_prefix;
 /// assert!(is_valid_fingerprint_with_prefix(with_prefix));
 /// ```
 pub fn is_valid_fingerprint(s: &str) -> bool {
@@ -106,7 +106,7 @@ pub fn is_valid_fingerprint(s: &str) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_fingerprint_with_prefix;
+/// use stem::util::is_valid_fingerprint_with_prefix;
 ///
 /// // Both formats are valid
 /// assert!(is_valid_fingerprint_with_prefix("$9695DFC35FFEB861329B9F1AB04C46397020CE31"));
@@ -145,7 +145,7 @@ pub fn is_valid_fingerprint_with_prefix(s: &str) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_nickname;
+/// use stem::util::is_valid_nickname;
 ///
 /// // Valid nicknames
 /// assert!(is_valid_nickname("MyRelay"));
@@ -164,7 +164,7 @@ pub fn is_valid_fingerprint_with_prefix(s: &str) -> bool {
 /// # This Compiles But Is Wrong
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_nickname;
+/// use stem::util::is_valid_nickname;
 ///
 /// // Nicknames are NOT case-insensitive identifiers
 /// // "MyRelay" and "myrelay" are different nicknames
@@ -200,7 +200,7 @@ pub fn is_valid_nickname(s: &str) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_circuit_id;
+/// use stem::util::is_valid_circuit_id;
 ///
 /// assert!(is_valid_circuit_id("1"));
 /// assert!(is_valid_circuit_id("123"));
@@ -231,7 +231,7 @@ pub fn is_valid_circuit_id(s: &str) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_stream_id;
+/// use stem::util::is_valid_stream_id;
 ///
 /// assert!(is_valid_stream_id("1"));
 /// assert!(is_valid_stream_id("456"));
@@ -259,7 +259,7 @@ pub fn is_valid_stream_id(s: &str) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_ipv4_address;
+/// use stem::util::is_valid_ipv4_address;
 ///
 /// assert!(is_valid_ipv4_address("127.0.0.1"));
 /// assert!(is_valid_ipv4_address("192.168.1.1"));
@@ -305,7 +305,7 @@ pub fn is_valid_ipv4_address(s: &str) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_ipv6_address;
+/// use stem::util::is_valid_ipv6_address;
 ///
 /// assert!(is_valid_ipv6_address("2001:0db8:0000:0000:0000:ff00:0042:8329"));
 /// assert!(is_valid_ipv6_address("2001:db8::ff00:42:8329")); // Compressed
@@ -334,7 +334,7 @@ pub fn is_valid_ipv6_address(s: &str) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_ipv6_address_bracketed;
+/// use stem::util::is_valid_ipv6_address_bracketed;
 ///
 /// assert!(is_valid_ipv6_address_bracketed("[::1]"));
 /// assert!(is_valid_ipv6_address_bracketed("[2001:db8::1]"));
@@ -396,7 +396,7 @@ fn is_valid_ipv6_address_impl(s: &str, allow_brackets: bool) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_port;
+/// use stem::util::is_valid_port;
 ///
 /// assert!(is_valid_port("80"));
 /// assert!(is_valid_port("443"));
@@ -426,7 +426,7 @@ pub fn is_valid_port(s: &str) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_port_number;
+/// use stem::util::is_valid_port_number;
 ///
 /// assert!(is_valid_port_number(80));
 /// assert!(is_valid_port_number(9051));
@@ -463,7 +463,7 @@ pub fn is_valid_port_number(port: u16) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_private_address;
+/// use stem::util::is_private_address;
 ///
 /// assert_eq!(is_private_address("10.0.0.1"), Some(true));
 /// assert_eq!(is_private_address("192.168.1.1"), Some(true));
@@ -503,7 +503,7 @@ pub fn is_private_address(s: &str) -> Option<bool> {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::expand_ipv6_address;
+/// use stem::util::expand_ipv6_address;
 ///
 /// assert_eq!(
 ///     expand_ipv6_address("::1"),
@@ -570,7 +570,7 @@ pub fn expand_ipv6_address(s: &str) -> Option<String> {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_connection_id;
+/// use stem::util::is_valid_connection_id;
 ///
 /// assert!(is_valid_connection_id("1"));
 /// assert!(is_valid_connection_id("123"));
@@ -598,7 +598,7 @@ pub fn is_valid_connection_id(s: &str) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_hidden_service_address;
+/// use stem::util::is_valid_hidden_service_address;
 ///
 /// // V2 addresses (16 base32 characters)
 /// assert!(is_valid_hidden_service_address("facebookcorewwwi"));
@@ -641,7 +641,7 @@ pub fn is_valid_hidden_service_address(s: &str) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_hidden_service_address_v2;
+/// use stem::util::is_valid_hidden_service_address_v2;
 ///
 /// assert!(is_valid_hidden_service_address_v2("facebookcorewwwi"));
 /// assert!(is_valid_hidden_service_address_v2("facebookcorewwwi.onion"));
@@ -683,7 +683,7 @@ pub fn is_valid_hidden_service_address_v2(s: &str) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_valid_hidden_service_address_v3;
+/// use stem::util::is_valid_hidden_service_address_v3;
 ///
 /// let v3_addr = "a".repeat(56);
 /// assert!(is_valid_hidden_service_address_v3(&v3_addr));
@@ -723,7 +723,7 @@ fn is_base32_char(c: char) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::is_hex_digits;
+/// use stem::util::is_hex_digits;
 ///
 /// assert!(is_hex_digits("abcd", 4));
 /// assert!(is_hex_digits("ABCD1234", 8));
@@ -771,7 +771,7 @@ pub fn is_hex_digits(s: &str, length: usize) -> bool {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::util::secure_compare;
+/// use stem::util::secure_compare;
 ///
 /// let secret = b"my_secret_cookie";
 /// let attempt = b"my_secret_cookie";
@@ -795,7 +795,7 @@ pub fn is_hex_digits(s: &str, length: usize) -> bool {
 /// // if secret == attempt { ... }
 ///
 /// // Use secure_compare instead
-/// use stem_rs::util::secure_compare;
+/// use stem::util::secure_compare;
 /// if secure_compare(secret, attempt) {
 ///     // Safe comparison
 /// }

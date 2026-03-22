@@ -25,10 +25,10 @@
 //! # Example
 //!
 //! ```rust,no_run
-//! use stem_rs::Controller;
-//! use stem_rs::interpreter::help;
+//! use stem::Controller;
+//! use stem::interpreter::help;
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 //! controller.authenticate(None).await?;
 //!
@@ -69,10 +69,10 @@ use crate::controller::Controller;
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::Controller;
-/// use stem_rs::interpreter::help;
+/// use stem::Controller;
+/// use stem::interpreter::help;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// # let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 /// # controller.authenticate(None).await?;
 /// // General help

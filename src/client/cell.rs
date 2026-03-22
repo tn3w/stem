@@ -47,8 +47,8 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::client::cell::{VersionsCell, Cell, CellType};
-//! use stem_rs::client::datatype::LinkProtocol;
+//! use stem::client::cell::{VersionsCell, Cell, CellType};
+//! use stem::client::datatype::LinkProtocol;
 //!
 //! // Create a VERSIONS cell for protocol negotiation
 //! let versions = VersionsCell::new(vec![3, 4, 5]);
@@ -142,7 +142,7 @@ pub const STREAM_ID_DISALLOWED: &[RelayCommand] = &[
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::cell::{CellType, cell_by_name, cell_by_value};
+/// use stem::client::cell::{CellType, cell_by_name, cell_by_value};
 ///
 /// let cell_type = cell_by_name("NETINFO").unwrap();
 /// assert_eq!(cell_type.value(), 8);
@@ -278,7 +278,7 @@ impl CellType {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::cell::cell_by_name;
+/// use stem::client::cell::cell_by_name;
 ///
 /// let cell_type = cell_by_name("NETINFO").unwrap();
 /// assert_eq!(cell_type.value(), 8);
@@ -327,7 +327,7 @@ pub fn cell_by_name(name: &str) -> Result<CellType, Error> {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::cell::cell_by_value;
+/// use stem::client::cell::cell_by_value;
 ///
 /// let cell_type = cell_by_value(8).unwrap();
 /// assert_eq!(cell_type.name(), "NETINFO");
@@ -379,8 +379,8 @@ pub fn cell_by_value(value: u8) -> Result<CellType, Error> {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::cell::{Cell, VersionsCell};
-/// use stem_rs::client::datatype::LinkProtocol;
+/// use stem::client::cell::{Cell, VersionsCell};
+/// use stem::client::datatype::LinkProtocol;
 ///
 /// // Create and pack a cell
 /// let versions = VersionsCell::new(vec![3, 4, 5]);
@@ -466,8 +466,8 @@ impl Cell {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::client::cell::{Cell, VersionsCell};
-    /// use stem_rs::client::datatype::LinkProtocol;
+    /// use stem::client::cell::{Cell, VersionsCell};
+    /// use stem::client::datatype::LinkProtocol;
     ///
     /// let versions = VersionsCell::new(vec![3, 4, 5]);
     /// let packed = versions.pack(&LinkProtocol::new(2));
@@ -586,8 +586,8 @@ impl Cell {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::cell::PaddingCell;
-/// use stem_rs::client::datatype::LinkProtocol;
+/// use stem::client::cell::PaddingCell;
+/// use stem::client::datatype::LinkProtocol;
 ///
 /// // Create with random payload
 /// let cell = PaddingCell::new();
@@ -680,8 +680,8 @@ impl Default for PaddingCell {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::cell::VersionsCell;
-/// use stem_rs::client::datatype::LinkProtocol;
+/// use stem::client::cell::VersionsCell;
+/// use stem::client::datatype::LinkProtocol;
 ///
 /// let cell = VersionsCell::new(vec![3, 4, 5]);
 /// let packed = cell.pack(&LinkProtocol::new(2));
@@ -741,8 +741,8 @@ impl VersionsCell {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::cell::NetinfoCell;
-/// use stem_rs::client::datatype::{Address, LinkProtocol};
+/// use stem::client::cell::NetinfoCell;
+/// use stem::client::datatype::{Address, LinkProtocol};
 ///
 /// let receiver = Address::new("127.0.0.1").unwrap();
 /// let cell = NetinfoCell::new(receiver, vec![], None);
@@ -840,7 +840,7 @@ impl NetinfoCell {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::cell::CreateFastCell;
+/// use stem::client::cell::CreateFastCell;
 ///
 /// // Create with random key material
 /// let cell = CreateFastCell::new(1);
@@ -1230,8 +1230,8 @@ impl RelayCell {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::cell::DestroyCell;
-/// use stem_rs::client::datatype::CloseReason;
+/// use stem::client::cell::DestroyCell;
+/// use stem::client::datatype::CloseReason;
 ///
 /// let cell = DestroyCell::new(1, CloseReason::Requested);
 /// ```

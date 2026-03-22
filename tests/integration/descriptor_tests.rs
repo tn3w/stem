@@ -2,9 +2,9 @@
 
 use std::net::SocketAddr;
 
-use stem_rs::controller::Controller;
-use stem_rs::descriptor::{Compression, Descriptor, DigestEncoding, DigestHash, ServerDescriptor};
-use stem_rs::exit_policy::ExitPolicy;
+use stem::controller::Controller;
+use stem::descriptor::{Compression, Descriptor, DigestEncoding, DigestHash, ServerDescriptor};
+use stem::exit_policy::ExitPolicy;
 
 use crate::{get_control_port, is_tor_available};
 
@@ -155,7 +155,7 @@ async fn test_find_relays_by_flag() {
         .await
         .expect("Authentication failed");
 
-    let result = controller.find_relays_by_flag(stem_rs::Flag::Guard).await;
+    let result = controller.find_relays_by_flag(stem::Flag::Guard).await;
 
     if let Ok(guard_relays) = result {
         for relay in &guard_relays {
@@ -565,7 +565,7 @@ reject *:*"#;
 async fn test_descriptor_digest_computation() {
     let content = b"test content for digest";
     let digest =
-        stem_rs::descriptor::compute_digest(content, DigestHash::Sha256, DigestEncoding::Hex);
+        stem::descriptor::compute_digest(content, DigestHash::Sha256, DigestEncoding::Hex);
 
     assert!(!digest.is_empty(), "Digest should not be empty");
     assert_eq!(
@@ -575,7 +575,7 @@ async fn test_descriptor_digest_computation() {
     );
 
     let sha1_digest =
-        stem_rs::descriptor::compute_digest(content, DigestHash::Sha1, DigestEncoding::Hex);
+        stem::descriptor::compute_digest(content, DigestHash::Sha1, DigestEncoding::Hex);
     assert_eq!(
         sha1_digest.len(),
         40,
@@ -586,25 +586,25 @@ async fn test_descriptor_digest_computation() {
 #[tokio::test]
 async fn test_compression_detection() {
     let plaintext = b"Hello, World!";
-    let compression = stem_rs::descriptor::detect_compression(plaintext);
+    let compression = stem::descriptor::detect_compression(plaintext);
     assert_eq!(compression, Compression::Plaintext);
 
     let gzip_header = &[0x1f, 0x8b, 0x08, 0x00];
-    let compression = stem_rs::descriptor::detect_compression(gzip_header);
+    let compression = stem::descriptor::detect_compression(gzip_header);
     assert_eq!(compression, Compression::Gzip);
 }
 
 #[tokio::test]
 async fn test_auto_decompress() {
     let content = b"Hello, World!";
-    let result = stem_rs::descriptor::auto_decompress(content);
+    let result = stem::descriptor::auto_decompress(content);
     assert!(result.is_ok());
     assert_eq!(result.unwrap(), content);
 }
 
 #[tokio::test]
 async fn test_descriptor_error_types() {
-    use stem_rs::descriptor::{
+    use stem::descriptor::{
         ConsensusError, DescriptorError, MicrodescriptorError, ServerDescriptorError,
     };
 
@@ -623,7 +623,7 @@ async fn test_descriptor_error_types() {
 
 #[tokio::test]
 async fn test_consensus_error_variants() {
-    use stem_rs::descriptor::ConsensusError;
+    use stem::descriptor::ConsensusError;
 
     let err = ConsensusError::InvalidNetworkStatusVersion("2".to_string());
     assert!(err.to_string().contains("expected 3, got 2"));
@@ -646,7 +646,7 @@ async fn test_consensus_error_variants() {
 
 #[tokio::test]
 async fn test_server_descriptor_error_variants() {
-    use stem_rs::descriptor::ServerDescriptorError;
+    use stem::descriptor::ServerDescriptorError;
 
     let err = ServerDescriptorError::InvalidRouterFormat { actual: 3 };
     assert!(err.to_string().contains("expected 5 parts, got 3"));
@@ -663,7 +663,7 @@ async fn test_server_descriptor_error_variants() {
 
 #[tokio::test]
 async fn test_microdescriptor_error_variants() {
-    use stem_rs::descriptor::MicrodescriptorError;
+    use stem::descriptor::MicrodescriptorError;
 
     let err = MicrodescriptorError::InvalidIdentityLength {
         algorithm: "ed25519".to_string(),
@@ -682,7 +682,7 @@ async fn test_microdescriptor_error_variants() {
 
 #[tokio::test]
 async fn test_descriptor_error_conversion() {
-    use stem_rs::descriptor::{ConsensusError, DescriptorError, ServerDescriptorError};
+    use stem::descriptor::{ConsensusError, DescriptorError, ServerDescriptorError};
 
     let consensus_err = ConsensusError::InvalidFingerprint("test".to_string());
     let desc_err: DescriptorError = consensus_err.into();
@@ -702,7 +702,7 @@ async fn test_descriptor_error_conversion() {
 #[tokio::test]
 async fn test_descriptor_error_from_io() {
     use std::io;
-    use stem_rs::descriptor::ServerDescriptorError;
+    use stem::descriptor::ServerDescriptorError;
 
     let io_err = io::Error::new(io::ErrorKind::NotFound, "file not found");
     let desc_err: ServerDescriptorError = io_err.into();
@@ -711,7 +711,7 @@ async fn test_descriptor_error_from_io() {
 
 #[tokio::test]
 async fn test_descriptor_error_display() {
-    use stem_rs::descriptor::{
+    use stem::descriptor::{
         BandwidthFileError, ExtraInfoError, HiddenServiceDescriptorError, KeyCertificateError,
         TorDNSELError,
     };
@@ -734,7 +734,7 @@ async fn test_descriptor_error_display() {
 
 #[tokio::test]
 async fn test_unsupported_compression_error() {
-    use stem_rs::descriptor::DescriptorError;
+    use stem::descriptor::DescriptorError;
 
     let err = DescriptorError::UnsupportedCompression("zstd".to_string());
     assert!(err.to_string().contains("Unsupported compression format"));
@@ -743,7 +743,7 @@ async fn test_unsupported_compression_error() {
 
 #[tokio::test]
 async fn test_decompression_failed_error() {
-    use stem_rs::descriptor::DescriptorError;
+    use stem::descriptor::DescriptorError;
 
     let err = DescriptorError::DecompressionFailed("corrupted data".to_string());
     assert!(err.to_string().contains("Decompression failed"));
@@ -752,7 +752,7 @@ async fn test_decompression_failed_error() {
 
 #[tokio::test]
 async fn test_error_source_chain() {
-    use stem_rs::descriptor::{ConsensusError, DescriptorError};
+    use stem::descriptor::{ConsensusError, DescriptorError};
 
     let consensus_err = ConsensusError::InvalidFingerprint("test".to_string());
     let desc_err: DescriptorError = consensus_err.into();
@@ -767,7 +767,7 @@ async fn test_error_source_chain() {
 
 #[tokio::test]
 async fn test_error_debug_format() {
-    use stem_rs::descriptor::ConsensusError;
+    use stem::descriptor::ConsensusError;
 
     let err = ConsensusError::InvalidFingerprint("ABCD".to_string());
     let debug_str = format!("{:?}", err);
@@ -777,8 +777,8 @@ async fn test_error_debug_format() {
 
 #[tokio::test]
 async fn test_main_error_includes_descriptor_error() {
-    use stem_rs::descriptor::{ConsensusError, DescriptorError};
-    use stem_rs::Error;
+    use stem::descriptor::{ConsensusError, DescriptorError};
+    use stem::Error;
 
     let consensus_err = ConsensusError::InvalidFingerprint("test".to_string());
     let desc_err: DescriptorError = consensus_err.into();
@@ -792,7 +792,7 @@ async fn test_main_error_includes_descriptor_error() {
 
 #[tokio::test]
 async fn test_legacy_parse_error_still_works() {
-    use stem_rs::Error;
+    use stem::Error;
 
     let err = Error::Parse {
         location: "line 10".to_string(),
@@ -805,8 +805,8 @@ async fn test_legacy_parse_error_still_works() {
 
 #[tokio::test]
 async fn test_error_handling_example() {
-    use stem_rs::descriptor::{ConsensusError, DescriptorError};
-    use stem_rs::Error;
+    use stem::descriptor::{ConsensusError, DescriptorError};
+    use stem::Error;
 
     fn handle_error(err: Error) -> String {
         match err {
@@ -878,7 +878,7 @@ CxdSKSSy0mmcBe2TOyQsahlGZ9Pudxfnrey7KcfqnArEOqNH09RpAgMBAAE=
 
 #[tokio::test]
 async fn test_consensus_validate_valid() {
-    use stem_rs::descriptor::{Descriptor, NetworkStatusDocument};
+    use stem::descriptor::{Descriptor, NetworkStatusDocument};
 
     let doc = NetworkStatusDocument::parse(EXAMPLE_CONSENSUS).unwrap();
     assert!(doc.validate().is_ok());
@@ -886,8 +886,8 @@ async fn test_consensus_validate_valid() {
 
 #[tokio::test]
 async fn test_consensus_validate_invalid_timestamp_ordering() {
-    use stem_rs::descriptor::{ConsensusError, Descriptor, DescriptorError, NetworkStatusDocument};
-    use stem_rs::Error;
+    use stem::descriptor::{ConsensusError, Descriptor, DescriptorError, NetworkStatusDocument};
+    use stem::Error;
 
     let mut doc = NetworkStatusDocument::parse(EXAMPLE_CONSENSUS).unwrap();
     doc.fresh_until = doc.valid_after;
@@ -903,8 +903,8 @@ async fn test_consensus_validate_invalid_timestamp_ordering() {
 
 #[tokio::test]
 async fn test_consensus_validate_invalid_version() {
-    use stem_rs::descriptor::{ConsensusError, Descriptor, DescriptorError, NetworkStatusDocument};
-    use stem_rs::Error;
+    use stem::descriptor::{ConsensusError, Descriptor, DescriptorError, NetworkStatusDocument};
+    use stem::Error;
 
     let mut doc = NetworkStatusDocument::parse(EXAMPLE_CONSENSUS).unwrap();
     doc.version = 2;
@@ -920,8 +920,8 @@ async fn test_consensus_validate_invalid_version() {
 
 #[tokio::test]
 async fn test_consensus_validate_invalid_authority_fingerprint() {
-    use stem_rs::descriptor::{ConsensusError, Descriptor, DescriptorError, NetworkStatusDocument};
-    use stem_rs::Error;
+    use stem::descriptor::{ConsensusError, Descriptor, DescriptorError, NetworkStatusDocument};
+    use stem::Error;
 
     let mut doc = NetworkStatusDocument::parse(EXAMPLE_CONSENSUS).unwrap();
     doc.authorities[0].v3ident = "INVALID".to_string();
@@ -937,8 +937,8 @@ async fn test_consensus_validate_invalid_authority_fingerprint() {
 
 #[tokio::test]
 async fn test_consensus_validate_missing_signatures() {
-    use stem_rs::descriptor::{ConsensusError, Descriptor, DescriptorError, NetworkStatusDocument};
-    use stem_rs::Error;
+    use stem::descriptor::{ConsensusError, Descriptor, DescriptorError, NetworkStatusDocument};
+    use stem::Error;
 
     let mut doc = NetworkStatusDocument::parse(EXAMPLE_CONSENSUS).unwrap();
     doc.signatures.clear();
@@ -954,8 +954,8 @@ async fn test_consensus_validate_missing_signatures() {
 
 #[tokio::test]
 async fn test_consensus_validate_invalid_signature_fingerprint() {
-    use stem_rs::descriptor::{ConsensusError, Descriptor, DescriptorError, NetworkStatusDocument};
-    use stem_rs::Error;
+    use stem::descriptor::{ConsensusError, Descriptor, DescriptorError, NetworkStatusDocument};
+    use stem::Error;
 
     let mut doc = NetworkStatusDocument::parse(EXAMPLE_CONSENSUS).unwrap();
     doc.signatures[0].identity = "INVALID".to_string();
@@ -977,8 +977,8 @@ async fn test_server_descriptor_validate_valid() {
 
 #[tokio::test]
 async fn test_server_descriptor_validate_invalid_nickname() {
-    use stem_rs::descriptor::{DescriptorError, ServerDescriptorError};
-    use stem_rs::Error;
+    use stem::descriptor::{DescriptorError, ServerDescriptorError};
+    use stem::Error;
 
     let mut desc = ServerDescriptor::parse(EXAMPLE_SERVER_DESCRIPTOR).unwrap();
     desc.nickname = "Invalid$Nickname".to_string();
@@ -994,8 +994,8 @@ async fn test_server_descriptor_validate_invalid_nickname() {
 
 #[tokio::test]
 async fn test_server_descriptor_validate_invalid_fingerprint() {
-    use stem_rs::descriptor::{DescriptorError, ServerDescriptorError};
-    use stem_rs::Error;
+    use stem::descriptor::{DescriptorError, ServerDescriptorError};
+    use stem::Error;
 
     let mut desc = ServerDescriptor::parse(EXAMPLE_SERVER_DESCRIPTOR).unwrap();
     desc.fingerprint = Some("INVALID".to_string());
@@ -1011,8 +1011,8 @@ async fn test_server_descriptor_validate_invalid_fingerprint() {
 
 #[tokio::test]
 async fn test_server_descriptor_validate_invalid_port() {
-    use stem_rs::descriptor::{DescriptorError, ServerDescriptorError};
-    use stem_rs::Error;
+    use stem::descriptor::{DescriptorError, ServerDescriptorError};
+    use stem::Error;
 
     let mut desc = ServerDescriptor::parse(EXAMPLE_SERVER_DESCRIPTOR).unwrap();
     desc.or_port = 0;
@@ -1028,8 +1028,8 @@ async fn test_server_descriptor_validate_invalid_port() {
 
 #[tokio::test]
 async fn test_server_descriptor_validate_invalid_bandwidth() {
-    use stem_rs::descriptor::{DescriptorError, ServerDescriptorError};
-    use stem_rs::Error;
+    use stem::descriptor::{DescriptorError, ServerDescriptorError};
+    use stem::Error;
 
     let mut desc = ServerDescriptor::parse(EXAMPLE_SERVER_DESCRIPTOR).unwrap();
     desc.bandwidth_avg = 1000;
@@ -1046,8 +1046,8 @@ async fn test_server_descriptor_validate_invalid_bandwidth() {
 
 #[tokio::test]
 async fn test_server_descriptor_validate_missing_signature() {
-    use stem_rs::descriptor::{DescriptorError, ServerDescriptorError};
-    use stem_rs::Error;
+    use stem::descriptor::{DescriptorError, ServerDescriptorError};
+    use stem::Error;
 
     let mut desc = ServerDescriptor::parse(EXAMPLE_SERVER_DESCRIPTOR).unwrap();
     desc.signature = String::new();
@@ -1063,7 +1063,7 @@ async fn test_server_descriptor_validate_missing_signature() {
 
 #[tokio::test]
 async fn test_microdescriptor_validate_valid() {
-    use stem_rs::descriptor::{Descriptor, Microdescriptor};
+    use stem::descriptor::{Descriptor, Microdescriptor};
 
     let desc = Microdescriptor::parse(EXAMPLE_MICRODESCRIPTOR).unwrap();
     assert!(desc.validate().is_ok());
@@ -1071,8 +1071,8 @@ async fn test_microdescriptor_validate_valid() {
 
 #[tokio::test]
 async fn test_microdescriptor_validate_missing_onion_key() {
-    use stem_rs::descriptor::{Descriptor, DescriptorError, Microdescriptor, MicrodescriptorError};
-    use stem_rs::Error;
+    use stem::descriptor::{Descriptor, DescriptorError, Microdescriptor, MicrodescriptorError};
+    use stem::Error;
 
     let mut desc = Microdescriptor::parse(EXAMPLE_MICRODESCRIPTOR).unwrap();
     desc.onion_key = String::new();
@@ -1088,8 +1088,8 @@ async fn test_microdescriptor_validate_missing_onion_key() {
 
 #[tokio::test]
 async fn test_microdescriptor_validate_invalid_port() {
-    use stem_rs::descriptor::{Descriptor, DescriptorError, Microdescriptor, MicrodescriptorError};
-    use stem_rs::Error;
+    use stem::descriptor::{Descriptor, DescriptorError, Microdescriptor, MicrodescriptorError};
+    use stem::Error;
 
     let mut desc = Microdescriptor::parse(EXAMPLE_MICRODESCRIPTOR).unwrap();
     desc.or_addresses
@@ -1106,8 +1106,8 @@ async fn test_microdescriptor_validate_invalid_port() {
 
 #[tokio::test]
 async fn test_microdescriptor_validate_invalid_family_fingerprint() {
-    use stem_rs::descriptor::{Descriptor, DescriptorError, Microdescriptor, MicrodescriptorError};
-    use stem_rs::Error;
+    use stem::descriptor::{Descriptor, DescriptorError, Microdescriptor, MicrodescriptorError};
+    use stem::Error;
 
     let mut desc = Microdescriptor::parse(EXAMPLE_MICRODESCRIPTOR).unwrap();
     desc.family
@@ -1126,7 +1126,7 @@ async fn test_microdescriptor_validate_invalid_family_fingerprint() {
 fn test_network_status_document_builder() {
     use chrono::Utc;
     use std::collections::HashMap;
-    use stem_rs::descriptor::NetworkStatusDocumentBuilder;
+    use stem::descriptor::NetworkStatusDocumentBuilder;
 
     let now = Utc::now();
     let later = now + chrono::Duration::hours(1);
@@ -1172,9 +1172,9 @@ fn test_server_descriptor_builder() {
     use chrono::Utc;
     use std::collections::{HashMap, HashSet};
     use std::net::IpAddr;
-    use stem_rs::descriptor::ServerDescriptorBuilder;
-    use stem_rs::exit_policy::ExitPolicy;
-    use stem_rs::BridgeDistribution;
+    use stem::descriptor::ServerDescriptorBuilder;
+    use stem::exit_policy::ExitPolicy;
+    use stem::BridgeDistribution;
 
     let exit_policy = ExitPolicy::parse("reject *:*").expect("Failed to parse exit policy");
     let address: IpAddr = "192.168.1.1".parse().unwrap();
@@ -1213,8 +1213,8 @@ fn test_server_descriptor_builder() {
 #[test]
 fn test_microdescriptor_builder() {
     use std::collections::HashMap;
-    use stem_rs::descriptor::MicrodescriptorBuilder;
-    use stem_rs::exit_policy::MicroExitPolicy;
+    use stem::descriptor::MicrodescriptorBuilder;
+    use stem::exit_policy::MicroExitPolicy;
 
     let onion_key = "-----BEGIN RSA PUBLIC KEY-----\ntest\n-----END RSA PUBLIC KEY-----";
     let exit_policy = MicroExitPolicy::parse("reject 1-65535").expect("Failed to parse policy");
@@ -1241,7 +1241,7 @@ fn test_microdescriptor_builder() {
 fn test_extra_info_descriptor_builder() {
     use chrono::Utc;
     use std::collections::HashMap;
-    use stem_rs::descriptor::ExtraInfoDescriptorBuilder;
+    use stem::descriptor::ExtraInfoDescriptorBuilder;
 
     let desc = ExtraInfoDescriptorBuilder::default()
         .nickname("TestRelay")
@@ -1292,9 +1292,9 @@ fn test_builder_with_into_conversions() {
     use chrono::Utc;
     use std::collections::{HashMap, HashSet};
     use std::net::IpAddr;
-    use stem_rs::descriptor::ServerDescriptorBuilder;
-    use stem_rs::exit_policy::ExitPolicy;
-    use stem_rs::BridgeDistribution;
+    use stem::descriptor::ServerDescriptorBuilder;
+    use stem::exit_policy::ExitPolicy;
+    use stem::BridgeDistribution;
 
     let exit_policy = ExitPolicy::parse("reject *:*").expect("Failed to parse exit policy");
     let address: IpAddr = "192.168.1.1".parse().unwrap();

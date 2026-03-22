@@ -46,9 +46,9 @@ jobs:
           
           mkdir -p dist-cache
           
-          ARCHIVE_NAME="stem-rs-${VERSION}-${DATE}-${COMMIT}"
-          git archive --format=tar.gz --prefix=stem-rs-${VERSION}/ HEAD -o "dist-cache/${ARCHIVE_NAME}.tar.gz"
-          git archive --format=zip --prefix=stem-rs-${VERSION}/ HEAD -o "dist-cache/${ARCHIVE_NAME}.zip"
+          ARCHIVE_NAME="stem-${VERSION}-${DATE}-${COMMIT}"
+          git archive --format=tar.gz --prefix=stem-${VERSION}/ HEAD -o "dist-cache/${ARCHIVE_NAME}.tar.gz"
+          git archive --format=zip --prefix=stem-${VERSION}/ HEAD -o "dist-cache/${ARCHIVE_NAME}.zip"
 
       - name: Save archives to cache
         uses: actions/cache/save@v4
@@ -61,7 +61,7 @@ jobs:
           mkdir -p docs
           cp -r docs-src/* docs/
           mkdir -p docs/docs
-          cp -r target/doc/stem_rs/* docs/docs/
+          cp -r target/doc/stem/* docs/docs/
           cp -r target/doc/static.files docs/
           cp -r target/doc/src docs/
           
@@ -71,10 +71,10 @@ jobs:
           VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/.*"\(.*\)".*/\1/')
           COMMIT=$(git rev-parse --short HEAD)
           DATE=$(date +%Y%m%d)
-          ARCHIVE_NAME="stem-rs-${VERSION}-${DATE}-${COMMIT}"
+          ARCHIVE_NAME="stem-${VERSION}-${DATE}-${COMMIT}"
           cd docs/dist
-          ln -sf "${ARCHIVE_NAME}.tar.gz" stem-rs-latest.tar.gz
-          ln -sf "${ARCHIVE_NAME}.zip" stem-rs-latest.zip
+          ln -sf "${ARCHIVE_NAME}.tar.gz" stem-latest.tar.gz
+          ln -sf "${ARCHIVE_NAME}.zip" stem-latest.zip
           cd ../..
           
           find docs -name "*.html" -exec sed -i "s|>VERSION</span>|>v${VERSION}</span>|g" {} \;
@@ -94,7 +94,7 @@ jobs:
             sed -i "s|href=\"${rel_path}index.html\"|href=\"/\"|g" "$file"
             sed -i "s|href=\"../index.html\"|href=\"/\"|g" "$file"
             sed -i "s|href=\"/index.html\"|href=\"/\"|g" "$file"
-            sed -i 's|href="[^"]*stem_rs/index\.html"|href="/"|g' "$file"
+            sed -i 's|href="[^"]*stem/index\.html"|href="/"|g' "$file"
           done
 
       - name: Setup Node.js
@@ -127,7 +127,7 @@ jobs:
           VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/.*"\(.*\)".*/\1/')
           COMMIT=$(git rev-parse --short HEAD)
           DATE=$(date +%Y%m%d)
-          LATEST_NAME="stem-rs-${VERSION}-${DATE}-${COMMIT}"
+          LATEST_NAME="stem-${VERSION}-${DATE}-${COMMIT}"
           
           LATEST_ROWS=""
           OTHER_ROWS=""

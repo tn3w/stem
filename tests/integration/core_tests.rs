@@ -3,11 +3,11 @@
 use std::net::SocketAddr;
 use std::time::Duration;
 
-use stem_rs::auth::{
+use stem::auth::{
     authenticate, authenticate_cookie, authenticate_none, authenticate_safecookie,
     get_protocol_info, AuthMethod,
 };
-use stem_rs::ControlSocket;
+use stem::ControlSocket;
 
 use crate::{get_control_port, is_tor_available};
 
@@ -513,7 +513,7 @@ async fn test_concurrent_connections() {
                 authenticate(&mut socket, None).await?;
                 socket.send("GETINFO version").await?;
                 let response = socket.recv().await?;
-                Ok::<_, stem_rs::Error>((i, response.is_ok()))
+                Ok::<_, stem::Error>((i, response.is_ok()))
             })
         })
         .collect();

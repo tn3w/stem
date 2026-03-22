@@ -3,16 +3,16 @@
 use std::net::SocketAddr;
 use std::time::Duration;
 
-use stem_rs::client::Relay;
-use stem_rs::client::{
+use stem::client::Relay;
+use stem::client::{
     cell_by_name, cell_by_value, Cell, CellType, CertsCell, CreateFastCell, DestroyCell,
     NetinfoCell, PaddingCell, RelayCell, VPaddingCell, VersionsCell, DEFAULT_LINK_PROTOCOLS,
 };
-use stem_rs::client::{
+use stem::client::{
     AddrType, Address, CertType, Certificate, CloseReason, LinkProtocol, LinkSpecifier,
     RelayCommand, Size, KDF,
 };
-use stem_rs::controller::Controller;
+use stem::controller::Controller;
 
 use crate::{get_control_port, is_tor_available};
 

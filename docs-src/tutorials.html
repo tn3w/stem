@@ -5,20 +5,20 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta
             name="description"
-            content="Comprehensive tutorials and examples for stem-rs, the Rust library for Tor control protocol. Learn to connect, authenticate, monitor events, and build hidden services."
+            content="Comprehensive tutorials and examples for stem, the Rust library for Tor control protocol. Learn to connect, authenticate, monitor events, and build hidden services."
         />
         <meta
             name="keywords"
-            content="stem-rs, Tor, Rust, tutorials, examples, control protocol, hidden services, onion services"
+            content="stem, Tor, Rust, tutorials, examples, control protocol, hidden services, onion services"
         />
-        <meta property="og:title" content="Tutorials — stem-rs" />
+        <meta property="og:title" content="Tutorials — stem" />
         <meta
             property="og:description"
             content="Step-by-step guides for building Tor-integrated applications with Rust."
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://stem.tn3w.dev/tutorials" />
-        <title>Tutorials — stem-rs</title>
+        <title>Tutorials — stem</title>
         <link rel="stylesheet" href="styles/theme.css" />
         <link rel="stylesheet" href="styles/main.css" />
         <link rel="stylesheet" href="styles/tutorials.css" />
@@ -27,7 +27,7 @@
         <header>
             <nav class="container">
                 <a href="/" class="nav-brand">
-                    <span class="nav-logo">stem-rs</span>
+                    <span class="nav-logo">stem</span>
                     <span class="nav-version">VERSION</span>
                 </a>
                 <div class="nav-links">
@@ -35,7 +35,7 @@
                     <a href="/tutorials" class="nav-hide-mobile">Tutorials</a>
                     <a href="/docs/">Docs</a>
                     <a
-                        href="https://crates.io/crates/stem-rs"
+                        href="https://crates.io/crates/stem"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
@@ -57,7 +57,7 @@
                         </svg>
                     </a>
                     <a
-                        href="https://github.com/tn3w/stem-rs"
+                        href="https://github.com/tn3w/stem"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
@@ -143,7 +143,7 @@
                     <div class="page-header-badge">📚 Comprehensive Guides</div>
                     <h1 class="page-title">Tutorials & Examples</h1>
                     <p class="page-description">
-                        Learn to build Tor-integrated applications with stem-rs through practical,
+                        Learn to build Tor-integrated applications with stem through practical,
                         production-ready examples. From basic connections to advanced hidden service
                         deployment.
                     </p>
@@ -180,7 +180,7 @@
                             </div>
                             <div class="content-block-body">
                                 <p>
-                                    Before using stem-rs, ensure you have Tor installed and
+                                    Before using stem, ensure you have Tor installed and
                                     configured with a control port. The control port allows external
                                     applications to communicate with the Tor process.
                                 </p>
@@ -312,7 +312,7 @@ CookieAuthentication 1
                                     </span>
                                 </div>
                                 <pre><code><span class="code-keyword">[dependencies]</span>
-stem-rs = <span class="code-string">"1"</span>
+stem = <span class="code-string">"1"</span>
 tokio = { version = <span class="code-string">"1"</span>, features = [<span class="code-string">"full"</span>] }</code></pre>
                             </div>
                         </div>
@@ -353,7 +353,7 @@ tokio = { version = <span class="code-string">"1"</span>, features = [<span clas
                                         </button>
                                     </div>
                                 </div>
-                                <pre><code id="basic-connection"><span class="code-keyword">use</span> stem_rs::{Controller, Error};
+                                <pre><code id="basic-connection"><span class="code-keyword">use</span> stem::{Controller, Error};
 
 <span class="code-macro">#[tokio::main]</span>
 <span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
@@ -388,7 +388,7 @@ tokio = { version = <span class="code-string">"1"</span>, features = [<span clas
                                 </div>
                             </div>
                             <div class="content-block-body">
-                                <p>stem-rs supports all standard Tor authentication methods:</p>
+                                <p>stem supports all standard Tor authentication methods:</p>
 
                                 <table class="config-table">
                                     <thead>
@@ -428,7 +428,7 @@ tokio = { version = <span class="code-string">"1"</span>, features = [<span clas
                             <div class="code-block-header">
                                 <span class="code-block-filename">Password Authentication</span>
                             </div>
-                            <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error};
+                            <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
 
 <span class="code-macro">#[tokio::main]</span>
 <span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
@@ -448,7 +448,7 @@ tokio = { version = <span class="code-string">"1"</span>, features = [<span clas
                                 <span class="code-block-filename">Unix Socket Connection</span>
                             </div>
                             <pre><code><span class="code-keyword">use</span> std::path::Path;
-<span class="code-keyword">use</span> stem_rs::{Controller, Error};
+<span class="code-keyword">use</span> stem::{Controller, Error};
 
 <span class="code-macro">#[tokio::main]</span>
 <span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
@@ -507,7 +507,7 @@ tokio = { version = <span class="code-string">"1"</span>, features = [<span clas
                                 <div class="code-block-header">
                                     <span class="code-block-filename">traffic_monitor.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error};
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
 
 <span class="code-macro">#[tokio::main]</span>
 <span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
@@ -618,7 +618,7 @@ Traffic Statistics:
                                 <div class="code-block-header">
                                     <span class="code-block-filename">relay_dashboard.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error};
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
 
 <span class="code-keyword">fn</span> <span class="code-function">format_bytes</span>(bytes: <span class="code-type">u64</span>) -> <span class="code-type">String</span> {
     <span class="code-keyword">const</span> KB: <span class="code-type">u64</span> = <span class="code-number">1024</span>;
@@ -707,7 +707,7 @@ Traffic Statistics:
                                 <div class="code-block-header">
                                     <span class="code-block-filename">exit_selection.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error, Signal};
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, Signal};
 
 <span class="code-macro">#[tokio::main]</span>
 <span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
@@ -802,7 +802,7 @@ Traffic Statistics:
                             </div>
                             <div class="content-block-body">
                                 <p>
-                                    Combine stem-rs with an HTTP client that supports SOCKS5 proxies
+                                    Combine stem with an HTTP client that supports SOCKS5 proxies
                                     to make requests through Tor:
                                 </p>
                             </div>
@@ -819,7 +819,7 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">tor_http_client.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error, Signal};
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, Signal};
 <span class="code-keyword">use</span> std::time::Duration;
 
 <span class="code-keyword">const</span> SOCKS_PORT: <span class="code-type">u16</span> = <span class="code-number">9050</span>;
@@ -881,7 +881,7 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">country_rotation.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error, Signal};
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, Signal};
 <span class="code-keyword">use</span> std::time::Duration;
 
 <span class="code-macro">#[tokio::main]</span>
@@ -937,7 +937,7 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">circuit_management.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error, CircStatus};
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, CircStatus};
 <span class="code-keyword">use</span> std::time::Duration;
 
 <span class="code-macro">#[tokio::main]</span>
@@ -1074,8 +1074,8 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">bandwidth_monitor.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error, EventType};
-<span class="code-keyword">use</span> stem_rs::events::ParsedEvent;
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, EventType};
+<span class="code-keyword">use</span> stem::events::ParsedEvent;
 
 <span class="code-keyword">fn</span> <span class="code-function">format_bytes</span>(bytes: <span class="code-type">u64</span>) -> <span class="code-type">String</span> {
     <span class="code-keyword">const</span> KB: <span class="code-type">u64</span> = <span class="code-number">1024</span>;
@@ -1156,8 +1156,8 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">circuit_monitor.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error, EventType, CircStatus};
-<span class="code-keyword">use</span> stem_rs::events::ParsedEvent;
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, EventType, CircStatus};
+<span class="code-keyword">use</span> stem::events::ParsedEvent;
 
 <span class="code-macro">#[tokio::main]</span>
 <span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
@@ -1220,8 +1220,8 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">multi_event_handler.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error, EventType};
-<span class="code-keyword">use</span> stem_rs::events::ParsedEvent;
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, EventType};
+<span class="code-keyword">use</span> stem::events::ParsedEvent;
 <span class="code-keyword">use</span> tokio::sync::mpsc;
 <span class="code-keyword">use</span> std::sync::Arc;
 <span class="code-keyword">use</span> tokio::sync::Mutex;
@@ -1344,7 +1344,7 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">ephemeral_service.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error};
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
 <span class="code-keyword">use</span> std::time::Duration;
 
 <span class="code-macro">#[tokio::main]</span>
@@ -1405,7 +1405,7 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">persistent_service.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error};
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
 <span class="code-keyword">use</span> std::path::Path;
 <span class="code-keyword">use</span> tokio::fs;
 
@@ -1490,7 +1490,7 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">multi_port_service.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error};
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
 
 <span class="code-macro">#[tokio::main]</span>
 <span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
@@ -1549,7 +1549,7 @@ tower = <span class="code-string">"0.4"</span></code></pre>
                                 <div class="code-block-header">
                                     <span class="code-block-filename">onion_web_server.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error};
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
 <span class="code-keyword">use</span> axum::{routing::get, Router};
 <span class="code-keyword">use</span> std::net::SocketAddr;
 
@@ -1710,8 +1710,8 @@ tower = <span class="code-string">"0.4"</span></code></pre>
                                 <div class="code-block-header">
                                     <span class="code-block-filename">consensus_analysis.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::descriptor::{download_consensus, NetworkStatusDocument};
-<span class="code-keyword">use</span> stem_rs::{Error, Flag};
+                                <pre><code><span class="code-keyword">use</span> stem::descriptor::{download_consensus, NetworkStatusDocument};
+<span class="code-keyword">use</span> stem::{Error, Flag};
 
 <span class="code-macro">#[tokio::main]</span>
 <span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
@@ -1782,8 +1782,8 @@ tower = <span class="code-string">"0.4"</span></code></pre>
                                 <div class="code-block-header">
                                     <span class="code-block-filename">top_exits.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::descriptor::{download_server_descriptors, ServerDescriptor, Descriptor};
-<span class="code-keyword">use</span> stem_rs::Error;
+                                <pre><code><span class="code-keyword">use</span> stem::descriptor::{download_server_descriptors, ServerDescriptor, Descriptor};
+<span class="code-keyword">use</span> stem::Error;
 <span class="code-keyword">use</span> std::collections::BinaryHeap;
 
 <span class="code-keyword">fn</span> <span class="code-function">format_bandwidth</span>(bytes: <span class="code-type">u64</span>) -> <span class="code-type">String</span> {
@@ -1853,9 +1853,9 @@ tower = <span class="code-string">"0.4"</span></code></pre>
                                 <div class="code-block-header">
                                     <span class="code-block-filename">parse_local.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::descriptor::{parse_file, ServerDescriptor, Descriptor};
-<span class="code-keyword">use</span> stem_rs::descriptor::{DigestHash, DigestEncoding};
-<span class="code-keyword">use</span> stem_rs::Error;
+                                <pre><code><span class="code-keyword">use</span> stem::descriptor::{parse_file, ServerDescriptor, Descriptor};
+<span class="code-keyword">use</span> stem::descriptor::{DigestHash, DigestEncoding};
+<span class="code-keyword">use</span> stem::Error;
 <span class="code-keyword">use</span> std::fs;
 
 <span class="code-keyword">fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
@@ -1927,10 +1927,10 @@ tower = <span class="code-string">"0.4"</span></code></pre>
                                 <div class="code-block-header">
                                     <span class="code-block-filename">exit_policy.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::exit_policy::{ExitPolicy, ExitPolicyRule, MicroExitPolicy};
+                                <pre><code><span class="code-keyword">use</span> stem::exit_policy::{ExitPolicy, ExitPolicyRule, MicroExitPolicy};
 <span class="code-keyword">use</span> std::net::IpAddr;
 
-<span class="code-keyword">fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), stem_rs::Error&gt; {
+<span class="code-keyword">fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), stem::Error&gt; {
     <span class="code-comment">// Parse a full exit policy</span>
     <span class="code-keyword">let</span> policy = ExitPolicy::<span class="code-function">parse</span>(
         <span class="code-string">"accept *:80, accept *:443, accept *:8080-8090, reject *:*"</span>
@@ -1996,9 +1996,9 @@ Allows any exit: true</pre
                                 <div class="code-block-header">
                                     <span class="code-block-filename">version_check.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::Version;
+                                <pre><code><span class="code-keyword">use</span> stem::Version;
 
-<span class="code-keyword">fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), stem_rs::Error&gt; {
+<span class="code-keyword">fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), stem::Error&gt; {
     <span class="code-keyword">let</span> v1 = Version::<span class="code-function">parse</span>(<span class="code-string">"0.4.7.10"</span>)?;
     <span class="code-keyword">let</span> v2 = Version::<span class="code-function">parse</span>(<span class="code-string">"0.4.8.0"</span>)?;
     <span class="code-keyword">let</span> v3 = Version::<span class="code-function">parse</span>(<span class="code-string">"0.4.7.10-dev"</span>)?;
@@ -2036,7 +2036,7 @@ Allows any exit: true</pre
                                 <div class="code-block-header">
                                     <span class="code-block-filename">validation.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::util::{is_valid_fingerprint, is_valid_nickname};
+                                <pre><code><span class="code-keyword">use</span> stem::util::{is_valid_fingerprint, is_valid_nickname};
 
 <span class="code-keyword">fn</span> <span class="code-function">main</span>() {
     <span class="code-comment">// Fingerprint validation (40 hex characters)</span>
@@ -2079,7 +2079,7 @@ Allows any exit: true</pre
                                 <div class="code-block-header">
                                     <span class="code-block-filename">digests.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::descriptor::{compute_digest, DigestHash, DigestEncoding};
+                                <pre><code><span class="code-keyword">use</span> stem::descriptor::{compute_digest, DigestHash, DigestEncoding};
 
 <span class="code-keyword">fn</span> <span class="code-function">main</span>() {
     <span class="code-keyword">let</span> content = <span class="code-string">b"Example descriptor content"</span>;
@@ -2115,7 +2115,7 @@ Allows any exit: true</pre
                                 <div class="code-block-header">
                                     <span class="code-block-filename">config_management.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error};
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
 
 <span class="code-macro">#[tokio::main]</span>
 <span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
@@ -2161,7 +2161,7 @@ Allows any exit: true</pre
                                 <div class="code-block-header">
                                     <span class="code-block-filename">inspect_connections.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error, StreamStatus, CircStatus};
+                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, StreamStatus, CircStatus};
 
 <span class="code-macro">#[tokio::main]</span>
 <span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
@@ -2231,20 +2231,20 @@ Allows any exit: true</pre
             <div class="container">
                 <div class="footer-content">
                     <div class="footer-brand">
-                        <div class="footer-logo">stem-rs</div>
+                        <div class="footer-logo">stem</div>
                         <p class="footer-tagline">
                             A Rust implementation of Stem for Tor control protocol interaction.
                         </p>
                     </div>
                     <div class="footer-links">
                         <a
-                            href="https://github.com/tn3w/stem-rs"
+                            href="https://github.com/tn3w/stem"
                             target="_blank"
                             rel="noopener noreferrer"
                             >GitHub</a
                         >
                         <a
-                            href="https://crates.io/crates/stem-rs"
+                            href="https://crates.io/crates/stem"
                             target="_blank"
                             rel="noopener noreferrer"
                             >crates.io</a
@@ -2254,7 +2254,7 @@ Allows any exit: true</pre
                 </div>
                 <div class="footer-bottom">
                     <p class="footer-copyright">
-                        © 2026 stem-rs contributors. Licensed under Apache-2.0.
+                        © 2026 stem contributors. Licensed under Apache-2.0.
                     </p>
                 </div>
             </div>

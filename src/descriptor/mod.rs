@@ -62,8 +62,8 @@
 //! # Example
 //!
 //! ```rust,no_run
-//! use stem_rs::descriptor::{parse_file, ServerDescriptor, Descriptor};
-//! use stem_rs::descriptor::{DigestHash, DigestEncoding};
+//! use stem::descriptor::{parse_file, ServerDescriptor, Descriptor};
+//! use stem::descriptor::{DigestHash, DigestEncoding};
 //!
 //! // Parse a server descriptor from file contents
 //! let content = std::fs::read("cached-descriptors").unwrap();
@@ -154,7 +154,7 @@ use thiserror::Error as ThisError;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::ConsensusError;
+/// use stem::descriptor::ConsensusError;
 ///
 /// fn handle_consensus_error(err: ConsensusError) {
 ///     match err {
@@ -248,7 +248,7 @@ pub enum ConsensusError {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::ServerDescriptorError;
+/// use stem::descriptor::ServerDescriptorError;
 ///
 /// fn handle_server_error(err: ServerDescriptorError) {
 ///     match err {
@@ -344,7 +344,7 @@ pub enum ServerDescriptorError {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::MicrodescriptorError;
+/// use stem::descriptor::MicrodescriptorError;
 ///
 /// fn handle_micro_error(err: MicrodescriptorError) {
 ///     match err {
@@ -595,7 +595,7 @@ pub enum TorDNSELError {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::DescriptorError;
+/// use stem::descriptor::DescriptorError;
 ///
 /// fn handle_descriptor_error(err: DescriptorError) {
 ///     match err {
@@ -676,7 +676,7 @@ pub enum DescriptorError {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::TypeAnnotation;
+/// use stem::descriptor::TypeAnnotation;
 ///
 /// let annotation = TypeAnnotation::parse("@type server-descriptor 1.0").unwrap();
 /// assert_eq!(annotation.name, "server-descriptor");
@@ -713,7 +713,7 @@ impl TypeAnnotation {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::TypeAnnotation;
+    /// use stem::descriptor::TypeAnnotation;
     ///
     /// let annotation = TypeAnnotation::new("server-descriptor", 1, 0);
     /// assert_eq!(annotation.to_string(), "@type server-descriptor 1.0");
@@ -737,7 +737,7 @@ impl TypeAnnotation {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::TypeAnnotation;
+    /// use stem::descriptor::TypeAnnotation;
     ///
     /// // Valid annotation
     /// let annotation = TypeAnnotation::parse("@type extra-info 1.0").unwrap();
@@ -802,7 +802,7 @@ impl std::fmt::Display for TypeAnnotation {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::{DescriptorType, TypeAnnotation};
+/// use stem::descriptor::{DescriptorType, TypeAnnotation};
 ///
 /// // From type annotation
 /// let annotation = TypeAnnotation::new("server-descriptor", 1, 0);
@@ -890,7 +890,7 @@ impl DescriptorType {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::DescriptorType;
+    /// use stem::descriptor::DescriptorType;
     ///
     /// assert_eq!(DescriptorType::ServerDescriptor.annotation_name(), "server-descriptor");
     /// assert_eq!(DescriptorType::Microdescriptor.annotation_name(), "microdescriptor");
@@ -924,7 +924,7 @@ impl DescriptorType {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::{DescriptorType, TypeAnnotation};
+    /// use stem::descriptor::{DescriptorType, TypeAnnotation};
     ///
     /// let annotation = TypeAnnotation::new("extra-info", 1, 0);
     /// assert_eq!(
@@ -969,7 +969,7 @@ impl DescriptorType {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::DescriptorType;
+    /// use stem::descriptor::DescriptorType;
     ///
     /// assert_eq!(
     ///     DescriptorType::from_filename("cached-descriptors"),
@@ -1020,7 +1020,7 @@ impl DescriptorType {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::{compute_digest, DigestHash, DigestEncoding};
+/// use stem::descriptor::{compute_digest, DigestHash, DigestEncoding};
 ///
 /// let content = b"example content";
 /// let sha1_digest = compute_digest(content, DigestHash::Sha1, DigestEncoding::Hex);
@@ -1051,7 +1051,7 @@ pub enum DigestHash {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::{compute_digest, DigestHash, DigestEncoding};
+/// use stem::descriptor::{compute_digest, DigestHash, DigestEncoding};
 ///
 /// let content = b"test";
 ///
@@ -1105,8 +1105,8 @@ pub enum DigestEncoding {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::descriptor::{Descriptor, DigestHash, DigestEncoding};
-/// use stem_rs::descriptor::ServerDescriptor;
+/// use stem::descriptor::{Descriptor, DigestHash, DigestEncoding};
+/// use stem::descriptor::ServerDescriptor;
 ///
 /// let content = "router example 127.0.0.1 9001 0 0\n...";
 /// let descriptor = ServerDescriptor::parse(content).unwrap();
@@ -1197,7 +1197,7 @@ pub trait Descriptor: Sized {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::{detect_compression, Compression};
+/// use stem::descriptor::{detect_compression, Compression};
 ///
 /// // Gzip magic bytes
 /// let gzip_content = &[0x1f, 0x8b, 0x08, 0x00];
@@ -1266,7 +1266,7 @@ pub fn detect_compression(content: &[u8]) -> Compression {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::{decompress, Compression};
+/// use stem::descriptor::{decompress, Compression};
 ///
 /// // Plaintext passes through unchanged
 /// let content = b"Hello, World!";
@@ -1330,7 +1330,7 @@ fn decompress_gzip(_content: &[u8]) -> Result<Vec<u8>, Error> {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::auto_decompress;
+/// use stem::descriptor::auto_decompress;
 ///
 /// // Plain text passes through
 /// let plain = b"router example 127.0.0.1";
@@ -1361,7 +1361,7 @@ pub fn auto_decompress(content: &[u8]) -> Result<Vec<u8>, Error> {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::{compute_digest, DigestHash, DigestEncoding};
+/// use stem::descriptor::{compute_digest, DigestHash, DigestEncoding};
 ///
 /// let content = b"test content";
 ///
@@ -1448,7 +1448,7 @@ fn base64_encode(bytes: &[u8]) -> String {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::descriptor::{parse_file, ServerDescriptor};
+/// use stem::descriptor::{parse_file, ServerDescriptor};
 ///
 /// let content = std::fs::read("cached-descriptors").unwrap();
 /// let descriptor: ServerDescriptor = parse_file(&content).unwrap();
@@ -1492,7 +1492,7 @@ pub fn parse_file<T: Descriptor>(content: &[u8]) -> Result<T, Error> {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::descriptor::{parse_file_with_annotation, ServerDescriptor};
+/// use stem::descriptor::{parse_file_with_annotation, ServerDescriptor};
 ///
 /// let content = std::fs::read("server-descriptor").unwrap();
 /// let (annotation, descriptor): (_, ServerDescriptor) =
@@ -1530,7 +1530,7 @@ pub fn parse_file_with_annotation<T: Descriptor>(
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::strip_type_annotation;
+/// use stem::descriptor::strip_type_annotation;
 ///
 /// let content = "@type server-descriptor 1.0\nrouter example 127.0.0.1";
 /// let (annotation, rest) = strip_type_annotation(content);

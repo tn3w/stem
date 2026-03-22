@@ -26,7 +26,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::descriptor::authority::DirectoryAuthority;
+//! use stem::descriptor::authority::DirectoryAuthority;
 //!
 //! let content = r#"dir-source moria1 D586D18309DED4CD6D57C18FDB97EFA96D330566 128.31.0.39 128.31.0.39 9131 9101
 //! contact 1024D/28988BF5 arma mit edu
@@ -120,7 +120,7 @@ pub struct SharedRandomnessCommitment {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::authority::DirectoryAuthority;
+/// use stem::descriptor::authority::DirectoryAuthority;
 ///
 /// // Parse a consensus authority entry
 /// let content = r#"dir-source gabelmoo F2044413DAC2E02E3D6BCF4735A19BCA1DE97281 131.188.40.189 131.188.40.189 80 443
@@ -131,7 +131,7 @@ pub struct SharedRandomnessCommitment {
 /// let authority = DirectoryAuthority::parse(content, false)?;
 /// assert_eq!(authority.nickname, "gabelmoo");
 /// assert!(!authority.is_legacy);
-/// # Ok::<(), stem_rs::Error>(())
+/// # Ok::<(), stem::Error>(())
 /// ```
 ///
 /// # See Also
@@ -233,7 +233,7 @@ impl DirectoryAuthority {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::authority::DirectoryAuthority;
+    /// use stem::descriptor::authority::DirectoryAuthority;
     ///
     /// // Parse a consensus entry
     /// let consensus_entry = r#"dir-source moria1 D586D18309DED4CD6D57C18FDB97EFA96D330566 128.31.0.39 128.31.0.39 9131 9101
@@ -241,7 +241,7 @@ impl DirectoryAuthority {
     /// vote-digest 49015F787433103580E3B66A1707A00E60F2D15B
     /// "#;
     /// let authority = DirectoryAuthority::parse(consensus_entry, false)?;
-    /// # Ok::<(), stem_rs::Error>(())
+    /// # Ok::<(), stem::Error>(())
     /// ```
     pub fn parse(content: &str, is_vote: bool) -> Result<Self, Error> {
         Self::parse_with_validation(content, true, is_vote)
@@ -553,7 +553,7 @@ impl DirectoryAuthority {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::authority::DirectoryAuthority;
+    /// use stem::descriptor::authority::DirectoryAuthority;
     ///
     /// let content = r#"dir-source test AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA example.com 1.2.3.4 80 443
     /// contact test
@@ -562,7 +562,7 @@ impl DirectoryAuthority {
     /// "#;
     /// let authority = DirectoryAuthority::parse(content, false)?;
     /// assert!(authority.unrecognized_lines().iter().any(|l| l.contains("unknown-field")));
-    /// # Ok::<(), stem_rs::Error>(())
+    /// # Ok::<(), stem::Error>(())
     /// ```
     pub fn unrecognized_lines(&self) -> &[String] {
         &self.unrecognized_lines

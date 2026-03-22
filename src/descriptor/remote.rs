@@ -31,10 +31,10 @@
 //! # Example
 //!
 //! ```rust,no_run
-//! use stem_rs::descriptor::remote::{download_consensus, DirPort};
+//! use stem::descriptor::remote::{download_consensus, DirPort};
 //! use std::time::Duration;
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! // Download the current consensus with a 30-second timeout
 //! let result = download_consensus(
 //!     false,  // full consensus, not microdescriptor
@@ -87,7 +87,7 @@ use tokio::net::TcpStream;
 use tokio::time::timeout;
 
 /// User agent string sent with HTTP requests.
-const USER_AGENT: &str = "stem-rs/0.1.0";
+const USER_AGENT: &str = "stem/0.1.0";
 
 /// Maximum number of fingerprints that can be requested at once.
 ///
@@ -119,7 +119,7 @@ const MAX_MICRODESCRIPTOR_HASHES: usize = 90;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::remote::Compression;
+/// use stem::descriptor::remote::Compression;
 ///
 /// let formats = [Compression::Zstd, Compression::Gzip, Compression::Plaintext];
 /// for fmt in &formats {
@@ -166,7 +166,7 @@ impl Compression {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::remote::Compression;
+    /// use stem::descriptor::remote::Compression;
     ///
     /// assert_eq!(Compression::Gzip.encoding(), "gzip");
     /// assert_eq!(Compression::Plaintext.encoding(), "identity");
@@ -190,7 +190,7 @@ impl Compression {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::remote::DirPort;
+/// use stem::descriptor::remote::DirPort;
 /// use std::net::IpAddr;
 ///
 /// let addr: IpAddr = "128.31.0.39".parse().unwrap();
@@ -222,7 +222,7 @@ impl DirPort {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::remote::DirPort;
+    /// use stem::descriptor::remote::DirPort;
     /// use std::net::IpAddr;
     ///
     /// let addr: IpAddr = "127.0.0.1".parse().unwrap();
@@ -262,7 +262,7 @@ impl DirPort {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::remote::get_authorities;
+/// use stem::descriptor::remote::get_authorities;
 ///
 /// for auth in get_authorities() {
 ///     println!("{}: {}:{}", auth.nickname, auth.address, auth.dir_port);
@@ -320,7 +320,7 @@ pub struct DirectoryAuthority {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::remote::get_authorities;
+/// use stem::descriptor::remote::get_authorities;
 ///
 /// let authorities = get_authorities();
 /// println!("Known authorities: {}", authorities.len());
@@ -414,10 +414,10 @@ pub fn get_authorities() -> Vec<DirectoryAuthority> {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::descriptor::remote::download_consensus;
+/// use stem::descriptor::remote::download_consensus;
 /// use std::time::Duration;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let result = download_consensus(false, None, Some(Duration::from_secs(30))).await?;
 ///
 /// println!("Downloaded {} bytes", result.content.len());
@@ -475,10 +475,10 @@ pub struct DownloadResult {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::descriptor::remote::{download_from_dirport, DirPort, Compression};
+/// use stem::descriptor::remote::{download_from_dirport, DirPort, Compression};
 /// use std::time::Duration;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let endpoint = DirPort::new("128.31.0.39".parse().unwrap(), 9131);
 /// let result = download_from_dirport(
 ///     &endpoint,
@@ -616,10 +616,10 @@ fn extract_http_body(response: &[u8]) -> Result<Vec<u8>, Error> {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::descriptor::remote::download_consensus;
+/// use stem::descriptor::remote::download_consensus;
 /// use std::time::Duration;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// // Download microdescriptor consensus (smaller, for clients)
 /// let result = download_consensus(true, None, Some(Duration::from_secs(60))).await?;
 /// println!("Consensus size: {} bytes", result.content.len());
@@ -665,10 +665,10 @@ pub async fn download_consensus(
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::descriptor::remote::download_server_descriptors;
+/// use stem::descriptor::remote::download_server_descriptors;
 /// use std::time::Duration;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// // Download specific relay descriptors
 /// let fingerprints = ["9695DFC35FFEB861329B9F1AB04C46397020CE31"];
 /// let result = download_server_descriptors(

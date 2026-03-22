@@ -54,7 +54,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::descriptor::{Microdescriptor, Descriptor, DigestHash, DigestEncoding};
+//! use stem::descriptor::{Microdescriptor, Descriptor, DigestHash, DigestEncoding};
 //!
 //! let content = r#"onion-key
 //! -----BEGIN RSA PUBLIC KEY-----
@@ -123,7 +123,7 @@ use super::{compute_digest, Descriptor, DigestEncoding, DigestHash};
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::{Microdescriptor, Descriptor};
+/// use stem::descriptor::{Microdescriptor, Descriptor};
 ///
 /// let content = r#"onion-key
 /// -----BEGIN RSA PUBLIC KEY-----
@@ -211,7 +211,7 @@ impl Microdescriptor {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::descriptor::{Microdescriptor, Descriptor};
+    /// use stem::descriptor::{Microdescriptor, Descriptor};
     ///
     /// let content = std::fs::read_to_string("microdescriptor").unwrap();
     /// let microdesc = Microdescriptor::parse(&content).unwrap();
@@ -274,7 +274,7 @@ impl Microdescriptor {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::Microdescriptor;
+    /// use stem::descriptor::Microdescriptor;
     ///
     /// let key = "-----BEGIN RSA PUBLIC KEY-----\n...\n-----END RSA PUBLIC KEY-----";
     /// let desc = Microdescriptor::new(key.to_string());
@@ -315,7 +315,7 @@ impl Microdescriptor {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::Microdescriptor;
+    /// use stem::descriptor::Microdescriptor;
     ///
     /// let content = r#"onion-key
     /// -----BEGIN RSA PUBLIC KEY-----
@@ -358,7 +358,7 @@ impl Microdescriptor {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::{Microdescriptor, Descriptor};
+    /// use stem::descriptor::{Microdescriptor, Descriptor};
     ///
     /// let content = r#"@last-listed 2023-01-01 00:00:00
     /// onion-key
@@ -388,7 +388,7 @@ impl Microdescriptor {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::{Microdescriptor, Descriptor};
+    /// use stem::descriptor::{Microdescriptor, Descriptor};
     ///
     /// let content = r#"@last-listed 2023-01-01 00:00:00
     /// onion-key

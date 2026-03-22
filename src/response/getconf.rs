@@ -21,7 +21,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::response::{ControlMessage, GetConfResponse};
+//! use stem::response::{ControlMessage, GetConfResponse};
 //!
 //! let response_text = "250-CookieAuthentication=0\r\n\
 //!                      250-ControlPort=9100\r\n\
@@ -41,7 +41,7 @@
 //! Some options like `ExitPolicy` can have multiple values:
 //!
 //! ```rust
-//! use stem_rs::response::{ControlMessage, GetConfResponse};
+//! use stem::response::{ControlMessage, GetConfResponse};
 //!
 //! let response_text = "250-ExitPolicy=accept *:80\r\n\
 //!                      250-ExitPolicy=accept *:443\r\n\
@@ -78,7 +78,7 @@ use crate::Error;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::{ControlMessage, GetConfResponse};
+/// use stem::response::{ControlMessage, GetConfResponse};
 ///
 /// let msg = ControlMessage::from_str(
 ///     "250-ControlPort=9051\r\n\
@@ -131,7 +131,7 @@ impl GetConfResponse {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::{ControlMessage, GetConfResponse};
+    /// use stem::response::{ControlMessage, GetConfResponse};
     ///
     /// // Successful response
     /// let msg = ControlMessage::from_str(

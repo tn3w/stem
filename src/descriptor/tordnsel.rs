@@ -38,7 +38,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::descriptor::tordnsel::{TorDNSEL, parse_exit_list};
+//! use stem::descriptor::tordnsel::{TorDNSEL, parse_exit_list};
 //!
 //! let exit_list = r#"ExitNode 003A71137D959748C8157C4A76ECA639CEF5E33E
 //! Published 2024-01-01 12:00:00
@@ -59,7 +59,7 @@
 //!         println!("  Exit address: {} (seen {})", addr, date);
 //!     }
 //! }
-//! # Ok::<(), stem_rs::Error>(())
+//! # Ok::<(), stem::Error>(())
 //! ```
 //!
 //! # Data Source
@@ -102,7 +102,7 @@ use std::net::Ipv4Addr;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::tordnsel::TorDNSEL;
+/// use stem::descriptor::tordnsel::TorDNSEL;
 ///
 /// let content = r#"ExitNode 003A71137D959748C8157C4A76ECA639CEF5E33E
 /// Published 2024-01-01 12:00:00
@@ -113,7 +113,7 @@ use std::net::Ipv4Addr;
 /// let entry = TorDNSEL::parse(content)?;
 /// assert_eq!(entry.fingerprint, "003A71137D959748C8157C4A76ECA639CEF5E33E");
 /// assert_eq!(entry.exit_addresses.len(), 1);
-/// # Ok::<(), stem_rs::Error>(())
+/// # Ok::<(), stem::Error>(())
 /// ```
 #[derive(Debug, Clone)]
 pub struct TorDNSEL {
@@ -179,7 +179,7 @@ impl TorDNSEL {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::tordnsel::TorDNSEL;
+    /// use stem::descriptor::tordnsel::TorDNSEL;
     ///
     /// let content = r#"ExitNode 003A71137D959748C8157C4A76ECA639CEF5E33E
     /// Published 2024-01-01 12:00:00
@@ -188,7 +188,7 @@ impl TorDNSEL {
     ///
     /// let entry = TorDNSEL::parse(content)?;
     /// assert_eq!(entry.fingerprint, "003A71137D959748C8157C4A76ECA639CEF5E33E");
-    /// # Ok::<(), stem_rs::Error>(())
+    /// # Ok::<(), stem::Error>(())
     /// ```
     pub fn parse(content: &str) -> Result<Self, Error> {
         Self::parse_bytes(content.as_bytes())
@@ -312,7 +312,7 @@ impl TorDNSEL {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::tordnsel::TorDNSEL;
+    /// use stem::descriptor::tordnsel::TorDNSEL;
     ///
     /// let content = r#"ExitNode 003A71137D959748C8157C4A76ECA639CEF5E33E
     /// Published 2024-01-01 12:00:00
@@ -322,7 +322,7 @@ impl TorDNSEL {
     /// let entry = TorDNSEL::parse(content)?;
     /// let output = entry.to_descriptor_string();
     /// assert!(output.contains("ExitNode 003A71137D959748C8157C4A76ECA639CEF5E33E"));
-    /// # Ok::<(), stem_rs::Error>(())
+    /// # Ok::<(), stem::Error>(())
     /// ```
     pub fn to_descriptor_string(&self) -> String {
         let mut lines = Vec::new();
@@ -365,7 +365,7 @@ impl TorDNSEL {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::tordnsel::parse_exit_list;
+/// use stem::descriptor::tordnsel::parse_exit_list;
 ///
 /// let exit_list = r#"@type tordnsel 1.0
 /// Downloaded 2024-01-01 00:00:00
@@ -379,7 +379,7 @@ impl TorDNSEL {
 ///
 /// let entries = parse_exit_list(exit_list)?;
 /// assert_eq!(entries.len(), 2);
-/// # Ok::<(), stem_rs::Error>(())
+/// # Ok::<(), stem::Error>(())
 /// ```
 pub fn parse_exit_list(content: &str) -> Result<Vec<TorDNSEL>, Error> {
     parse_exit_list_bytes(content.as_bytes())

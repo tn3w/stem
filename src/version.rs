@@ -34,7 +34,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::Version;
+//! use stem::Version;
 //!
 //! // Parse version strings
 //! let v1 = Version::parse("0.4.7.1-alpha").unwrap();
@@ -87,7 +87,7 @@ use crate::Error;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::Version;
+/// use stem::Version;
 ///
 /// let alpha = Version::parse("0.4.7.1-alpha").unwrap();
 /// let beta = Version::parse("0.4.7.1-beta").unwrap();
@@ -146,7 +146,7 @@ impl Version {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::Version;
+    /// use stem::Version;
     ///
     /// let v = Version::new(0, 4, 7);
     /// assert_eq!(v.to_string(), "0.4.7");
@@ -171,7 +171,7 @@ impl Version {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::Version;
+    /// use stem::Version;
     ///
     /// let v = Version::new(0, 4, 7).with_patch(1);
     /// assert_eq!(v.patch, Some(1));
@@ -198,7 +198,7 @@ impl Version {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::Version;
+    /// use stem::Version;
     ///
     /// let alpha = Version::new(0, 4, 7).with_status("alpha");
     /// let beta = Version::new(0, 4, 7).with_status("beta");
@@ -236,7 +236,7 @@ impl Version {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::Version;
+    /// use stem::Version;
     ///
     /// // Simple version
     /// let v = Version::parse("0.4.7").unwrap();
@@ -340,7 +340,7 @@ impl FromStr for Version {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::Version;
+/// use stem::Version;
 ///
 /// let v = Version::new(0, 4, 7).with_patch(1).with_status("alpha");
 /// assert_eq!(format!("{}", v), "0.4.7.1-alpha");
@@ -403,7 +403,7 @@ fn status_priority(status: &Option<String>) -> u8 {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::Version;
+/// use stem::Version;
 ///
 /// // Numeric comparison
 /// assert!(Version::parse("0.4.7").unwrap() < Version::parse("0.4.8").unwrap());

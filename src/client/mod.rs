@@ -36,9 +36,9 @@
 //! # Example
 //!
 //! ```rust,no_run
-//! use stem_rs::client::{Relay, DEFAULT_LINK_PROTOCOLS};
+//! use stem::client::{Relay, DEFAULT_LINK_PROTOCOLS};
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! // Connect to a relay's ORPort
 //! let mut relay = Relay::connect("127.0.0.1", 9001, DEFAULT_LINK_PROTOCOLS).await?;
 //!
@@ -117,9 +117,9 @@ use tokio_rustls::TlsConnector;
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::client::{Relay, DEFAULT_LINK_PROTOCOLS};
+/// use stem::client::{Relay, DEFAULT_LINK_PROTOCOLS};
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// // Use default protocols
 /// let relay = Relay::connect("127.0.0.1", 9001, DEFAULT_LINK_PROTOCOLS).await?;
 ///
@@ -169,9 +169,9 @@ pub const DEFAULT_LINK_PROTOCOLS: &[u32] = &[3, 4, 5];
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::client::{Relay, DEFAULT_LINK_PROTOCOLS};
+/// use stem::client::{Relay, DEFAULT_LINK_PROTOCOLS};
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut relay = Relay::connect("127.0.0.1", 9001, DEFAULT_LINK_PROTOCOLS).await?;
 ///
 /// println!("Connected with link protocol {}", relay.link_protocol.version);
@@ -240,9 +240,9 @@ impl Relay {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::client::{Relay, DEFAULT_LINK_PROTOCOLS};
+    /// use stem::client::{Relay, DEFAULT_LINK_PROTOCOLS};
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// // Connect with default protocols
     /// let relay = Relay::connect("192.168.1.1", 9001, DEFAULT_LINK_PROTOCOLS).await?;
     ///
@@ -373,9 +373,9 @@ impl Relay {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::client::{Relay, DEFAULT_LINK_PROTOCOLS};
+    /// use stem::client::{Relay, DEFAULT_LINK_PROTOCOLS};
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let relay = Relay::connect("127.0.0.1", 9001, DEFAULT_LINK_PROTOCOLS).await?;
     ///
     /// if relay.is_alive() {
@@ -401,10 +401,10 @@ impl Relay {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::client::{Relay, DEFAULT_LINK_PROTOCOLS};
+    /// use stem::client::{Relay, DEFAULT_LINK_PROTOCOLS};
     /// use std::time::Duration;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let relay = Relay::connect("127.0.0.1", 9001, DEFAULT_LINK_PROTOCOLS).await?;
     ///
     /// // Check connection age
@@ -433,9 +433,9 @@ impl Relay {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::client::{Relay, DEFAULT_LINK_PROTOCOLS};
+    /// use stem::client::{Relay, DEFAULT_LINK_PROTOCOLS};
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut relay = Relay::connect("127.0.0.1", 9001, DEFAULT_LINK_PROTOCOLS).await?;
     ///
     /// // Use the relay...
@@ -479,9 +479,9 @@ impl Relay {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::client::{Relay, DEFAULT_LINK_PROTOCOLS};
+    /// use stem::client::{Relay, DEFAULT_LINK_PROTOCOLS};
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut relay = Relay::connect("127.0.0.1", 9001, DEFAULT_LINK_PROTOCOLS).await?;
     ///
     /// // Create a circuit
@@ -600,9 +600,9 @@ impl Relay {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::client::{Relay, DEFAULT_LINK_PROTOCOLS};
+/// use stem::client::{Relay, DEFAULT_LINK_PROTOCOLS};
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut relay = Relay::connect("127.0.0.1", 9001, DEFAULT_LINK_PROTOCOLS).await?;
 /// let mut circuit = relay.create_circuit().await?;
 ///
@@ -674,9 +674,9 @@ impl RelayCircuit {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::client::{Relay, DEFAULT_LINK_PROTOCOLS};
+    /// use stem::client::{Relay, DEFAULT_LINK_PROTOCOLS};
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut relay = Relay::connect("127.0.0.1", 9001, DEFAULT_LINK_PROTOCOLS).await?;
     /// let mut circuit = relay.create_circuit().await?;
     ///
@@ -778,9 +778,9 @@ impl RelayCircuit {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::client::{Relay, DEFAULT_LINK_PROTOCOLS};
+    /// use stem::client::{Relay, DEFAULT_LINK_PROTOCOLS};
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut relay = Relay::connect("127.0.0.1", 9001, DEFAULT_LINK_PROTOCOLS).await?;
     /// let mut circuit = relay.create_circuit().await?;
     ///

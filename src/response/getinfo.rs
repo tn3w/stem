@@ -27,7 +27,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::response::{ControlMessage, GetInfoResponse};
+//! use stem::response::{ControlMessage, GetInfoResponse};
 //!
 //! let response_text = "250-version=0.4.7.1\r\n\
 //!                      250-address=192.0.2.1\r\n\
@@ -65,7 +65,7 @@ use crate::Error;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::{ControlMessage, GetInfoResponse};
+/// use stem::response::{ControlMessage, GetInfoResponse};
 ///
 /// let msg = ControlMessage::from_str(
 ///     "250-version=0.4.7.1\r\n\
@@ -115,7 +115,7 @@ impl GetInfoResponse {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::{ControlMessage, GetInfoResponse};
+    /// use stem::response::{ControlMessage, GetInfoResponse};
     ///
     /// let msg = ControlMessage::from_str(
     ///     "250-version=0.4.7.1\r\n250 OK\r\n",
@@ -221,7 +221,7 @@ impl GetInfoResponse {
     ///
     /// ```rust
     /// use std::collections::HashSet;
-    /// use stem_rs::response::{ControlMessage, GetInfoResponse};
+    /// use stem::response::{ControlMessage, GetInfoResponse};
     ///
     /// let msg = ControlMessage::from_str(
     ///     "250-version=0.4.7.1\r\n250 OK\r\n",
@@ -272,7 +272,7 @@ impl GetInfoResponse {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::{ControlMessage, GetInfoResponse};
+    /// use stem::response::{ControlMessage, GetInfoResponse};
     ///
     /// let msg = ControlMessage::from_str(
     ///     "250-version=0.4.7.1\r\n250 OK\r\n",

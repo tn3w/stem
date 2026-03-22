@@ -18,7 +18,7 @@
 //! # Example
 //!
 //! ```rust,no_run
-//! use stem_rs::response::{ControlMessage, AddOnionResponse};
+//! use stem::response::{ControlMessage, AddOnionResponse};
 //!
 //! // Parse an ADD_ONION response
 //! let response_text = "250-ServiceID=gfzprpioee3hoppz\r\n\
@@ -66,7 +66,7 @@ use crate::Error;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::{ControlMessage, AddOnionResponse};
+/// use stem::response::{ControlMessage, AddOnionResponse};
 ///
 /// // Response with service ID and private key
 /// let msg = ControlMessage::from_str(
@@ -138,7 +138,7 @@ impl AddOnionResponse {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::{ControlMessage, AddOnionResponse};
+    /// use stem::response::{ControlMessage, AddOnionResponse};
     ///
     /// // Basic response with just service ID
     /// let msg = ControlMessage::from_str(

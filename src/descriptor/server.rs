@@ -50,7 +50,7 @@
 //! # Example
 //!
 //! ```rust,no_run
-//! use stem_rs::descriptor::{ServerDescriptor, Descriptor, DigestHash, DigestEncoding};
+//! use stem::descriptor::{ServerDescriptor, Descriptor, DigestHash, DigestEncoding};
 //!
 //! let content = r#"router example 192.168.1.1 9001 0 0
 //! published 2023-01-01 00:00:00
@@ -157,7 +157,7 @@ fn is_valid_nickname(nickname: &str) -> bool {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::descriptor::{ServerDescriptor, Descriptor};
+/// use stem::descriptor::{ServerDescriptor, Descriptor};
 ///
 /// let content = std::fs::read_to_string("server-descriptor").unwrap();
 /// let desc = ServerDescriptor::parse(&content).unwrap();
@@ -311,7 +311,7 @@ impl ServerDescriptor {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::descriptor::{ServerDescriptor, Descriptor};
+    /// use stem::descriptor::{ServerDescriptor, Descriptor};
     ///
     /// let content = std::fs::read_to_string("server-descriptor").unwrap();
     /// let descriptor = ServerDescriptor::parse(&content).unwrap();
@@ -414,7 +414,7 @@ impl ServerDescriptor {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::ServerDescriptor;
+    /// use stem::descriptor::ServerDescriptor;
     /// use chrono::Utc;
     /// use std::net::IpAddr;
     ///

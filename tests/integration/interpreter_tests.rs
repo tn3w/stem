@@ -2,8 +2,8 @@
 
 use std::net::SocketAddr;
 
-use stem_rs::controller::Controller;
-use stem_rs::interpreter::ControlInterpreter;
+use stem::controller::Controller;
+use stem::interpreter::ControlInterpreter;
 
 use crate::{get_control_port, is_tor_available};
 

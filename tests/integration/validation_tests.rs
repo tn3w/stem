@@ -2,8 +2,8 @@
 
 use std::net::SocketAddr;
 
-use stem_rs::controller::Controller;
-use stem_rs::util::{
+use stem::controller::Controller;
+use stem::util::{
     is_valid_circuit_id, is_valid_fingerprint, is_valid_fingerprint_with_prefix,
     is_valid_ipv4_address, is_valid_nickname, is_valid_port, is_valid_stream_id,
 };

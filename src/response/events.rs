@@ -39,7 +39,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::response::{ControlMessage, events::parse_event};
+//! use stem::response::{ControlMessage, events::parse_event};
 //!
 //! // Parse a bandwidth event
 //! let msg = ControlMessage::from_str("650 BW 1024 2048", None, true).unwrap();
@@ -47,7 +47,7 @@
 //!
 //! // Events are returned as ParsedEvent enum variants
 //! match event {
-//!     stem_rs::events::ParsedEvent::Bandwidth(bw) => {
+//!     stem::events::ParsedEvent::Bandwidth(bw) => {
 //!         println!("Read: {} bytes, Written: {} bytes", bw.read, bw.written);
 //!     }
 //!     _ => {}
@@ -92,8 +92,8 @@ pub use crate::events::{Event, ParsedEvent as EventEnum};
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::{ControlMessage, events::parse_event};
-/// use stem_rs::events::ParsedEvent;
+/// use stem::response::{ControlMessage, events::parse_event};
+/// use stem::events::ParsedEvent;
 ///
 /// // Parse a circuit event
 /// let msg = ControlMessage::from_str("650 CIRC 1 BUILT", None, true).unwrap();
@@ -171,8 +171,8 @@ pub fn parse_event(message: &ControlMessage) -> Result<ParsedEvent, Error> {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::events::event_type_to_class;
-/// use stem_rs::EventType;
+/// use stem::response::events::event_type_to_class;
+/// use stem::EventType;
 ///
 /// assert_eq!(event_type_to_class("BW"), Some(EventType::Bw));
 /// assert_eq!(event_type_to_class("CIRC"), Some(EventType::Circ));
@@ -235,7 +235,7 @@ pub fn event_type_to_class(event_type: &str) -> Option<EventType> {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::events::is_known_event_type;
+/// use stem::response::events::is_known_event_type;
 ///
 /// assert!(is_known_event_type("BW"));
 /// assert!(is_known_event_type("CIRC"));

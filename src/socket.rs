@@ -40,10 +40,10 @@
 //! # Example
 //!
 //! ```rust,no_run
-//! use stem_rs::ControlSocket;
+//! use stem::ControlSocket;
 //! use std::net::SocketAddr;
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! // Connect to Tor's control port
 //! let addr: SocketAddr = "127.0.0.1:9051".parse().unwrap();
 //! let mut socket = ControlSocket::connect_port(addr).await?;
@@ -128,9 +128,9 @@ use tokio::net::UnixStream;
 /// ```rust,no_run
 /// use std::sync::Arc;
 /// use tokio::sync::Mutex;
-/// use stem_rs::ControlSocket;
+/// use stem::ControlSocket;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
 /// let shared = Arc::new(Mutex::new(socket));
 ///
@@ -147,9 +147,9 @@ use tokio::net::UnixStream;
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::ControlSocket;
+/// use stem::ControlSocket;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
 ///
 /// // Send a command
@@ -214,10 +214,10 @@ impl ControlSocket {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::ControlSocket;
+    /// use stem::ControlSocket;
     /// use std::net::SocketAddr;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// // Connect to default control port
     /// let addr: SocketAddr = "127.0.0.1:9051".parse().unwrap();
     /// let socket = ControlSocket::connect_port(addr).await?;
@@ -277,10 +277,10 @@ impl ControlSocket {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::ControlSocket;
+    /// use stem::ControlSocket;
     /// use std::path::Path;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// // Connect to default control socket
     /// let socket = ControlSocket::connect_unix(Path::new("/var/run/tor/control")).await?;
     ///
@@ -354,9 +354,9 @@ impl ControlSocket {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::ControlSocket;
+    /// use stem::ControlSocket;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
     ///
     /// // Send PROTOCOLINFO (no auth required)
@@ -449,9 +449,9 @@ impl ControlSocket {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::ControlSocket;
+    /// use stem::ControlSocket;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
     ///
     /// socket.send("PROTOCOLINFO 1").await?;
@@ -578,9 +578,9 @@ impl ControlSocket {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::ControlSocket;
+    /// use stem::ControlSocket;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
     ///
     /// if socket.is_alive() {
@@ -607,10 +607,10 @@ impl ControlSocket {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::ControlSocket;
+    /// use stem::ControlSocket;
     /// use std::time::Duration;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
     ///
     /// // ... do some work ...
@@ -651,9 +651,9 @@ impl ControlSocket {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::ControlSocket;
+/// use stem::ControlSocket;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
 ///
 /// socket.send("GETINFO version").await?;
@@ -706,7 +706,7 @@ impl ControlMessage {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::socket::ControlMessage;
+    /// use stem::socket::ControlMessage;
     ///
     /// let success = ControlMessage {
     ///     status_code: 250,
@@ -736,7 +736,7 @@ impl ControlMessage {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::socket::ControlMessage;
+    /// use stem::socket::ControlMessage;
     ///
     /// let msg = ControlMessage {
     ///     status_code: 250,
@@ -766,7 +766,7 @@ impl ControlMessage {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::socket::ControlMessage;
+    /// use stem::socket::ControlMessage;
     ///
     /// let msg = ControlMessage {
     ///     status_code: 250,
@@ -797,7 +797,7 @@ impl ControlMessage {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::socket::ControlMessage;
+    /// use stem::socket::ControlMessage;
     ///
     /// let msg = ControlMessage {
     ///     status_code: 250,

@@ -23,7 +23,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::types::{Fingerprint, Nickname};
+//! use stem::types::{Fingerprint, Nickname};
 //! use std::str::FromStr;
 //!
 //! let fp = Fingerprint::from_str(
@@ -105,7 +105,7 @@ pub enum Ed25519IdentityError {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::types::Fingerprint;
+/// use stem::types::Fingerprint;
 /// use std::str::FromStr;
 ///
 /// let fp = Fingerprint::from_str(
@@ -183,7 +183,7 @@ impl FromStr for Fingerprint {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::types::Nickname;
+/// use stem::types::Nickname;
 /// use std::str::FromStr;
 ///
 /// let nick = Nickname::from_str("MyRelay").unwrap();
@@ -248,7 +248,7 @@ impl FromStr for Nickname {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::types::Ed25519PublicKey;
+/// use stem::types::Ed25519PublicKey;
 ///
 /// let bytes = [42u8; 32];
 /// let key = Ed25519PublicKey::new(bytes);
@@ -328,7 +328,7 @@ impl FromStr for Ed25519PublicKey {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::types::Ed25519Identity;
+/// use stem::types::Ed25519Identity;
 ///
 /// let bytes = [99u8; 32];
 /// let identity = Ed25519Identity::new(bytes);

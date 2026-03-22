@@ -5,20 +5,20 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta
             name="description"
-            content="stem-rs is a Rust library for Tor control protocol. Connect, authenticate, query information, and handle events with type-safe async APIs."
+            content="stem is a Rust library for Tor control protocol. Connect, authenticate, query information, and handle events with type-safe async APIs."
         />
         <meta
             name="keywords"
-            content="stem-rs, Tor, Rust, control protocol, privacy, anonymity, networking"
+            content="stem, Tor, Rust, control protocol, privacy, anonymity, networking"
         />
-        <meta property="og:title" content="stem-rs — Tor Control Protocol for Rust" />
+        <meta property="og:title" content="stem — Tor Control Protocol for Rust" />
         <meta
             property="og:description"
             content="Type-safe, async-first Rust library for Tor control protocol interaction."
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://stem.tn3w.dev/" />
-        <title>stem-rs — Tor Control Protocol for Rust</title>
+        <title>stem — Tor Control Protocol for Rust</title>
         <link rel="stylesheet" href="styles/theme.css" />
         <link rel="stylesheet" href="styles/main.css" />
     </head>
@@ -26,7 +26,7 @@
         <header>
             <nav class="container">
                 <a href="/" class="nav-brand">
-                    <span class="nav-logo">stem-rs</span>
+                    <span class="nav-logo">stem</span>
                     <span class="nav-version">VERSION</span>
                 </a>
                 <div class="nav-links">
@@ -34,7 +34,7 @@
                     <a href="/tutorials" class="nav-hide-mobile">Tutorials</a>
                     <a href="docs/">Docs</a>
                     <a
-                        href="https://crates.io/crates/stem-rs"
+                        href="https://crates.io/crates/stem"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
@@ -90,11 +90,11 @@
                             </p>
                             <button
                                 class="hero-install"
-                                data-copy="cargo add stem-rs"
+                                data-copy="cargo add stem"
                                 title="Click to copy"
                             >
                                 <span class="hero-install-prompt">$</span>
-                                <code>cargo add stem-rs</code>
+                                <code>cargo add stem</code>
                                 <span class="hero-install-feedback">Copied!</span>
                             </button>
                             <div class="hero-actions">
@@ -135,7 +135,7 @@
                                     GitHub
                                 </a>
                                 <a
-                                    href="https://crates.io/crates/stem-rs"
+                                    href="https://crates.io/crates/stem"
                                     class="btn btn-secondary"
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -291,7 +291,7 @@
                                 </div>
                                 <span class="example-lang">Rust</span>
                             </div>
-                            <pre><code><span class="code-keyword">use</span> stem_rs::{Controller, Error};
+                            <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
 
 <span class="code-macro">#[tokio::main]</span>
 <span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
@@ -336,7 +336,7 @@
                                 </div>
                                 <span class="example-lang">Rust</span>
                             </div>
-                            <pre><code><span class="code-keyword">use</span> stem_rs::EventType;
+                            <pre><code><span class="code-keyword">use</span> stem::EventType;
 
 <span class="code-comment">// Subscribe to bandwidth and circuit events</span>
 ctrl.<span class="code-function">set_events</span>(&amp;[
@@ -466,7 +466,7 @@ ctrl.<span class="code-function">set_events</span>(&amp;[
                         </div>
                         <div class="download-actions">
                             <a
-                                href="dist/stem-rs-latest.tar.gz"
+                                href="dist/stem-latest.tar.gz"
                                 class="btn btn-secondary download-btn"
                             >
                                 <svg
@@ -486,7 +486,7 @@ ctrl.<span class="code-function">set_events</span>(&amp;[
                                 .tar.gz
                             </a>
                             <a
-                                href="dist/stem-rs-latest.zip"
+                                href="dist/stem-latest.zip"
                                 class="btn btn-secondary download-btn"
                             >
                                 <svg
@@ -516,7 +516,7 @@ ctrl.<span class="code-function">set_events</span>(&amp;[
             <div class="container">
                 <div class="footer-content">
                     <div class="footer-brand">
-                        <div class="footer-logo">stem-rs</div>
+                        <div class="footer-logo">stem</div>
                         <p class="footer-tagline">
                             A Rust implementation of Stem for Tor control protocol interaction.
                         </p>
@@ -529,7 +529,7 @@ ctrl.<span class="code-function">set_events</span>(&amp;[
                             >GitHub</a
                         >
                         <a
-                            href="https://crates.io/crates/stem-rs"
+                            href="https://crates.io/crates/stem"
                             target="_blank"
                             rel="noopener noreferrer"
                             >crates.io</a
@@ -539,7 +539,7 @@ ctrl.<span class="code-function">set_events</span>(&amp;[
                 </div>
                 <div class="footer-bottom">
                     <p class="footer-copyright">
-                        © 2026 stem-rs contributors. Licensed under Apache-2.0.
+                        © 2026 stem contributors. Licensed under Apache-2.0.
                     </p>
                 </div>
             </div>

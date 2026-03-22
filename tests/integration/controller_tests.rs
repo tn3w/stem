@@ -3,9 +3,9 @@
 use std::net::SocketAddr;
 use std::time::Duration;
 
-use stem_rs::controller::Controller;
-use stem_rs::version::Version;
-use stem_rs::{EventType, Signal};
+use stem::controller::Controller;
+use stem::version::Version;
+use stem::{EventType, Signal};
 
 use crate::{get_control_port, is_tor_available};
 

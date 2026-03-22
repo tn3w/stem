@@ -25,7 +25,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::interpreter::arguments::Arguments;
+//! use stem::interpreter::arguments::Arguments;
 //!
 //! // Parse command-line arguments
 //! let args = Arguments::parse(&[
@@ -61,7 +61,7 @@ use crate::util::{is_valid_ipv4_address, is_valid_port};
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::interpreter::arguments::Arguments;
+/// use stem::interpreter::arguments::Arguments;
 ///
 /// // Use defaults
 /// let defaults = Arguments::default();
@@ -161,7 +161,7 @@ impl Arguments {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::interpreter::arguments::Arguments;
+    /// use stem::interpreter::arguments::Arguments;
     ///
     /// // Parse port only
     /// let args = Arguments::parse(&["-i".to_string(), "9051".to_string()]).unwrap();
@@ -260,7 +260,7 @@ impl Arguments {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::interpreter::arguments::Arguments;
+    /// use stem::interpreter::arguments::Arguments;
     ///
     /// let help = Arguments::get_help();
     /// assert!(help.contains("--interface"));

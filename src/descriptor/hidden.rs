@@ -60,8 +60,8 @@
 //! # Example
 //!
 //! ```rust,no_run
-//! use stem_rs::descriptor::hidden::{HiddenServiceDescriptorV2, HiddenServiceDescriptorV3};
-//! use stem_rs::descriptor::Descriptor;
+//! use stem::descriptor::hidden::{HiddenServiceDescriptorV2, HiddenServiceDescriptorV3};
+//! use stem::descriptor::Descriptor;
 //!
 //! // Parse a v2 descriptor
 //! let v2_content = "rendezvous-service-descriptor ...";
@@ -248,8 +248,8 @@ impl IntroductionPointV2 {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::descriptor::hidden::HiddenServiceDescriptorV2;
-/// use stem_rs::descriptor::Descriptor;
+/// use stem::descriptor::hidden::HiddenServiceDescriptorV2;
+/// use stem::descriptor::Descriptor;
 ///
 /// let content = std::fs::read_to_string("descriptor.txt")?;
 /// let desc = HiddenServiceDescriptorV2::parse(&content)?;
@@ -620,7 +620,7 @@ impl fmt::Display for HiddenServiceDescriptorV2 {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::hidden::LinkSpecifier;
+/// use stem::descriptor::hidden::LinkSpecifier;
 ///
 /// let ipv4 = LinkSpecifier::IPv4 {
 ///     address: "192.168.1.1".to_string(),
@@ -680,7 +680,7 @@ impl LinkSpecifier {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::hidden::LinkSpecifier;
+    /// use stem::descriptor::hidden::LinkSpecifier;
     ///
     /// let spec = LinkSpecifier::IPv4 {
     ///     address: "1.2.3.4".to_string(),
@@ -815,7 +815,7 @@ impl IntroductionPointV3 {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::hidden::{IntroductionPointV3, LinkSpecifier};
+    /// use stem::descriptor::hidden::{IntroductionPointV3, LinkSpecifier};
     ///
     /// let intro = IntroductionPointV3 {
     ///     link_specifiers: vec![LinkSpecifier::IPv4 {
@@ -1364,8 +1364,8 @@ impl InnerLayer {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::descriptor::hidden::HiddenServiceDescriptorV3;
-/// use stem_rs::descriptor::Descriptor;
+/// use stem::descriptor::hidden::HiddenServiceDescriptorV3;
+/// use stem::descriptor::Descriptor;
 ///
 /// let content = std::fs::read_to_string("v3_descriptor.txt")?;
 /// let desc = HiddenServiceDescriptorV3::parse(&content)?;
@@ -1425,7 +1425,7 @@ impl HiddenServiceDescriptorV3 {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::hidden::HiddenServiceDescriptorV3;
+    /// use stem::descriptor::hidden::HiddenServiceDescriptorV3;
     ///
     /// let key = [0u8; 32];
     /// let address = HiddenServiceDescriptorV3::address_from_identity_key(&key);
@@ -1473,7 +1473,7 @@ impl HiddenServiceDescriptorV3 {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::hidden::HiddenServiceDescriptorV3;
+    /// use stem::descriptor::hidden::HiddenServiceDescriptorV3;
     ///
     /// let key = [0u8; 32];
     /// let address = HiddenServiceDescriptorV3::address_from_identity_key(&key);

@@ -18,7 +18,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::response::{ControlMessage, OnionClientAuthViewResponse};
+//! use stem::response::{ControlMessage, OnionClientAuthViewResponse};
 //!
 //! let response_text = "250-ONION_CLIENT_AUTH_VIEW\r\n\
 //!                      250-CLIENT service1 x25519:privatekey123\r\n\
@@ -53,7 +53,7 @@ use crate::Error;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::{ControlMessage, OnionClientAuthViewResponse};
+/// use stem::response::{ControlMessage, OnionClientAuthViewResponse};
 ///
 /// let msg = ControlMessage::from_str(
 ///     "250-ONION_CLIENT_AUTH_VIEW\r\n\
@@ -115,7 +115,7 @@ pub struct HiddenServiceCredential {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::{ControlMessage, OnionClientAuthViewResponse};
+/// use stem::response::{ControlMessage, OnionClientAuthViewResponse};
 ///
 /// // View all credentials
 /// let msg = ControlMessage::from_str(
@@ -168,7 +168,7 @@ impl OnionClientAuthViewResponse {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::{ControlMessage, OnionClientAuthViewResponse};
+    /// use stem::response::{ControlMessage, OnionClientAuthViewResponse};
     ///
     /// // View credentials for a specific service
     /// let msg = ControlMessage::from_str(

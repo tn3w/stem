@@ -31,7 +31,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::descriptor::certificate::Ed25519Certificate;
+//! use stem::descriptor::certificate::Ed25519Certificate;
 //!
 //! let cert_pem = r#"-----BEGIN ED25519 CERT-----
 //! AQQABhtZAaW2GoBED1IjY3A6f6GNqBEl5A83fD2Za9upGke51JGqAQAgBABnprVR
@@ -94,7 +94,7 @@ pub const ED25519_SIGNATURE_LENGTH: usize = 64;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::certificate::ExtensionType;
+/// use stem::descriptor::certificate::ExtensionType;
 ///
 /// let ext_type = ExtensionType::from_int(4);
 /// assert_eq!(ext_type, ExtensionType::HasSigningKey);
@@ -133,7 +133,7 @@ impl ExtensionType {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::certificate::ExtensionType;
+    /// use stem::descriptor::certificate::ExtensionType;
     ///
     /// assert_eq!(ExtensionType::from_int(4), ExtensionType::HasSigningKey);
     /// assert_eq!(ExtensionType::from_int(0), ExtensionType::Unknown);
@@ -154,7 +154,7 @@ impl ExtensionType {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::certificate::ExtensionType;
+    /// use stem::descriptor::certificate::ExtensionType;
     ///
     /// assert_eq!(ExtensionType::HasSigningKey.value(), 4);
     /// ```
@@ -174,7 +174,7 @@ impl ExtensionType {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::certificate::ExtensionFlag;
+/// use stem::descriptor::certificate::ExtensionFlag;
 ///
 /// // Check if an extension affects validation
 /// let flags = vec![ExtensionFlag::AffectsValidation];
@@ -221,7 +221,7 @@ pub enum ExtensionFlag {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::certificate::{Ed25519Extension, ExtensionType, ExtensionFlag};
+/// use stem::descriptor::certificate::{Ed25519Extension, ExtensionType, ExtensionFlag};
 ///
 /// // Create a signing key extension
 /// let signing_key = vec![0u8; 32]; // 32-byte Ed25519 public key
@@ -280,7 +280,7 @@ impl Ed25519Extension {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::certificate::Ed25519Extension;
+    /// use stem::descriptor::certificate::Ed25519Extension;
     ///
     /// // Create a signing key extension (type 4)
     /// let key_data = vec![0u8; 32];
@@ -338,7 +338,7 @@ impl Ed25519Extension {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::certificate::Ed25519Extension;
+    /// use stem::descriptor::certificate::Ed25519Extension;
     ///
     /// let ext = Ed25519Extension::new(4, 0, vec![0u8; 32]).unwrap();
     /// let packed = ext.pack();
@@ -378,7 +378,7 @@ impl Ed25519Extension {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::certificate::Ed25519Extension;
+    /// use stem::descriptor::certificate::Ed25519Extension;
     ///
     /// // Extension: length=2, type=5, flags=0, data=[0x11, 0x22]
     /// let data = [0x00, 0x02, 0x05, 0x00, 0x11, 0x22, 0xFF];
@@ -458,7 +458,7 @@ impl Ed25519Extension {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::certificate::Ed25519Certificate;
+/// use stem::descriptor::certificate::Ed25519Certificate;
 ///
 /// let cert_b64 = "AQQABhtZAaW2GoBED1IjY3A6f6GNqBEl5A83fD2Za9upGke51JGqAQAgBABn\
 ///                 prVRptIr43bWPo2fIzo3uOywfoMrryprpbm4HhCkZMaO064LP+1KNuLvlc8s\
@@ -571,7 +571,7 @@ impl Ed25519Certificate {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::certificate::Ed25519Certificate;
+    /// use stem::descriptor::certificate::Ed25519Certificate;
     ///
     /// // Typically you'd get these bytes from base64 decoding
     /// // let cert = Ed25519Certificate::unpack(&decoded_bytes)?;
@@ -714,7 +714,7 @@ impl Ed25519Certificate {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::certificate::Ed25519Certificate;
+    /// use stem::descriptor::certificate::Ed25519Certificate;
     ///
     /// // Raw base64
     /// let cert_b64 = "AQQABhtZAaW2GoBED1IjY3A6f6GNqBEl5A83fD2Za9upGke51JGqAQAgBABn\
@@ -775,7 +775,7 @@ impl Ed25519Certificate {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::certificate::Ed25519Certificate;
+    /// use stem::descriptor::certificate::Ed25519Certificate;
     ///
     /// let cert_b64 = "AQQABhtZAaW2GoBED1IjY3A6f6GNqBEl5A83fD2Za9upGke51JGqAQAgBABn\
     ///                 prVRptIr43bWPo2fIzo3uOywfoMrryprpbm4HhCkZMaO064LP+1KNuLvlc8s\
@@ -816,7 +816,7 @@ impl Ed25519Certificate {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::certificate::Ed25519Certificate;
+    /// use stem::descriptor::certificate::Ed25519Certificate;
     ///
     /// let cert_b64 = "AQQABhtZAaW2GoBED1IjY3A6f6GNqBEl5A83fD2Za9upGke51JGqAQAgBABn\
     ///                 prVRptIr43bWPo2fIzo3uOywfoMrryprpbm4HhCkZMaO064LP+1KNuLvlc8s\
@@ -852,7 +852,7 @@ impl Ed25519Certificate {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::certificate::Ed25519Certificate;
+    /// use stem::descriptor::certificate::Ed25519Certificate;
     ///
     /// let cert_b64 = "AQQABhtZAaW2GoBED1IjY3A6f6GNqBEl5A83fD2Za9upGke51JGqAQAgBABn\
     ///                 prVRptIr43bWPo2fIzo3uOywfoMrryprpbm4HhCkZMaO064LP+1KNuLvlc8s\
@@ -889,7 +889,7 @@ impl Ed25519Certificate {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::certificate::Ed25519Certificate;
+    /// use stem::descriptor::certificate::Ed25519Certificate;
     ///
     /// let cert_b64 = "AQQABhtZAaW2GoBED1IjY3A6f6GNqBEl5A83fD2Za9upGke51JGqAQAgBABn\
     ///                 prVRptIr43bWPo2fIzo3uOywfoMrryprpbm4HhCkZMaO064LP+1KNuLvlc8s\
@@ -924,7 +924,7 @@ impl Ed25519Certificate {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::certificate::Ed25519Certificate;
+    /// use stem::descriptor::certificate::Ed25519Certificate;
     ///
     /// let cert_b64 = "AQQABhtZAaW2GoBED1IjY3A6f6GNqBEl5A83fD2Za9upGke51JGqAQAgBABn\
     ///                 prVRptIr43bWPo2fIzo3uOywfoMrryprpbm4HhCkZMaO064LP+1KNuLvlc8s\

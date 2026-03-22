@@ -41,7 +41,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::response::{ControlMessage, ControlLine};
+//! use stem::response::{ControlMessage, ControlLine};
 //!
 //! // Parse a simple OK response
 //! let msg = ControlMessage::from_str("250 OK\r\n", None, false).unwrap();
@@ -129,7 +129,7 @@ pub use protocolinfo::{AuthMethod, ProtocolInfoResponse};
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::ControlMessage;
+/// use stem::response::ControlMessage;
 ///
 /// // Parse a GETINFO response
 /// let response = "250-version=0.4.7.8\r\n250 OK\r\n";
@@ -180,7 +180,7 @@ impl ControlMessage {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlMessage;
+    /// use stem::response::ControlMessage;
     ///
     /// let parsed = vec![("250".to_string(), ' ', b"OK".to_vec())];
     /// let raw = b"250 OK\r\n".to_vec();
@@ -235,7 +235,7 @@ impl ControlMessage {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlMessage;
+    /// use stem::response::ControlMessage;
     ///
     /// // Parse without normalization (content already has \r\n)
     /// let msg = ControlMessage::from_str("250 OK\r\n", None, false).unwrap();
@@ -362,7 +362,7 @@ impl ControlMessage {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlMessage;
+    /// use stem::response::ControlMessage;
     ///
     /// let ok = ControlMessage::from_str("250 OK\r\n", None, false).unwrap();
     /// assert!(ok.is_ok());
@@ -395,7 +395,7 @@ impl ControlMessage {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlMessage;
+    /// use stem::response::ControlMessage;
     ///
     /// let msg = ControlMessage::from_str("250-version=0.4.7.8\r\n250 OK\r\n", None, false).unwrap();
     /// let content = msg.content();
@@ -466,7 +466,7 @@ impl ControlMessage {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlMessage;
+    /// use stem::response::ControlMessage;
     ///
     /// let msg = ControlMessage::from_str(
     ///     "250-version=0.4.7.8\r\n250 OK\r\n",
@@ -520,7 +520,7 @@ impl ControlMessage {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlMessage;
+    /// use stem::response::ControlMessage;
     ///
     /// let msg = ControlMessage::from_str("250-first\r\n250 second\r\n", None, false).unwrap();
     ///
@@ -594,7 +594,7 @@ impl std::ops::Index<usize> for ControlMessage {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::ControlLine;
+/// use stem::response::ControlLine;
 ///
 /// let mut line = ControlLine::new("AUTH METHODS=COOKIE,PASSWORD VERSION=\"1.0\"");
 ///
@@ -642,7 +642,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlLine;
+    /// use stem::response::ControlLine;
     ///
     /// let line = ControlLine::new("KEY=value more data");
     /// assert_eq!(line.remainder(), "KEY=value more data");
@@ -666,7 +666,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlLine;
+    /// use stem::response::ControlLine;
     ///
     /// let mut line = ControlLine::new("first second third");
     /// assert_eq!(line.remainder(), "first second third");
@@ -687,7 +687,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlLine;
+    /// use stem::response::ControlLine;
     ///
     /// let mut line = ControlLine::new("single");
     /// assert!(!line.is_empty());
@@ -715,7 +715,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlLine;
+    /// use stem::response::ControlLine;
     ///
     /// let line = ControlLine::new("\"quoted value\" unquoted");
     /// assert!(line.is_next_quoted(false));
@@ -748,7 +748,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlLine;
+    /// use stem::response::ControlLine;
     ///
     /// let line = ControlLine::new("KEY=value OTHER=stuff");
     ///
@@ -798,7 +798,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlLine;
+    /// use stem::response::ControlLine;
     ///
     /// let line = ControlLine::new("MYKEY=myvalue");
     /// assert_eq!(line.peek_key(), Some("MYKEY".to_string()));
@@ -840,7 +840,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlLine;
+    /// use stem::response::ControlLine;
     ///
     /// let mut line = ControlLine::new("\"We're all mad here.\" says the cat.");
     ///
@@ -886,7 +886,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlLine;
+    /// use stem::response::ControlLine;
     ///
     /// let mut line = ControlLine::new("Tor=\"0.4.7.8\" other=value");
     ///
@@ -925,7 +925,7 @@ impl ControlLine {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::ControlLine;
+    /// use stem::response::ControlLine;
     ///
     /// let mut line = ControlLine::new("DATA=binary_content");
     /// let (key, value_bytes) = line.pop_mapping_bytes(false, false).unwrap();
@@ -1134,7 +1134,7 @@ fn unescape_string(s: &str) -> String {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::{ControlMessage, SingleLineResponse};
+/// use stem::response::{ControlMessage, SingleLineResponse};
 ///
 /// let msg = ControlMessage::from_str("250 OK\r\n", None, false).unwrap();
 /// let response = SingleLineResponse::from_message(msg).unwrap();
@@ -1169,7 +1169,7 @@ impl SingleLineResponse {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::{ControlMessage, SingleLineResponse};
+    /// use stem::response::{ControlMessage, SingleLineResponse};
     ///
     /// // Valid single-line response
     /// let msg = ControlMessage::from_str("250 OK\r\n", None, false).unwrap();
@@ -1213,7 +1213,7 @@ impl SingleLineResponse {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::{ControlMessage, SingleLineResponse};
+    /// use stem::response::{ControlMessage, SingleLineResponse};
     ///
     /// let msg = ControlMessage::from_str("250 OK\r\n", None, false).unwrap();
     /// let response = SingleLineResponse::from_message(msg).unwrap();
@@ -1272,7 +1272,7 @@ impl SingleLineResponse {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::{ControlMessage, convert};
+/// use stem::response::{ControlMessage, convert};
 ///
 /// let msg = ControlMessage::from_str("250 OK\r\n", None, false).unwrap();
 ///

@@ -28,7 +28,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::response::{ControlMessage, ProtocolInfoResponse, AuthMethod};
+//! use stem::response::{ControlMessage, ProtocolInfoResponse, AuthMethod};
 //!
 //! let response_text = "250-PROTOCOLINFO 1\r\n\
 //!                      250-AUTH METHODS=COOKIE,SAFECOOKIE COOKIEFILE=\"/tmp/cookie\"\r\n\
@@ -71,7 +71,7 @@ use crate::Error;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::{ControlMessage, ProtocolInfoResponse, AuthMethod};
+/// use stem::response::{ControlMessage, ProtocolInfoResponse, AuthMethod};
 ///
 /// let msg = ControlMessage::from_str(
 ///     "250-PROTOCOLINFO 1\r\n\
@@ -146,7 +146,7 @@ impl AuthMethod {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::{ControlMessage, ProtocolInfoResponse, AuthMethod};
+/// use stem::response::{ControlMessage, ProtocolInfoResponse, AuthMethod};
 ///
 /// let msg = ControlMessage::from_str(
 ///     "250-PROTOCOLINFO 1\r\n\
@@ -224,7 +224,7 @@ impl ProtocolInfoResponse {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::{ControlMessage, ProtocolInfoResponse, AuthMethod};
+    /// use stem::response::{ControlMessage, ProtocolInfoResponse, AuthMethod};
     ///
     /// // Minimal response (just protocol version)
     /// let msg = ControlMessage::from_str(

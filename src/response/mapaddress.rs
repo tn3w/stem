@@ -22,7 +22,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::response::{ControlMessage, MapAddressResponse};
+//! use stem::response::{ControlMessage, MapAddressResponse};
 //!
 //! // Single successful mapping
 //! let msg = ControlMessage::from_str(
@@ -62,7 +62,7 @@ use crate::Error;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::{ControlMessage, MapAddressResponse};
+/// use stem::response::{ControlMessage, MapAddressResponse};
 ///
 /// // Response with multiple mappings
 /// let msg = ControlMessage::from_str(
@@ -117,7 +117,7 @@ impl MapAddressResponse {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::{ControlMessage, MapAddressResponse};
+    /// use stem::response::{ControlMessage, MapAddressResponse};
     ///
     /// // Successful mapping
     /// let msg = ControlMessage::from_str(

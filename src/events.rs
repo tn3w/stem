@@ -32,9 +32,9 @@
 //! To receive events, subscribe using the controller's `set_events` method:
 //!
 //! ```rust,no_run
-//! use stem_rs::{controller::Controller, EventType};
+//! use stem::{controller::Controller, EventType};
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 //! controller.authenticate(None).await?;
 //!
@@ -138,7 +138,7 @@ pub trait Event: Send + Sync {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::BandwidthEvent;
+/// use stem::events::BandwidthEvent;
 ///
 /// fn handle_bandwidth(event: &BandwidthEvent) {
 ///     let read_kbps = event.read as f64 / 1024.0;
@@ -240,8 +240,8 @@ impl BandwidthEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::{EventType, Runlevel};
-/// use stem_rs::events::LogEvent;
+/// use stem::{EventType, Runlevel};
+/// use stem::events::LogEvent;
 ///
 /// fn handle_log(event: &LogEvent) {
 ///     match event.runlevel {
@@ -339,8 +339,8 @@ impl LogEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::CircuitEvent;
-/// use stem_rs::CircStatus;
+/// use stem::events::CircuitEvent;
+/// use stem::CircStatus;
 ///
 /// fn handle_circuit(event: &CircuitEvent) {
 ///     match event.status {
@@ -521,8 +521,8 @@ impl CircuitEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::StreamEvent;
-/// use stem_rs::StreamStatus;
+/// use stem::events::StreamEvent;
+/// use stem::StreamStatus;
 ///
 /// fn handle_stream(event: &StreamEvent) {
 ///     match event.status {
@@ -681,8 +681,8 @@ impl StreamEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::OrConnEvent;
-/// use stem_rs::OrStatus;
+/// use stem::events::OrConnEvent;
+/// use stem::OrStatus;
 ///
 /// fn handle_orconn(event: &OrConnEvent) {
 ///     match event.status {
@@ -809,7 +809,7 @@ impl OrConnEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::AddrMapEvent;
+/// use stem::events::AddrMapEvent;
 ///
 /// fn handle_addrmap(event: &AddrMapEvent) {
 ///     match &event.destination {
@@ -954,7 +954,7 @@ impl AddrMapEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::BuildTimeoutSetEvent;
+/// use stem::events::BuildTimeoutSetEvent;
 ///
 /// fn handle_timeout(event: &BuildTimeoutSetEvent) {
 ///     if let Some(timeout) = event.timeout {
@@ -1131,8 +1131,8 @@ impl BuildTimeoutSetEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::GuardEvent;
-/// use stem_rs::GuardStatus;
+/// use stem::events::GuardEvent;
+/// use stem::GuardStatus;
 ///
 /// fn handle_guard(event: &GuardEvent) {
 ///     match event.status {
@@ -1239,7 +1239,7 @@ impl GuardEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::NewDescEvent;
+/// use stem::events::NewDescEvent;
 ///
 /// fn handle_newdesc(event: &NewDescEvent) {
 ///     println!("Received {} new descriptors:", event.relays.len());
@@ -1320,8 +1320,8 @@ impl NewDescEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::SignalEvent;
-/// use stem_rs::Signal;
+/// use stem::events::SignalEvent;
+/// use stem::Signal;
 ///
 /// fn handle_signal(event: &SignalEvent) {
 ///     match event.signal {
@@ -1396,8 +1396,8 @@ impl SignalEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::StatusEvent;
-/// use stem_rs::StatusType;
+/// use stem::events::StatusEvent;
+/// use stem::StatusType;
 ///
 /// fn handle_status(event: &StatusEvent) {
 ///     if event.action == "BOOTSTRAP" {
@@ -1504,7 +1504,7 @@ impl StatusEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::ConfChangedEvent;
+/// use stem::events::ConfChangedEvent;
 ///
 /// fn handle_conf_changed(event: &ConfChangedEvent) {
 ///     for (option, values) in &event.changed {
@@ -1590,7 +1590,7 @@ impl ConfChangedEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::NetworkLivenessEvent;
+/// use stem::events::NetworkLivenessEvent;
 ///
 /// fn handle_liveness(event: &NetworkLivenessEvent) {
 ///     match event.status.as_str() {
@@ -1650,7 +1650,7 @@ impl NetworkLivenessEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::CircuitBandwidthEvent;
+/// use stem::events::CircuitBandwidthEvent;
 ///
 /// fn handle_circ_bw(event: &CircuitBandwidthEvent) {
 ///     println!("Circuit {} bandwidth: {} read, {} written",
@@ -1819,8 +1819,8 @@ impl CircuitBandwidthEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::ConnectionBandwidthEvent;
-/// use stem_rs::ConnectionType;
+/// use stem::events::ConnectionBandwidthEvent;
+/// use stem::ConnectionType;
 ///
 /// fn handle_conn_bw(event: &ConnectionBandwidthEvent) {
 ///     let type_str = match event.conn_type {
@@ -1952,8 +1952,8 @@ impl ConnectionBandwidthEvent {
 /// # Example
 ///
 /// ```rust,ignore
-/// use stem_rs::events::HsDescEvent;
-/// use stem_rs::HsDescAction;
+/// use stem::events::HsDescEvent;
+/// use stem::HsDescAction;
 ///
 /// fn handle_hsdesc(event: &HsDescEvent) {
 ///     match event.action {
@@ -3027,7 +3027,7 @@ fn parse_utc_timestamp(s: &str) -> Result<DateTime<Utc>, Error> {
 /// Events are parsed from raw control protocol messages:
 ///
 /// ```rust,ignore
-/// use stem_rs::events::ParsedEvent;
+/// use stem::events::ParsedEvent;
 ///
 /// let event = ParsedEvent::parse("BW", "1024 2048", None)?;
 /// match event {
@@ -3128,7 +3128,7 @@ impl ParsedEvent {
     /// # Example
     ///
     /// ```rust,ignore
-    /// use stem_rs::events::ParsedEvent;
+    /// use stem::events::ParsedEvent;
     ///
     /// // Parse a bandwidth event
     /// let event = ParsedEvent::parse("BW", "100 200", None)?;

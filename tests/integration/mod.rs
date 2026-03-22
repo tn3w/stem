@@ -1,4 +1,4 @@
-//! Integration tests for stem-rs against a real Tor process.
+//! Integration tests for stem against a real Tor process.
 
 mod client_tests;
 mod controller_tests;

@@ -1,4 +1,4 @@
-<h1 align="center">stem-rs</h1>
+<h1 align="center">stem</h1>
 
 <h3 align="center">A complete Rust library for Tor control protocol</h3>
 <p align="center">
@@ -6,23 +6,23 @@
 </p>
 
 <p align="center">
-  <a href="https://crates.io/crates/stem-rs">
-    <img src="https://img.shields.io/crates/v/stem-rs?style=for-the-badge&logo=rust&logoColor=white&color=f74c00" alt="Crates.io">
+  <a href="https://crates.io/crates/stem">
+    <img src="https://img.shields.io/crates/v/stem?style=for-the-badge&logo=rust&logoColor=white&color=f74c00" alt="Crates.io">
   </a>
   <a href="https://stem.tn3w.dev/docs/">
-    <img src="https://img.shields.io/docsrs/stem-rs?style=for-the-badge&logo=docs.rs&logoColor=white" alt="docs.rs">
+    <img src="https://img.shields.io/docsrs/stem?style=for-the-badge&logo=docs.rs&logoColor=white" alt="docs.rs">
   </a>
-  <a href="https://github.com/tn3w/stem-rs/blob/master/LICENSE">
+  <a href="https://github.com/tn3w/stem/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/license-Apache--2.0-blue?style=for-the-badge" alt="License">
   </a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/tn3w/stem-rs/actions">
-    <img src="https://img.shields.io/github/actions/workflow/status/tn3w/stem-rs/tests.yml?style=for-the-badge&logo=github&logoColor=white&label=CI" alt="CI">
+  <a href="https://github.com/tn3w/stem/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/tn3w/stem/tests.yml?style=for-the-badge&logo=github&logoColor=white&label=CI" alt="CI">
   </a>
-  <a href="https://github.com/tn3w/stem-rs">
-    <img src="https://img.shields.io/github/stars/tn3w/stem-rs?style=for-the-badge&logo=github&logoColor=white" alt="Stars">
+  <a href="https://github.com/tn3w/stem">
+    <img src="https://img.shields.io/github/stars/tn3w/stem?style=for-the-badge&logo=github&logoColor=white" alt="Stars">
   </a>
 </p>
 
@@ -36,12 +36,12 @@
 
 ## Overview
 
-**stem-rs** is a Rust implementation of [Stem](https://stem.torproject.org/), the Python library for interacting with Tor's control protocol. It provides idiomatic, type-safe Rust APIs while maintaining complete functional parity with Python Stem.
+**stem** is a Rust implementation of [Stem](https://stem.torproject.org/), the Python library for interacting with Tor's control protocol. It provides idiomatic, type-safe Rust APIs while maintaining complete functional parity with Python Stem.
 
-Whether you're building privacy tools, monitoring Tor relays, managing circuits, or creating onion services — stem-rs gives you the building blocks you need with the safety guarantees Rust provides.
+Whether you're building privacy tools, monitoring Tor relays, managing circuits, or creating onion services — stem gives you the building blocks you need with the safety guarantees Rust provides.
 
 ```rust
-use stem_rs::{Controller, Error};
+use stem::{Controller, Error};
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -151,18 +151,18 @@ Parse and evaluate relay exit policies.
 
 ## 🚀 Quick Start
 
-Add stem-rs to your `Cargo.toml`:
+Add stem to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-stem-rs = "1.2"
+stem = "1.2"
 tokio = { version = "1", features = ["full"] }
 ```
 
 Or install via cargo:
 
 ```bash
-cargo add stem-rs tokio --features tokio/full
+cargo add stem tokio --features tokio/full
 ```
 
 ### Enable Tor's Control Port
@@ -189,7 +189,7 @@ tor --hash-password "your-password"
 
 ## 🎛️ Feature Flags
 
-stem-rs uses feature flags to allow you to compile only what you need, reducing compile time and binary size.
+stem uses feature flags to allow you to compile only what you need, reducing compile time and binary size.
 
 ### Default Features
 
@@ -197,7 +197,7 @@ By default, all features are enabled:
 
 ```toml
 [dependencies]
-stem-rs = "1.2"  # Includes all features
+stem = "1.2"  # Includes all features
 ```
 
 ### Minimal Build
@@ -206,7 +206,7 @@ For a minimal build with just the core functionality:
 
 ```toml
 [dependencies]
-stem-rs = { version = "1.2", default-features = false }
+stem = { version = "1.2", default-features = false }
 ```
 
 This includes: socket communication, authentication, protocol parsing, utilities, and version handling.
@@ -229,19 +229,19 @@ This includes: socket communication, authentication, protocol parsing, utilities
 **Controller only** (no descriptor parsing):
 ```toml
 [dependencies]
-stem-rs = { version = "1.2", default-features = false, features = ["controller"] }
+stem = { version = "1.2", default-features = false, features = ["controller"] }
 ```
 
 **Descriptors only** (offline analysis):
 ```toml
 [dependencies]
-stem-rs = { version = "1.2", default-features = false, features = ["descriptors"] }
+stem = { version = "1.2", default-features = false, features = ["descriptors"] }
 ```
 
 **Controller + Descriptors** (most common):
 ```toml
 [dependencies]
-stem-rs = { version = "1.2", default-features = false, features = ["controller", "descriptors"] }
+stem = { version = "1.2", default-features = false, features = ["controller", "descriptors"] }
 ```
 
 ### Compile Time Improvements
@@ -259,7 +259,7 @@ Binary size reductions follow similar patterns.
 ### Connect and Authenticate
 
 ```rust
-use stem_rs::{Controller, Error};
+use stem::{Controller, Error};
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -306,7 +306,7 @@ for port in socks_ports {
 ### Circuit Management
 
 ```rust
-use stem_rs::CircStatus;
+use stem::CircStatus;
 
 // List all circuits
 let circuits = ctrl.get_circuits().await?;
@@ -330,7 +330,7 @@ ctrl.close_circuit(circuit_id).await?;
 ### Stream Management
 
 ```rust
-use stem_rs::StreamStatus;
+use stem::StreamStatus;
 
 // List all streams
 let streams = ctrl.get_streams().await?;
@@ -347,7 +347,7 @@ for stream in streams {
 ### Event Subscription
 
 ```rust
-use stem_rs::EventType;
+use stem::EventType;
 
 // Subscribe to events
 ctrl.set_events(&[
@@ -378,7 +378,7 @@ loop {
 ### Send Signals
 
 ```rust
-use stem_rs::Signal;
+use stem::Signal;
 
 // Request new identity (new circuits)
 ctrl.signal(Signal::Newnym).await?;
@@ -414,7 +414,7 @@ ctrl.remove_ephemeral_hidden_service(&response.service_id).await?;
 ### Descriptor Parsing
 
 ```rust
-use stem_rs::descriptor::{
+use stem::descriptor::{
     ServerDescriptor, Microdescriptor, NetworkStatusDocument,
     Descriptor, DigestHash, DigestEncoding,
     download_consensus, download_server_descriptors,
@@ -440,7 +440,7 @@ println!("Digest: {}", digest);
 ### Exit Policy Evaluation
 
 ```rust
-use stem_rs::exit_policy::ExitPolicy;
+use stem::exit_policy::ExitPolicy;
 use std::net::IpAddr;
 
 let policy = ExitPolicy::parse("accept *:80, accept *:443, reject *:*")?;
@@ -458,7 +458,7 @@ println!("Policy: {}", policy.summary());
 ### Version Comparison
 
 ```rust
-use stem_rs::Version;
+use stem::Version;
 
 let version = ctrl.get_version().await?;
 
@@ -486,7 +486,7 @@ if version >= min_version {
 
 ## 🔒 Security
 
-stem-rs is designed with security as a priority:
+stem is designed with security as a priority:
 
 - **100% Safe Rust** — No `unsafe` code
 - **Constant-time comparison** — For authentication tokens and cookies
@@ -522,9 +522,9 @@ cargo test --features extensive
 
 ## 📊 Comparison with Python Stem
 
-stem-rs maintains functional parity with Python Stem while providing Rust's safety guarantees:
+stem maintains functional parity with Python Stem while providing Rust's safety guarantees:
 
-| Feature                | Python Stem | stem-rs |
+| Feature                | Python Stem | stem |
 | ---------------------- | ----------- | ------- |
 | Control Protocol       | ✅          | ✅      |
 | All Auth Methods       | ✅          | ✅      |
@@ -539,7 +539,7 @@ stem-rs maintains functional parity with Python Stem while providing Rust's safe
 
 ## 📄 License
 
-Copyright 2026 stem-rs contributors
+Copyright 2026 stem contributors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -569,11 +569,11 @@ Contributions are welcome! Please feel free to submit issues and pull requests.
   <a href="https://stem.tn3w.dev">Website</a> •
   <a href="https://stem.tn3w.dev/docs/">Documentation</a> •
   <a href="https://stem.tn3w.dev/tutorials">Tutorials</a> •
-  <a href="https://crates.io/crates/stem-rs">crates.io</a> •
-  <a href="https://github.com/tn3w/stem-rs">GitHub</a> •
+  <a href="https://crates.io/crates/stem">crates.io</a> •
+  <a href="https://github.com/tn3w/stem">GitHub</a> •
   <a href="https://stem.torproject.org/">Python Stem</a>
 </p>
 
 <p align="center">
-  <sub>Built with 🦀 by the stem-rs contributors</sub>
+  <sub>Built with 🦀 by the stem contributors</sub>
 </p>

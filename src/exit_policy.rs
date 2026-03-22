@@ -55,7 +55,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::exit_policy::{ExitPolicy, MicroExitPolicy};
+//! use stem::exit_policy::{ExitPolicy, MicroExitPolicy};
 //! use std::net::IpAddr;
 //!
 //! // Parse a full exit policy
@@ -114,7 +114,7 @@ use std::str::FromStr;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::exit_policy::{ExitPolicyRule, AddressType};
+/// use stem::exit_policy::{ExitPolicyRule, AddressType};
 ///
 /// let rule = ExitPolicyRule::parse("accept *:80").unwrap();
 /// assert_eq!(rule.get_address_type(), AddressType::Wildcard);
@@ -156,7 +156,7 @@ pub enum AddressType {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::exit_policy::PortRange;
+/// use stem::exit_policy::PortRange;
 ///
 /// // Create a range for common web ports
 /// let web_ports = PortRange::new(80, 443).unwrap();
@@ -199,7 +199,7 @@ impl PortRange {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::PortRange;
+    /// use stem::exit_policy::PortRange;
     ///
     /// let range = PortRange::new(80, 443).unwrap();
     /// assert!(range.contains(200));
@@ -226,7 +226,7 @@ impl PortRange {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::PortRange;
+    /// use stem::exit_policy::PortRange;
     ///
     /// let ssh = PortRange::single(22);
     /// assert!(ssh.contains(22));
@@ -247,7 +247,7 @@ impl PortRange {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::PortRange;
+    /// use stem::exit_policy::PortRange;
     ///
     /// let all = PortRange::all();
     /// assert!(all.is_wildcard());
@@ -272,7 +272,7 @@ impl PortRange {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::PortRange;
+    /// use stem::exit_policy::PortRange;
     ///
     /// let range = PortRange::new(80, 443).unwrap();
     /// assert!(range.contains(80));   // min boundary
@@ -297,7 +297,7 @@ impl PortRange {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::PortRange;
+    /// use stem::exit_policy::PortRange;
     ///
     /// assert!(PortRange::all().is_wildcard());
     /// assert!(PortRange::new(1, 65535).unwrap().is_wildcard());
@@ -350,7 +350,7 @@ impl fmt::Display for PortRange {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::exit_policy::ExitPolicyRule;
+/// use stem::exit_policy::ExitPolicyRule;
 /// use std::net::IpAddr;
 ///
 /// // Parse a rule that accepts HTTP traffic
@@ -437,7 +437,7 @@ impl ExitPolicyRule {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicyRule;
+    /// use stem::exit_policy::ExitPolicyRule;
     ///
     /// // Various valid rule formats
     /// let rule = ExitPolicyRule::parse("accept *:80").unwrap();
@@ -748,7 +748,7 @@ impl ExitPolicyRule {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicyRule;
+    /// use stem::exit_policy::ExitPolicyRule;
     /// use std::net::IpAddr;
     ///
     /// let rule = ExitPolicyRule::parse("accept 10.0.0.0/8:80-443").unwrap();
@@ -795,7 +795,7 @@ impl ExitPolicyRule {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicyRule;
+    /// use stem::exit_policy::ExitPolicyRule;
     ///
     /// let accept_rule = ExitPolicyRule::parse("accept 10.0.0.0/8:80").unwrap();
     ///
@@ -927,7 +927,7 @@ impl ExitPolicyRule {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicyRule;
+    /// use stem::exit_policy::ExitPolicyRule;
     ///
     /// assert!(ExitPolicyRule::parse("accept *:80").unwrap().is_address_wildcard());
     /// assert!(!ExitPolicyRule::parse("accept *4:80").unwrap().is_address_wildcard());
@@ -950,7 +950,7 @@ impl ExitPolicyRule {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicyRule;
+    /// use stem::exit_policy::ExitPolicyRule;
     ///
     /// assert!(ExitPolicyRule::parse("accept *:*").unwrap().is_port_wildcard());
     /// assert!(ExitPolicyRule::parse("accept *:1-65535").unwrap().is_port_wildcard());
@@ -973,7 +973,7 @@ impl ExitPolicyRule {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::{ExitPolicyRule, AddressType};
+    /// use stem::exit_policy::{ExitPolicyRule, AddressType};
     ///
     /// let rule = ExitPolicyRule::parse("accept *:80").unwrap();
     /// assert_eq!(rule.get_address_type(), AddressType::Wildcard);
@@ -1001,7 +1001,7 @@ impl ExitPolicyRule {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicyRule;
+    /// use stem::exit_policy::ExitPolicyRule;
     /// use std::net::IpAddr;
     ///
     /// let rule = ExitPolicyRule::parse("accept 192.168.0.0/16:*").unwrap();
@@ -1049,7 +1049,7 @@ impl ExitPolicyRule {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicyRule;
+    /// use stem::exit_policy::ExitPolicyRule;
     ///
     /// let rule = ExitPolicyRule::parse("accept 10.0.0.0/8:*").unwrap();
     /// assert_eq!(rule.get_masked_bits(), Some(8));
@@ -1113,7 +1113,7 @@ impl ExitPolicyRule {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicyRule;
+    /// use stem::exit_policy::ExitPolicyRule;
     /// use std::net::IpAddr;
     ///
     /// let rule = ExitPolicyRule::parse("accept 192.168.1.1:80").unwrap();
@@ -1249,7 +1249,7 @@ const DEFAULT_POLICY_RULES: &[&str] = &[
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::exit_policy::ExitPolicy;
+/// use stem::exit_policy::ExitPolicy;
 /// use std::net::IpAddr;
 ///
 /// // Parse a policy that allows only web traffic
@@ -1294,7 +1294,7 @@ impl ExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::{ExitPolicy, ExitPolicyRule};
+    /// use stem::exit_policy::{ExitPolicy, ExitPolicyRule};
     ///
     /// let rules = vec![
     ///     ExitPolicyRule::parse("accept *:80").unwrap(),
@@ -1329,7 +1329,7 @@ impl ExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicy;
+    /// use stem::exit_policy::ExitPolicy;
     ///
     /// // Comma-separated rules
     /// let policy = ExitPolicy::parse("accept *:80, accept *:443, reject *:*").unwrap();
@@ -1377,7 +1377,7 @@ impl ExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicy;
+    /// use stem::exit_policy::ExitPolicy;
     ///
     /// let policy = ExitPolicy::from_rules(&[
     ///     "accept *:80",
@@ -1537,7 +1537,7 @@ impl ExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicy;
+    /// use stem::exit_policy::ExitPolicy;
     /// use std::net::IpAddr;
     ///
     /// let policy = ExitPolicy::parse("accept *:80, accept *:443, reject *:*").unwrap();
@@ -1571,7 +1571,7 @@ impl ExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicy;
+    /// use stem::exit_policy::ExitPolicy;
     ///
     /// let policy = ExitPolicy::parse("reject 10.0.0.0/8:80, accept *:*").unwrap();
     ///
@@ -1612,7 +1612,7 @@ impl ExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicy;
+    /// use stem::exit_policy::ExitPolicy;
     ///
     /// let policy = ExitPolicy::parse("accept *:80, reject *:*").unwrap();
     /// assert!(policy.is_exiting_allowed());
@@ -1660,7 +1660,7 @@ impl ExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicy;
+    /// use stem::exit_policy::ExitPolicy;
     ///
     /// let policy = ExitPolicy::parse("accept *:80, accept *:443, reject *:*").unwrap();
     /// assert_eq!(policy.summary(), "accept 80, 443");
@@ -1786,7 +1786,7 @@ impl ExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicy;
+    /// use stem::exit_policy::ExitPolicy;
     ///
     /// let policy = ExitPolicy::parse("accept *:80, reject *:*").unwrap();
     /// let stripped = policy.strip_private();
@@ -1833,7 +1833,7 @@ impl ExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicy;
+    /// use stem::exit_policy::ExitPolicy;
     ///
     /// let policy = ExitPolicy::parse("accept *:80, reject *:*").unwrap();
     /// let stripped = policy.strip_default();
@@ -1859,7 +1859,7 @@ impl ExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicy;
+    /// use stem::exit_policy::ExitPolicy;
     ///
     /// let policy = ExitPolicy::parse("accept *:80, reject *:*").unwrap();
     /// for rule in policy.iter() {
@@ -1875,7 +1875,7 @@ impl ExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicy;
+    /// use stem::exit_policy::ExitPolicy;
     ///
     /// let policy = ExitPolicy::parse("accept *:80, reject *:*").unwrap();
     /// let rules = policy.rules();
@@ -1890,7 +1890,7 @@ impl ExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicy;
+    /// use stem::exit_policy::ExitPolicy;
     ///
     /// let policy = ExitPolicy::parse("accept *:80, reject *:*").unwrap();
     /// assert_eq!(policy.len(), 2);
@@ -1906,7 +1906,7 @@ impl ExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::ExitPolicy;
+    /// use stem::exit_policy::ExitPolicy;
     ///
     /// let policy = ExitPolicy::parse("").unwrap();
     /// assert!(policy.is_empty());
@@ -1962,7 +1962,7 @@ impl FromStr for ExitPolicy {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::exit_policy::MicroExitPolicy;
+/// use stem::exit_policy::MicroExitPolicy;
 ///
 /// // Accept only web ports
 /// let policy = MicroExitPolicy::parse("accept 80,443").unwrap();
@@ -2019,7 +2019,7 @@ impl MicroExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::MicroExitPolicy;
+    /// use stem::exit_policy::MicroExitPolicy;
     ///
     /// let policy = MicroExitPolicy::parse("accept 80,443").unwrap();
     /// assert!(policy.is_accept);
@@ -2095,7 +2095,7 @@ impl MicroExitPolicy {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::exit_policy::MicroExitPolicy;
+    /// use stem::exit_policy::MicroExitPolicy;
     ///
     /// // Accept policy: only listed ports are allowed
     /// let policy = MicroExitPolicy::parse("accept 80,443").unwrap();

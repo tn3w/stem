@@ -3,7 +3,7 @@
 use std::net::SocketAddr;
 use std::time::Duration;
 
-use stem_rs::socket::{ControlMessage, ControlSocket};
+use stem::socket::{ControlMessage, ControlSocket};
 
 use crate::{get_control_port, is_tor_available};
 

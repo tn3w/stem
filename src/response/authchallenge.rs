@@ -24,7 +24,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::response::{ControlMessage, AuthChallengeResponse};
+//! use stem::response::{ControlMessage, AuthChallengeResponse};
 //!
 //! let response_text = "250 AUTHCHALLENGE \
 //!     SERVERHASH=680A73C9836C4F557314EA1C4EDE54C285DB9DC89C83627401AEF9D7D27A95D5 \
@@ -76,7 +76,7 @@ use crate::Error;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::response::{ControlMessage, AuthChallengeResponse};
+/// use stem::response::{ControlMessage, AuthChallengeResponse};
 ///
 /// // Parse a typical AUTHCHALLENGE response
 /// let msg = ControlMessage::from_str(
@@ -155,7 +155,7 @@ impl AuthChallengeResponse {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::response::{ControlMessage, AuthChallengeResponse};
+    /// use stem::response::{ControlMessage, AuthChallengeResponse};
     ///
     /// // Valid response
     /// let msg = ControlMessage::from_str(

@@ -39,7 +39,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::descriptor::bandwidth_file::BandwidthFile;
+//! use stem::descriptor::bandwidth_file::BandwidthFile;
 //!
 //! let content = r#"1547487689
 //! node_id=$221C91D4C51E4C73CB6A8F0BEE01B0A6BB4A8476 bw=38000 nick=myrelay"#;
@@ -47,7 +47,7 @@
 //! let bw_file = BandwidthFile::parse(content)?;
 //! assert_eq!(bw_file.version, "1.0.0");
 //! assert_eq!(bw_file.measurements.len(), 1);
-//! # Ok::<(), stem_rs::Error>(())
+//! # Ok::<(), stem::Error>(())
 //! ```
 //!
 //! # See Also
@@ -196,7 +196,7 @@ pub struct BandwidthMeasurement {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::bandwidth_file::BandwidthFile;
+/// use stem::descriptor::bandwidth_file::BandwidthFile;
 ///
 /// let content = r#"1547487689
 /// node_id=$221C91D4C51E4C73CB6A8F0BEE01B0A6BB4A8476 bw=38000 nick=myrelay"#;
@@ -204,7 +204,7 @@ pub struct BandwidthMeasurement {
 /// let bw_file = BandwidthFile::parse(content)?;
 /// assert_eq!(bw_file.version, "1.0.0");
 /// assert_eq!(bw_file.measurements.len(), 1);
-/// # Ok::<(), stem_rs::Error>(())
+/// # Ok::<(), stem::Error>(())
 /// ```
 ///
 /// # See Also
@@ -293,7 +293,7 @@ impl BandwidthFile {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::bandwidth_file::BandwidthFile;
+    /// use stem::descriptor::bandwidth_file::BandwidthFile;
     ///
     /// // Version 1.0.0 format (no headers)
     /// let v1_content = "1547487689\nnode_id=$ABC123 bw=1000";
@@ -308,7 +308,7 @@ impl BandwidthFile {
     /// node_id=$ABC123 bw=1000"#;
     /// let bw = BandwidthFile::parse(v1_2_content)?;
     /// assert_eq!(bw.version, "1.2.0");
-    /// # Ok::<(), stem_rs::Error>(())
+    /// # Ok::<(), stem::Error>(())
     /// ```
     pub fn parse(content: &str) -> Result<Self, Error> {
         let raw_content = content.as_bytes().to_vec();

@@ -45,7 +45,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::descriptor::router_status::RouterStatusEntry;
+//! use stem::descriptor::router_status::RouterStatusEntry;
 //!
 //! let entry_content = r#"r example ARIJF2zbqirB9IwsW0mQznccWww oQZFLYe9e4A7bOkWKR7TaNxb0JE 2024-01-15 12:00:00 192.0.2.1 9001 0
 //! s Fast Guard Running Stable Valid
@@ -132,7 +132,7 @@ use crate::Error;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::router_status::RouterStatusEntryType;
+/// use stem::descriptor::router_status::RouterStatusEntryType;
 ///
 /// let entry_type = RouterStatusEntryType::V3;
 /// assert_eq!(entry_type, RouterStatusEntryType::V3);
@@ -192,7 +192,7 @@ pub enum RouterStatusEntryType {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::router_status::MicrodescriptorHash;
+/// use stem::descriptor::router_status::MicrodescriptorHash;
 /// use std::collections::HashMap;
 ///
 /// let hash = MicrodescriptorHash {
@@ -264,7 +264,7 @@ pub struct MicrodescriptorHash {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::router_status::RouterStatusEntry;
+/// use stem::descriptor::router_status::RouterStatusEntry;
 ///
 /// let content = r#"r example ARIJF2zbqirB9IwsW0mQznccWww oQZFLYe9e4A7bOkWKR7TaNxb0JE 2024-01-15 12:00:00 192.0.2.1 9001 9030
 /// s Fast Guard Running Stable Valid
@@ -453,7 +453,7 @@ impl RouterStatusEntry {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::router_status::{RouterStatusEntry, RouterStatusEntryType};
+    /// use stem::descriptor::router_status::{RouterStatusEntry, RouterStatusEntryType};
     /// use chrono::Utc;
     /// use std::net::IpAddr;
     ///
@@ -527,7 +527,7 @@ impl RouterStatusEntry {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::router_status::RouterStatusEntry;
+    /// use stem::descriptor::router_status::RouterStatusEntry;
     ///
     /// let content = r#"r example ARIJF2zbqirB9IwsW0mQznccWww oQZFLYe9e4A7bOkWKR7TaNxb0JE 2024-01-15 12:00:00 192.0.2.1 9001 0
     /// s Fast Running Valid"#;
@@ -560,7 +560,7 @@ impl RouterStatusEntry {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::router_status::RouterStatusEntry;
+    /// use stem::descriptor::router_status::RouterStatusEntry;
     ///
     /// let content = r#"r example ARIJF2zbqirB9IwsW0mQznccWww 2024-01-15 12:00:00 192.0.2.1 9001 0
     /// m aiUklwBrua82obG5AsTX+iEpkjQA2+AQHxZ7GwMfY70
@@ -614,7 +614,7 @@ impl RouterStatusEntry {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::router_status::RouterStatusEntry;
+    /// use stem::descriptor::router_status::RouterStatusEntry;
     ///
     /// let content = r#"r example ARIJF2zbqirB9IwsW0mQznccWww oQZFLYe9e4A7bOkWKR7TaNxb0JE 2024-01-15 12:00:00 192.0.2.1 9001 0
     /// s Fast Running Valid
@@ -1256,7 +1256,7 @@ impl RouterStatusEntry {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::router_status::RouterStatusEntry;
+/// use stem::descriptor::router_status::RouterStatusEntry;
 /// use std::str::FromStr;
 ///
 /// let content = r#"r example ARIJF2zbqirB9IwsW0mQznccWww oQZFLYe9e4A7bOkWKR7TaNxb0JE 2024-01-15 12:00:00 192.0.2.1 9001 0

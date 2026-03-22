@@ -3,8 +3,8 @@
 use std::net::SocketAddr;
 use std::time::Duration;
 
-use stem_rs::controller::Controller;
-use stem_rs::EventType;
+use stem::controller::Controller;
+use stem::EventType;
 
 use crate::{get_control_port, is_tor_available};
 
@@ -331,7 +331,7 @@ async fn test_recv_circ_event_after_newnym() {
         .await
         .expect("set_events failed");
 
-    let _ = controller.signal(stem_rs::Signal::Newnym).await;
+    let _ = controller.signal(stem::Signal::Newnym).await;
 
     let event_result = tokio::time::timeout(Duration::from_secs(5), controller.recv_event()).await;
 

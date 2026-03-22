@@ -36,8 +36,8 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::descriptor::extra_info::ExtraInfoDescriptor;
-//! use stem_rs::descriptor::Descriptor;
+//! use stem::descriptor::extra_info::ExtraInfoDescriptor;
+//! use stem::descriptor::Descriptor;
 //!
 //! let content = r#"extra-info example B2289C3EAB83ECD6EB916A2F481A02E6B76A0A48
 //! published 2024-01-15 12:00:00
@@ -125,7 +125,7 @@ type PaddingCountsResult = Result<(DateTime<Utc>, u32, HashMap<String, String>),
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::extra_info::DirResponse;
+/// use stem::descriptor::extra_info::DirResponse;
 /// use std::str::FromStr;
 ///
 /// let status = DirResponse::from_str("ok").unwrap();
@@ -187,7 +187,7 @@ impl FromStr for DirResponse {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::extra_info::DirStat;
+/// use stem::descriptor::extra_info::DirStat;
 /// use std::str::FromStr;
 ///
 /// let stat = DirStat::from_str("complete").unwrap();
@@ -273,7 +273,7 @@ impl FromStr for DirStat {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::extra_info::BandwidthHistory;
+/// use stem::descriptor::extra_info::BandwidthHistory;
 /// use chrono::Utc;
 ///
 /// let history = BandwidthHistory {
@@ -308,7 +308,7 @@ pub struct BandwidthHistory {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::extra_info::Transport;
+/// use stem::descriptor::extra_info::Transport;
 ///
 /// let transport = Transport {
 ///     name: "obfs4".to_string(),
@@ -365,8 +365,8 @@ pub struct Transport {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::extra_info::ExtraInfoDescriptor;
-/// use stem_rs::descriptor::Descriptor;
+/// use stem::descriptor::extra_info::ExtraInfoDescriptor;
+/// use stem::descriptor::Descriptor;
 ///
 /// let content = r#"extra-info MyRelay B2289C3EAB83ECD6EB916A2F481A02E6B76A0A48
 /// published 2024-01-15 12:00:00
@@ -677,7 +677,7 @@ pub struct ExtraInfoDescriptor {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::extra_info::PortKey;
+/// use stem::descriptor::extra_info::PortKey;
 ///
 /// let http = PortKey::Port(80);
 /// let https = PortKey::Port(443);
@@ -1145,8 +1145,8 @@ impl ExtraInfoDescriptor {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::extra_info::ExtraInfoDescriptor;
-    /// use stem_rs::descriptor::Descriptor;
+    /// use stem::descriptor::extra_info::ExtraInfoDescriptor;
+    /// use stem::descriptor::Descriptor;
     ///
     /// let relay_content = r#"extra-info relay B2289C3EAB83ECD6EB916A2F481A02E6B76A0A48
     /// published 2024-01-15 12:00:00

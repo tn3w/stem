@@ -32,10 +32,10 @@
 //! # Example
 //!
 //! ```rust,no_run
-//! use stem_rs::auth::{authenticate, get_protocol_info};
-//! use stem_rs::ControlSocket;
+//! use stem::auth::{authenticate, get_protocol_info};
+//! use stem::ControlSocket;
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! let mut socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
 //!
 //! // Query available authentication methods
@@ -52,10 +52,10 @@
 //! # This Compiles But Is Wrong
 //!
 //! ```rust,no_run
-//! use stem_rs::auth::authenticate;
-//! use stem_rs::ControlSocket;
+//! use stem::auth::authenticate;
+//! use stem::ControlSocket;
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! let mut socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
 //!
 //! // WRONG: Don't call authenticate twice on the same connection!
@@ -104,7 +104,7 @@ const SAFECOOKIE_CONTROLLER_TO_SERVER: &[u8] =
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::auth::AuthMethod;
+/// use stem::auth::AuthMethod;
 ///
 /// let methods = vec![AuthMethod::Cookie, AuthMethod::SafeCookie];
 /// assert!(methods.contains(&AuthMethod::SafeCookie));
@@ -164,7 +164,7 @@ impl AuthMethod {
     /// # Examples
     ///
     /// ```rust
-    /// use stem_rs::auth::AuthMethod;
+    /// use stem::auth::AuthMethod;
     ///
     /// assert_eq!(AuthMethod::parse("NULL"), Some(AuthMethod::None));
     /// assert_eq!(AuthMethod::parse("HASHEDPASSWORD"), Some(AuthMethod::Password));
@@ -202,10 +202,10 @@ impl AuthMethod {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::auth::{get_protocol_info, AuthMethod};
-/// use stem_rs::ControlSocket;
+/// use stem::auth::{get_protocol_info, AuthMethod};
+/// use stem::ControlSocket;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
 /// let info = get_protocol_info(&mut socket).await?;
 ///
@@ -275,8 +275,8 @@ impl ProtocolInfo {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::auth::{ProtocolInfo, AuthMethod};
-    /// use stem_rs::socket::ControlMessage;
+    /// use stem::auth::{ProtocolInfo, AuthMethod};
+    /// use stem::socket::ControlMessage;
     ///
     /// let message = ControlMessage {
     ///     status_code: 250,
@@ -389,10 +389,10 @@ impl ProtocolInfo {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::auth::get_protocol_info;
-/// use stem_rs::ControlSocket;
+/// use stem::auth::get_protocol_info;
+/// use stem::ControlSocket;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
 /// let info = get_protocol_info(&mut socket).await?;
 ///
@@ -459,10 +459,10 @@ pub async fn get_protocol_info(socket: &mut ControlSocket) -> Result<ProtocolInf
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::auth::authenticate;
-/// use stem_rs::ControlSocket;
+/// use stem::auth::authenticate;
+/// use stem::ControlSocket;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
 ///
 /// // Auto-detect authentication method (no password)
@@ -553,10 +553,10 @@ pub async fn authenticate(socket: &mut ControlSocket, password: Option<&str>) ->
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::auth::authenticate_none;
-/// use stem_rs::ControlSocket;
+/// use stem::auth::authenticate_none;
+/// use stem::ControlSocket;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
 /// authenticate_none(&mut socket).await?;
 /// // Socket is now authenticated
@@ -610,10 +610,10 @@ pub async fn authenticate_none(socket: &mut ControlSocket) -> Result<(), Error> 
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::auth::authenticate_password;
-/// use stem_rs::ControlSocket;
+/// use stem::auth::authenticate_password;
+/// use stem::ControlSocket;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
 /// authenticate_password(&mut socket, "my_secure_password").await?;
 /// # Ok(())
@@ -682,11 +682,11 @@ pub async fn authenticate_password(
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::auth::authenticate_cookie;
-/// use stem_rs::ControlSocket;
+/// use stem::auth::authenticate_cookie;
+/// use stem::ControlSocket;
 /// use std::path::Path;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
 /// let cookie_path = Path::new("/var/run/tor/control.authcookie");
 /// authenticate_cookie(&mut socket, cookie_path).await?;
@@ -762,11 +762,11 @@ pub async fn authenticate_cookie(socket: &mut ControlSocket, path: &Path) -> Res
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::auth::authenticate_safecookie;
-/// use stem_rs::ControlSocket;
+/// use stem::auth::authenticate_safecookie;
+/// use stem::ControlSocket;
 /// use std::path::Path;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut socket = ControlSocket::connect_port("127.0.0.1:9051".parse()?).await?;
 /// let cookie_path = Path::new("/var/run/tor/control.authcookie");
 /// authenticate_safecookie(&mut socket, cookie_path).await?;

@@ -48,7 +48,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::descriptor::KeyCertificate;
+//! use stem::descriptor::KeyCertificate;
 //!
 //! let cert_content = r#"dir-key-certificate-version 3
 //! fingerprint BCB380A633592C218757BEE11E630511A485658A
@@ -125,7 +125,7 @@ use crate::Error;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::KeyCertificate;
+/// use stem::descriptor::KeyCertificate;
 ///
 /// let cert_content = r#"dir-key-certificate-version 3
 /// fingerprint BCB380A633592C218757BEE11E630511A485658A
@@ -148,7 +148,7 @@ use crate::Error;
 /// let cert = KeyCertificate::parse(cert_content)?;
 /// println!("Authority fingerprint: {:?}", cert.fingerprint);
 /// println!("Certificate expired: {}", cert.is_expired());
-/// # Ok::<(), stem_rs::Error>(())
+/// # Ok::<(), stem::Error>(())
 /// ```
 ///
 /// # Security
@@ -262,7 +262,7 @@ impl KeyCertificate {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::KeyCertificate;
+    /// use stem::descriptor::KeyCertificate;
     ///
     /// let content = r#"dir-key-certificate-version 3
     /// fingerprint BCB380A633592C218757BEE11E630511A485658A
@@ -284,7 +284,7 @@ impl KeyCertificate {
     ///
     /// let cert = KeyCertificate::parse(content)?;
     /// assert_eq!(cert.version, Some(3));
-    /// # Ok::<(), stem_rs::Error>(())
+    /// # Ok::<(), stem::Error>(())
     /// ```
     pub fn parse(content: &str) -> Result<Self, Error> {
         Self::parse_with_validation(content, true)
@@ -318,14 +318,14 @@ impl KeyCertificate {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::KeyCertificate;
+    /// use stem::descriptor::KeyCertificate;
     ///
     /// // Parse incomplete certificate without validation
     /// let partial = "dir-key-certificate-version 3\nfingerprint BCB380A633592C218757BEE11E630511A485658A\n";
     /// let cert = KeyCertificate::parse_with_validation(partial, false)?;
     /// assert_eq!(cert.version, Some(3));
     /// assert!(cert.identity_key.is_none()); // Missing but no error
-    /// # Ok::<(), stem_rs::Error>(())
+    /// # Ok::<(), stem::Error>(())
     /// ```
     pub fn parse_with_validation(content: &str, validate: bool) -> Result<Self, Error> {
         let raw_content = content.as_bytes().to_vec();
@@ -588,7 +588,7 @@ impl KeyCertificate {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::KeyCertificate;
+    /// use stem::descriptor::KeyCertificate;
     ///
     /// // Certificate with past expiration date
     /// let old_cert_content = r#"dir-key-certificate-version 3
@@ -611,7 +611,7 @@ impl KeyCertificate {
     ///
     /// let cert = KeyCertificate::parse(old_cert_content)?;
     /// assert!(cert.is_expired());
-    /// # Ok::<(), stem_rs::Error>(())
+    /// # Ok::<(), stem::Error>(())
     /// ```
     pub fn is_expired(&self) -> bool {
         match self.expires {
@@ -639,7 +639,7 @@ impl KeyCertificate {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::descriptor::KeyCertificate;
+    /// use stem::descriptor::KeyCertificate;
     ///
     /// let content = r#"dir-key-certificate-version 3
     /// fingerprint BCB380A633592C218757BEE11E630511A485658A
@@ -663,7 +663,7 @@ impl KeyCertificate {
     /// let output = cert.to_descriptor_string();
     /// assert!(output.contains("dir-key-certificate-version 3"));
     /// assert!(output.contains("fingerprint BCB380A633592C218757BEE11E630511A485658A"));
-    /// # Ok::<(), stem_rs::Error>(())
+    /// # Ok::<(), stem::Error>(())
     /// ```
     pub fn to_descriptor_string(&self) -> String {
         let mut result = String::new();

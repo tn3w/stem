@@ -1,10 +1,10 @@
-//! # stem-rs
+//! # stem
 //!
 //! A Rust implementation of the Stem library for Tor control protocol interaction.
 //!
 //! # Overview
 //!
-//! stem-rs provides idiomatic Rust APIs for interacting with Tor's control protocol,
+//! stem provides idiomatic Rust APIs for interacting with Tor's control protocol,
 //! maintaining functional parity with Python Stem. The library enables:
 //!
 //! - Control socket communication (TCP and Unix domain sockets)
@@ -18,7 +18,7 @@
 //!
 //! # Feature Flags
 //!
-//! stem-rs uses feature flags to allow you to compile only what you need, reducing
+//! stem uses feature flags to allow you to compile only what you need, reducing
 //! compile time and binary size.
 //!
 //! ## Default Features
@@ -27,7 +27,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! stem-rs = "1.2"  # Includes all features
+//! stem = "1.2"  # Includes all features
 //! ```
 //!
 //! ## Minimal Build
@@ -36,7 +36,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! stem-rs = { version = "1.2", default-features = false }
+//! stem = { version = "1.2", default-features = false }
 //! ```
 //!
 //! This includes: socket communication, authentication, protocol parsing, utilities,
@@ -60,19 +60,19 @@
 //! **Controller only** (no descriptor parsing):
 //! ```toml
 //! [dependencies]
-//! stem-rs = { version = "1.2", default-features = false, features = ["controller"] }
+//! stem = { version = "1.2", default-features = false, features = ["controller"] }
 //! ```
 //!
 //! **Descriptors only** (offline analysis):
 //! ```toml
 //! [dependencies]
-//! stem-rs = { version = "1.2", default-features = false, features = ["descriptors"] }
+//! stem = { version = "1.2", default-features = false, features = ["descriptors"] }
 //! ```
 //!
 //! **Controller + Descriptors** (most common):
 //! ```toml
 //! [dependencies]
-//! stem-rs = { version = "1.2", default-features = false, features = ["controller", "descriptors"] }
+//! stem = { version = "1.2", default-features = false, features = ["controller", "descriptors"] }
 //! ```
 //!
 //! ## Compile Time Improvements
@@ -85,9 +85,9 @@
 //!
 //! Binary size reductions follow similar patterns.
 //!
-//! # Choosing the Right Library: stem-rs vs tor-metrics-library
+//! # Choosing the Right Library: stem vs tor-metrics-library
 //!
-//! ## Use stem-rs for:
+//! ## Use stem for:
 //! Real-time Tor control, live network interaction (circuits, streams, hidden services),
 //! event monitoring, configuration management, and interactive applications.
 //!
@@ -114,7 +114,7 @@
 //! # Quick Start
 //!
 //! ```rust,no_run
-//! use stem_rs::{controller::Controller, Error};
+//! use stem::{controller::Controller, Error};
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Error> {
@@ -143,9 +143,9 @@
 //! The consensus document contains the current state of the Tor network:
 //!
 //! ```rust,no_run
-//! use stem_rs::controller::Controller;
+//! use stem::controller::Controller;
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 //! controller.authenticate(None).await?;
 //!
@@ -162,9 +162,9 @@
 //! Filter relays based on directory authority flags:
 //!
 //! ```rust,no_run
-//! use stem_rs::{controller::Controller, Flag};
+//! use stem::{controller::Controller, Flag};
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 //! controller.authenticate(None).await?;
 //!
@@ -186,9 +186,9 @@
 //! Find the fastest relays for high-bandwidth circuits:
 //!
 //! ```rust,no_run
-//! use stem_rs::controller::Controller;
+//! use stem::controller::Controller;
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 //! controller.authenticate(None).await?;
 //!
@@ -206,9 +206,9 @@
 //! Select guard relays using Tor's bandwidth-weighted algorithm:
 //!
 //! ```rust,no_run
-//! use stem_rs::controller::Controller;
+//! use stem::controller::Controller;
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 //! controller.authenticate(None).await?;
 //!
@@ -225,22 +225,22 @@
 //! Use descriptor information to build circuits through specific relays:
 //!
 //! ```rust,no_run
-//! use stem_rs::{controller::{Controller, CircuitId}, Flag};
+//! use stem::{controller::{Controller, CircuitId}, Flag};
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 //! controller.authenticate(None).await?;
 //!
 //! let guard = controller.select_guard_relay().await?
-//!     .ok_or_else(|| stem_rs::Error::Protocol("No guards available".into()))?;
+//!     .ok_or_else(|| stem::Error::Protocol("No guards available".into()))?;
 //!
 //! let middle_relays = controller.find_fastest_relays(100).await?;
 //! let middle = middle_relays.get(0)
-//!     .ok_or_else(|| stem_rs::Error::Protocol("No middle relays".into()))?;
+//!     .ok_or_else(|| stem::Error::Protocol("No middle relays".into()))?;
 //!
 //! let exit_relays = controller.find_relays_by_flag(Flag::Exit).await?;
 //! let exit = exit_relays.get(0)
-//!     .ok_or_else(|| stem_rs::Error::Protocol("No exit relays".into()))?;
+//!     .ok_or_else(|| stem::Error::Protocol("No exit relays".into()))?;
 //!
 //! let path = vec![
 //!     guard.fingerprint.as_str(),
@@ -261,10 +261,10 @@
 //! Find exit relays that allow specific destinations:
 //!
 //! ```rust,no_run
-//! use stem_rs::{controller::Controller, Flag};
+//! use stem::{controller::Controller, Flag};
 //! use std::net::IpAddr;
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 //! controller.authenticate(None).await?;
 //!
@@ -288,9 +288,9 @@
 //! Get detailed information about specific relays:
 //!
 //! ```rust,no_run
-//! use stem_rs::controller::Controller;
+//! use stem::controller::Controller;
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 //! controller.authenticate(None).await?;
 //!
@@ -320,9 +320,9 @@
 //! Subscribe to descriptor events to track network changes:
 //!
 //! ```rust,no_run
-//! use stem_rs::{controller::Controller, EventType};
+//! use stem::{controller::Controller, EventType};
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 //! controller.authenticate(None).await?;
 //!
@@ -331,7 +331,7 @@
 //! loop {
 //!     let event = controller.recv_event().await?;
 //!     match event {
-//!         stem_rs::events::ParsedEvent::NewDesc(desc_event) => {
+//!         stem::events::ParsedEvent::NewDesc(desc_event) => {
 //!             println!("New descriptors: {} relays", desc_event.relays.len());
 //!             
 //!             for (fingerprint, _nickname) in &desc_event.relays {
@@ -412,7 +412,7 @@ pub use version::Version;
 use std::fmt;
 use thiserror::Error;
 
-/// Errors that can occur during stem-rs operations.
+/// Errors that can occur during stem operations.
 ///
 /// This enum represents all possible error conditions in the library.
 /// Each variant provides specific information about the failure.
@@ -444,7 +444,7 @@ use thiserror::Error;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::Error;
+/// use stem::Error;
 ///
 /// fn handle_error(err: Error) {
 ///     match err {
@@ -734,7 +734,7 @@ pub enum Error {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::AuthError;
+/// use stem::AuthError;
 ///
 /// fn handle_auth_error(err: AuthError) {
 ///     match err {
@@ -866,7 +866,7 @@ pub enum AuthError {
     ///
     /// # Recovery
     ///
-    /// Update stem-rs to a newer version that supports these methods.
+    /// Update stem to a newer version that supports these methods.
     #[error("unrecognized auth methods: {0:?}")]
     UnrecognizedMethods(Vec<String>),
 
@@ -895,7 +895,7 @@ pub enum AuthError {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::Runlevel;
+/// use stem::Runlevel;
 ///
 /// let level = Runlevel::Notice;
 /// println!("Log level: {}", level); // Prints "NOTICE"
@@ -953,9 +953,9 @@ impl fmt::Display for Runlevel {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::{controller::Controller, Signal};
+/// use stem::{controller::Controller, Signal};
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// # let mut controller = Controller::from_port("127.0.0.1:9051".parse().unwrap()).await?;
 /// // Request new circuits for privacy
 /// controller.signal(Signal::Newnym).await?;
@@ -1073,7 +1073,7 @@ impl fmt::Display for Signal {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::Flag;
+/// use stem::Flag;
 ///
 /// let flag = Flag::Guard;
 /// println!("Relay flag: {}", flag); // Prints "Guard"
@@ -1187,7 +1187,7 @@ impl fmt::Display for Flag {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::CircStatus;
+/// use stem::CircStatus;
 ///
 /// let status = CircStatus::Built;
 /// println!("Circuit status: {}", status); // Prints "BUILT"
@@ -1241,7 +1241,7 @@ impl fmt::Display for CircStatus {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::CircBuildFlag;
+/// use stem::CircBuildFlag;
 ///
 /// let flag = CircBuildFlag::IsInternal;
 /// println!("Build flag: {}", flag); // Prints "IS_INTERNAL"
@@ -1284,7 +1284,7 @@ impl fmt::Display for CircBuildFlag {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::CircPurpose;
+/// use stem::CircPurpose;
 ///
 /// let purpose = CircPurpose::General;
 /// println!("Circuit purpose: {}", purpose); // Prints "GENERAL"
@@ -1362,7 +1362,7 @@ impl fmt::Display for CircPurpose {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::CircClosureReason;
+/// use stem::CircClosureReason;
 ///
 /// let reason = CircClosureReason::Timeout;
 /// println!("Closure reason: {}", reason); // Prints "TIMEOUT"
@@ -1464,7 +1464,7 @@ impl fmt::Display for CircClosureReason {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::CircEvent;
+/// use stem::CircEvent;
 ///
 /// let event = CircEvent::PurposeChanged;
 /// println!("Circuit event: {}", event); // Prints "PURPOSE_CHANGED"
@@ -1505,7 +1505,7 @@ impl fmt::Display for CircEvent {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::HiddenServiceState;
+/// use stem::HiddenServiceState;
 ///
 /// let state = HiddenServiceState::HscrJoined;
 /// println!("HS state: {}", state); // Prints "HSCR_JOINED"
@@ -1561,7 +1561,7 @@ impl fmt::Display for HiddenServiceState {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::StreamStatus;
+/// use stem::StreamStatus;
 ///
 /// let status = StreamStatus::Succeeded;
 /// println!("Stream status: {}", status); // Prints "SUCCEEDED"
@@ -1614,7 +1614,7 @@ impl fmt::Display for StreamStatus {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::StreamClosureReason;
+/// use stem::StreamClosureReason;
 ///
 /// let reason = StreamClosureReason::Done;
 /// println!("Closure reason: {}", reason); // Prints "DONE"
@@ -1683,7 +1683,7 @@ impl fmt::Display for StreamClosureReason {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::StreamSource;
+/// use stem::StreamSource;
 ///
 /// let source = StreamSource::Cache;
 /// println!("Stream source: {}", source); // Prints "CACHE"
@@ -1712,7 +1712,7 @@ impl fmt::Display for StreamSource {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::StreamPurpose;
+/// use stem::StreamPurpose;
 ///
 /// let purpose = StreamPurpose::User;
 /// println!("Stream purpose: {}", purpose); // Prints "USER"
@@ -1750,7 +1750,7 @@ impl fmt::Display for StreamPurpose {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::OrStatus;
+/// use stem::OrStatus;
 ///
 /// let status = OrStatus::Connected;
 /// println!("OR status: {}", status); // Prints "CONNECTED"
@@ -1786,7 +1786,7 @@ impl fmt::Display for OrStatus {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::OrClosureReason;
+/// use stem::OrClosureReason;
 ///
 /// let reason = OrClosureReason::Done;
 /// println!("OR closure reason: {}", reason); // Prints "DONE"
@@ -1837,7 +1837,7 @@ impl fmt::Display for OrClosureReason {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::GuardType;
+/// use stem::GuardType;
 ///
 /// let guard_type = GuardType::Entry;
 /// println!("Guard type: {}", guard_type); // Prints "ENTRY"
@@ -1861,7 +1861,7 @@ impl fmt::Display for GuardType {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::GuardStatus;
+/// use stem::GuardStatus;
 ///
 /// let status = GuardStatus::Up;
 /// println!("Guard status: {}", status); // Prints "UP"
@@ -1900,7 +1900,7 @@ impl fmt::Display for GuardStatus {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::TimeoutSetType;
+/// use stem::TimeoutSetType;
 ///
 /// let timeout_type = TimeoutSetType::Computed;
 /// println!("Timeout type: {}", timeout_type); // Prints "COMPUTED"
@@ -1936,7 +1936,7 @@ impl fmt::Display for TimeoutSetType {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::HsDescAction;
+/// use stem::HsDescAction;
 ///
 /// let action = HsDescAction::Received;
 /// println!("HS_DESC action: {}", action); // Prints "RECEIVED"
@@ -1978,7 +1978,7 @@ impl fmt::Display for HsDescAction {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::HsDescReason;
+/// use stem::HsDescReason;
 ///
 /// let reason = HsDescReason::NotFound;
 /// println!("HS_DESC reason: {}", reason); // Prints "NOT_FOUND"
@@ -2020,7 +2020,7 @@ impl fmt::Display for HsDescReason {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::HsAuth;
+/// use stem::HsAuth;
 ///
 /// let auth = HsAuth::NoAuth;
 /// println!("HS auth: {}", auth); // Prints "NO_AUTH"
@@ -2055,7 +2055,7 @@ impl fmt::Display for HsAuth {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::EventType;
+/// use stem::EventType;
 ///
 /// let event = EventType::Circ;
 /// println!("Event type: {}", event); // Prints "CIRC"
@@ -2172,7 +2172,7 @@ impl fmt::Display for EventType {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::StatusType;
+/// use stem::StatusType;
 ///
 /// let status = StatusType::General;
 /// println!("Status type: {}", status); // Prints "GENERAL"
@@ -2202,7 +2202,7 @@ impl fmt::Display for StatusType {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::ConnectionType;
+/// use stem::ConnectionType;
 ///
 /// let conn_type = ConnectionType::Or;
 /// println!("Connection type: {}", conn_type); // Prints "OR"
@@ -2234,7 +2234,7 @@ impl fmt::Display for ConnectionType {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::TokenBucket;
+/// use stem::TokenBucket;
 ///
 /// let bucket = TokenBucket::Global;
 /// println!("Token bucket: {}", bucket); // Prints "GLOBAL"
@@ -2264,7 +2264,7 @@ impl fmt::Display for TokenBucket {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::AuthDescriptorAction;
+/// use stem::AuthDescriptorAction;
 ///
 /// let action = AuthDescriptorAction::Accepted;
 /// println!("Auth action: {}", action); // Prints "ACCEPTED"
@@ -2296,7 +2296,7 @@ impl fmt::Display for AuthDescriptorAction {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::BridgeDistribution;
+/// use stem::BridgeDistribution;
 ///
 /// let dist = BridgeDistribution::Https;
 /// println!("Distribution: {}", dist); // Prints "https"

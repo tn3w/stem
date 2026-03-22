@@ -34,7 +34,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::client::datatype::{Size, Address, AddrType};
+//! use stem::client::datatype::{Size, Address, AddrType};
 //!
 //! // Pack and unpack integers
 //! let packed = Size::Short.pack(9001);
@@ -97,7 +97,7 @@ pub const KEY_LEN: usize = 16;
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::datatype::split;
+/// use stem::client::datatype::split;
 ///
 /// let data = b"hello";
 /// let (left, right) = split(data, 2);
@@ -132,7 +132,7 @@ pub fn split(content: &[u8], size: usize) -> (&[u8], &[u8]) {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::datatype::Size;
+/// use stem::client::datatype::Size;
 ///
 /// // Pack a 16-bit port number
 /// let port: u64 = 9001;
@@ -167,7 +167,7 @@ impl Size {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::client::datatype::Size;
+    /// use stem::client::datatype::Size;
     ///
     /// assert_eq!(Size::Char.size(), 1);
     /// assert_eq!(Size::Short.size(), 2);
@@ -196,7 +196,7 @@ impl Size {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::client::datatype::Size;
+    /// use stem::client::datatype::Size;
     ///
     /// assert_eq!(Size::Char.pack(0x12), vec![0x12]);
     /// assert_eq!(Size::Short.pack(0x1234), vec![0x12, 0x34]);
@@ -224,7 +224,7 @@ impl Size {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::client::datatype::Size;
+    /// use stem::client::datatype::Size;
     ///
     /// assert_eq!(Size::Char.unpack(&[0x12]).unwrap(), 0x12);
     /// assert_eq!(Size::Short.unpack(&[0x12, 0x34]).unwrap(), 0x1234);
@@ -270,7 +270,7 @@ impl Size {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::client::datatype::Size;
+    /// use stem::client::datatype::Size;
     ///
     /// let data = vec![0x00, 0x12, 0xFF, 0xFF];
     /// let (value, rest) = Size::Short.pop(&data).unwrap();
@@ -309,7 +309,7 @@ impl Size {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::datatype::{LinkProtocol, Size};
+/// use stem::client::datatype::{LinkProtocol, Size};
 ///
 /// // Version 3 uses 2-byte circuit IDs
 /// let v3 = LinkProtocol::new(3);
@@ -327,7 +327,7 @@ impl Size {
 /// `LinkProtocol` can be compared directly with `u32` version numbers:
 ///
 /// ```rust
-/// use stem_rs::client::datatype::LinkProtocol;
+/// use stem::client::datatype::LinkProtocol;
 ///
 /// let protocol = LinkProtocol::new(5);
 /// assert!(protocol == 5);
@@ -361,7 +361,7 @@ impl LinkProtocol {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::client::datatype::LinkProtocol;
+    /// use stem::client::datatype::LinkProtocol;
     ///
     /// let protocol = LinkProtocol::new(5);
     /// assert_eq!(protocol.version, 5);
@@ -415,7 +415,7 @@ impl PartialEq<u32> for LinkProtocol {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::datatype::AddrType;
+/// use stem::client::datatype::AddrType;
 ///
 /// let (addr_type, raw_value) = AddrType::get(4);
 /// assert_eq!(addr_type, AddrType::IPv4);
@@ -457,7 +457,7 @@ impl AddrType {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::client::datatype::AddrType;
+    /// use stem::client::datatype::AddrType;
     ///
     /// assert_eq!(AddrType::get(4), (AddrType::IPv4, 4));
     /// assert_eq!(AddrType::get(6), (AddrType::IPv6, 6));
@@ -506,7 +506,7 @@ impl AddrType {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::datatype::{Address, AddrType};
+/// use stem::client::datatype::{Address, AddrType};
 ///
 /// // Create from string
 /// let addr = Address::new("127.0.0.1").unwrap();
@@ -524,7 +524,7 @@ impl AddrType {
 /// IPv6 addresses are normalized to their fully expanded form:
 ///
 /// ```rust
-/// use stem_rs::client::datatype::Address;
+/// use stem::client::datatype::Address;
 ///
 /// let addr = Address::new("::1").unwrap();
 /// assert_eq!(addr.value, Some("0000:0000:0000:0000:0000:0000:0000:0001".to_string()));
@@ -559,7 +559,7 @@ impl Address {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::client::datatype::{Address, AddrType};
+    /// use stem::client::datatype::{Address, AddrType};
     ///
     /// let ipv4 = Address::new("192.168.1.1").unwrap();
     /// assert_eq!(ipv4.addr_type, AddrType::IPv4);
@@ -623,7 +623,7 @@ impl Address {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::client::datatype::{Address, AddrType};
+    /// use stem::client::datatype::{Address, AddrType};
     ///
     /// let addr = Address::with_type(&[127, 0, 0, 1], 4).unwrap();
     /// assert_eq!(addr.value, Some("127.0.0.1".to_string()));
@@ -683,7 +683,7 @@ impl Address {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::client::datatype::Address;
+    /// use stem::client::datatype::Address;
     ///
     /// let addr = Address::new("127.0.0.1").unwrap();
     /// let packed = addr.pack();
@@ -795,7 +795,7 @@ fn unpack_ipv6_address(value: &[u8]) -> String {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::datatype::CertType;
+/// use stem::client::datatype::CertType;
 ///
 /// let (cert_type, raw) = CertType::get(4);
 /// assert_eq!(cert_type, CertType::Ed25519Signing);
@@ -917,7 +917,7 @@ impl fmt::Display for CertType {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::datatype::{Certificate, CertType};
+/// use stem::client::datatype::{Certificate, CertType};
 ///
 /// // Create a certificate
 /// let cert = Certificate::new(CertType::Link, vec![0x01, 0x02, 0x03]);
@@ -1056,7 +1056,7 @@ impl Certificate {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::datatype::RelayCommand;
+/// use stem::client::datatype::RelayCommand;
 ///
 /// let (cmd, raw) = RelayCommand::get(1);
 /// assert_eq!(cmd, RelayCommand::Begin);
@@ -1206,7 +1206,7 @@ impl fmt::Display for RelayCommand {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::datatype::CloseReason;
+/// use stem::client::datatype::CloseReason;
 ///
 /// let (reason, raw) = CloseReason::get(3);
 /// assert_eq!(reason, CloseReason::Requested);
@@ -1349,7 +1349,7 @@ impl fmt::Display for CloseReason {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::datatype::LinkSpecifier;
+/// use stem::client::datatype::LinkSpecifier;
 ///
 /// // Create an IPv4 link specifier
 /// let spec = LinkSpecifier::IPv4 {
@@ -1614,7 +1614,7 @@ fn pack_ipv6_address(address: &str) -> Vec<u8> {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::client::datatype::KDF;
+/// use stem::client::datatype::KDF;
 ///
 /// // Derive keys from shared secret (e.g., from CREATE_FAST handshake)
 /// let key_material = b"shared_secret_from_handshake____";
@@ -1685,7 +1685,7 @@ impl KDF {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::client::datatype::KDF;
+    /// use stem::client::datatype::KDF;
     ///
     /// let shared_secret = b"example_shared_secret___________";
     /// let kdf = KDF::from_value(shared_secret);

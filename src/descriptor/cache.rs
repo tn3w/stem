@@ -23,7 +23,7 @@
 //! # Example
 //!
 //! ```rust
-//! use stem_rs::descriptor::cache::DescriptorCache;
+//! use stem::descriptor::cache::DescriptorCache;
 //! use std::time::Duration;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
@@ -96,7 +96,7 @@ impl<T> CacheEntry<T> {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::descriptor::cache::DescriptorCache;
+/// use stem::descriptor::cache::DescriptorCache;
 /// use std::time::Duration;
 ///
 /// let cache = DescriptorCache::new()

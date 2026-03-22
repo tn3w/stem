@@ -7,7 +7,7 @@
 //!
 //! # Overview
 //!
-//! The Controller is the main entry point for most stem-rs users. It handles:
+//! The Controller is the main entry point for most stem users. It handles:
 //!
 //! - **Connection Management**: Connect via TCP port or Unix domain socket
 //! - **Authentication**: Automatic method detection and credential handling
@@ -50,9 +50,9 @@
 //! ```rust,no_run
 //! use std::sync::Arc;
 //! use tokio::sync::Mutex;
-//! use stem_rs::controller::Controller;
+//! use stem::controller::Controller;
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! let controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 //! let shared = Arc::new(Mutex::new(controller));
 //!
@@ -71,10 +71,10 @@
 //! Basic usage pattern:
 //!
 //! ```rust,no_run
-//! use stem_rs::controller::Controller;
-//! use stem_rs::Signal;
+//! use stem::controller::Controller;
+//! use stem::Signal;
 //!
-//! # async fn example() -> Result<(), stem_rs::Error> {
+//! # async fn example() -> Result<(), stem::Error> {
 //! // Connect to Tor's control port
 //! let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 //!
@@ -131,7 +131,7 @@ use crate::{CircStatus, Error, EventType, Signal, StreamStatus};
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::controller::ListenerType;
+/// use stem::controller::ListenerType;
 ///
 /// let listener = ListenerType::Socks;
 /// assert_eq!(listener.to_string(), "socks");
@@ -182,7 +182,7 @@ impl std::fmt::Display for ListenerType {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::controller::CircuitPurpose;
+/// use stem::controller::CircuitPurpose;
 ///
 /// let purpose = CircuitPurpose::General;
 /// assert_eq!(purpose.to_string(), "general");
@@ -212,9 +212,9 @@ impl std::fmt::Display for CircuitPurpose {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::controller::Controller;
+/// use stem::controller::Controller;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 /// let info = controller.get_protocolinfo().await?;
 /// println!("Tor version: {}", info.tor_version);
@@ -242,9 +242,9 @@ pub struct ProtocolInfo {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::controller::Controller;
+/// use stem::controller::Controller;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 /// controller.authenticate(None).await?;
 /// let stats = controller.get_accounting_stats().await?;
@@ -292,7 +292,7 @@ pub struct AccountingStats {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::controller::CircuitId;
+/// use stem::controller::CircuitId;
 ///
 /// let id = CircuitId::new("42");
 /// assert_eq!(id.to_string(), "42");
@@ -320,7 +320,7 @@ impl CircuitId {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::controller::CircuitId;
+    /// use stem::controller::CircuitId;
     ///
     /// let id = CircuitId::new("123");
     /// let id_from_string = CircuitId::new(String::from("123"));
@@ -352,7 +352,7 @@ impl std::fmt::Display for CircuitId {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::controller::StreamId;
+/// use stem::controller::StreamId;
 ///
 /// let id = StreamId::new("99");
 /// assert_eq!(id.to_string(), "99");
@@ -380,7 +380,7 @@ impl StreamId {
     /// # Example
     ///
     /// ```rust
-    /// use stem_rs::controller::StreamId;
+    /// use stem::controller::StreamId;
     ///
     /// let id = StreamId::new("456");
     /// let id_from_string = StreamId::new(String::from("456"));
@@ -412,7 +412,7 @@ impl std::fmt::Display for StreamId {
 /// # Example
 ///
 /// ```rust
-/// use stem_rs::controller::RelayInfo;
+/// use stem::controller::RelayInfo;
 ///
 /// let relay = RelayInfo {
 ///     fingerprint: "9695DFC35FFEB861329B9F1AB04C46397020CE31".to_string(),
@@ -467,10 +467,10 @@ pub struct RelayInfo {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::controller::Controller;
-/// use stem_rs::CircStatus;
+/// use stem::controller::Controller;
+/// use stem::CircStatus;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 /// controller.authenticate(None).await?;
 ///
@@ -536,10 +536,10 @@ pub struct Circuit {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::controller::Controller;
-/// use stem_rs::StreamStatus;
+/// use stem::controller::Controller;
+/// use stem::StreamStatus;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 /// controller.authenticate(None).await?;
 ///
@@ -599,7 +599,7 @@ pub struct Stream {
 ///
 /// # Conceptual Role
 ///
-/// The Controller is the main entry point for most stem-rs users. It handles:
+/// The Controller is the main entry point for most stem users. It handles:
 ///
 /// - Protocol message formatting and parsing
 /// - Response validation and error handling
@@ -626,9 +626,9 @@ pub struct Stream {
 /// ```rust,no_run
 /// use std::sync::Arc;
 /// use tokio::sync::Mutex;
-/// use stem_rs::controller::Controller;
+/// use stem::controller::Controller;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// let controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 /// let shared = Arc::new(Mutex::new(controller));
 ///
@@ -645,10 +645,10 @@ pub struct Stream {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::controller::Controller;
-/// use stem_rs::Signal;
+/// use stem::controller::Controller;
+/// use stem::Signal;
 ///
-/// # async fn example() -> Result<(), stem_rs::Error> {
+/// # async fn example() -> Result<(), stem::Error> {
 /// // Connect and authenticate
 /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
 /// controller.authenticate(Some("my_password")).await?;
@@ -705,9 +705,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// // Connect to default control port
     /// let controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     ///
@@ -752,9 +752,9 @@ impl Controller {
     ///
     /// ```rust,no_run
     /// use std::path::Path;
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// // Connect to Tor's Unix control socket
     /// let controller = Controller::from_socket_file(
     ///     Path::new("/var/run/tor/control")
@@ -794,9 +794,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -825,11 +825,11 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
-    /// use stem_rs::descriptor::DescriptorCache;
+    /// use stem::controller::Controller;
+    /// use stem::descriptor::DescriptorCache;
     /// use std::time::Duration;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -868,9 +868,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     /// controller.enable_descriptor_cache();
@@ -959,9 +959,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     ///
     /// // Auto-detect authentication method
@@ -1018,9 +1018,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1080,9 +1080,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1117,9 +1117,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1154,9 +1154,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1235,9 +1235,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1296,9 +1296,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1346,9 +1346,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1422,10 +1422,10 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
-    /// use stem_rs::Signal;
+    /// use stem::controller::Controller;
+    /// use stem::Signal;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1478,10 +1478,10 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
-    /// use stem_rs::CircStatus;
+    /// use stem::controller::Controller;
+    /// use stem::CircStatus;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1533,9 +1533,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1607,9 +1607,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1659,9 +1659,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1705,10 +1705,10 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
-    /// use stem_rs::StreamStatus;
+    /// use stem::controller::Controller;
+    /// use stem::StreamStatus;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1759,9 +1759,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::{Controller, CircuitId, StreamId};
+    /// use stem::controller::{Controller, CircuitId, StreamId};
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1826,9 +1826,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::{Controller, StreamId};
+    /// use stem::controller::{Controller, StreamId};
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1890,9 +1890,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1962,10 +1962,10 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
-    /// use stem_rs::EventType;
+    /// use stem::controller::Controller;
+    /// use stem::EventType;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -1986,8 +1986,8 @@ impl Controller {
     /// To stop receiving events, call with an empty slice:
     ///
     /// ```rust,no_run
-    /// # use stem_rs::controller::Controller;
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # use stem::controller::Controller;
+    /// # async fn example() -> Result<(), stem::Error> {
     /// # let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.set_events(&[]).await?; // Clear all subscriptions
     /// # Ok(())
@@ -2041,11 +2041,11 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
-    /// use stem_rs::EventType;
-    /// use stem_rs::events::ParsedEvent;
+    /// use stem::controller::Controller;
+    /// use stem::EventType;
+    /// use stem::events::ParsedEvent;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2119,9 +2119,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2172,9 +2172,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2240,9 +2240,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2297,9 +2297,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2354,9 +2354,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2412,9 +2412,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::{Controller, CircuitId, CircuitPurpose};
+    /// use stem::controller::{Controller, CircuitId, CircuitPurpose};
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2461,9 +2461,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2508,9 +2508,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::{Controller, ListenerType};
+    /// use stem::controller::{Controller, ListenerType};
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2548,9 +2548,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::{Controller, ListenerType};
+    /// use stem::controller::{Controller, ListenerType};
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2581,9 +2581,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2609,9 +2609,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2647,9 +2647,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2683,9 +2683,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     ///
     /// let info = controller.get_protocolinfo().await?;
@@ -2723,9 +2723,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2805,9 +2805,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2866,9 +2866,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2930,9 +2930,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -2989,9 +2989,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -3053,10 +3053,10 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
-    /// use stem_rs::Flag;
+    /// use stem::controller::Controller;
+    /// use stem::Flag;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -3102,9 +3102,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///
@@ -3153,9 +3153,9 @@ impl Controller {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::controller::Controller;
+    /// use stem::controller::Controller;
     ///
-    /// # async fn example() -> Result<(), stem_rs::Error> {
+    /// # async fn example() -> Result<(), stem::Error> {
     /// let mut controller = Controller::from_port("127.0.0.1:9051".parse()?).await?;
     /// controller.authenticate(None).await?;
     ///

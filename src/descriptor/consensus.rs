@@ -59,7 +59,7 @@
 //! # Example
 //!
 //! ```rust,no_run
-//! use stem_rs::descriptor::{NetworkStatusDocument, Descriptor};
+//! use stem::descriptor::{NetworkStatusDocument, Descriptor};
 //!
 //! let content = std::fs::read_to_string("cached-consensus").unwrap();
 //! let consensus = NetworkStatusDocument::parse(&content).unwrap();
@@ -178,7 +178,7 @@ pub struct DocumentSignature {
 /// # Example
 ///
 /// ```rust,no_run
-/// use stem_rs::descriptor::{NetworkStatusDocument, Descriptor};
+/// use stem::descriptor::{NetworkStatusDocument, Descriptor};
 ///
 /// let content = std::fs::read_to_string("cached-consensus").unwrap();
 /// let doc = NetworkStatusDocument::parse(&content).unwrap();
@@ -302,7 +302,7 @@ impl NetworkStatusDocument {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use stem_rs::descriptor::{NetworkStatusDocument, Descriptor};
+    /// use stem::descriptor::{NetworkStatusDocument, Descriptor};
     ///
     /// let content = std::fs::read_to_string("consensus").unwrap();
     /// let consensus = NetworkStatusDocument::parse(&content).unwrap();
