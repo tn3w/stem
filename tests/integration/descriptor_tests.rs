@@ -564,8 +564,7 @@ reject *:*"#;
 #[tokio::test]
 async fn test_descriptor_digest_computation() {
     let content = b"test content for digest";
-    let digest =
-        stem::descriptor::compute_digest(content, DigestHash::Sha256, DigestEncoding::Hex);
+    let digest = stem::descriptor::compute_digest(content, DigestHash::Sha256, DigestEncoding::Hex);
 
     assert!(!digest.is_empty(), "Digest should not be empty");
     assert_eq!(
