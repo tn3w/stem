@@ -112,3 +112,30 @@ fn parses_ipv6_and_udp_entries() {
     assert!(connections[0].is_ipv6);
     assert_eq!(connections[0].remote_port, 9999);
 }
+
+#[test]
+fn matches_names_netstat_truncated() {
+    let output = lines(&[
+        "tcp 0 0 10.0.0.1:44284 10.0.0.2:443 ESTABLISHED 6918/process_inspec",
+        "tcp 0 0 10.0.0.1:44284 10.0.0.2:443 ESTABLISHED 6918/other_process",
+    ]);
+    let connections = parse_connections(
+        Resolver::Netstat,
+        &output,
+        Some(6918),
+        Some("process_inspect"),
+    )
+    .unwrap();
+    assert_eq!(connections, [expected()]);
+}
+
+#[test]
+fn matches_sockets_ss_lists_with_several_owners() {
+    let output = lines(&[concat!(
+        "tcp ESTAB 0 0 10.0.0.1:44284 10.0.0.2:443 ",
+        r#"users:(("bash",pid=900,fd=5),("tor",pid=15843,fd=8)) "#
+    )]);
+    let connections =
+        parse_connections(Resolver::Ss, &output, Some(15843), Some("tor")).unwrap();
+    assert_eq!(connections, [expected()]);
+}

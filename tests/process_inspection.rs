@@ -2,6 +2,7 @@
 
 use std::io::Write;
 use std::net::{TcpListener, TcpStream};
+use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
 use std::process::{Child, Command, Stdio};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
@@ -29,23 +30,24 @@ impl Drop for NamedProcess {
 
 fn spawn_named(name: &str) -> NamedProcess {
     let directory = tempfile::tempdir().unwrap();
-    let binary = directory.path().join(name);
-    std::os::unix::fs::symlink(which("sleep"), &binary).unwrap();
-    let child = Command::new(&binary)
-        .arg("60")
+    let script = directory.path().join(name);
+    std::fs::write(&script, "#!/bin/sh\nread line\n").unwrap();
+    std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
+    let mut command = Command::new(&script);
+    command
         .current_dir(directory.path())
-        .stdout(Stdio::null())
-        .spawn()
-        .unwrap();
+        .stdin(Stdio::piped())
+        .stdout(Stdio::null());
+    let child = loop {
+        match command.spawn() {
+            Err(error) if error.kind() == std::io::ErrorKind::ExecutableFileBusy => {
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            result => break result.unwrap(),
+        }
+    };
     std::thread::sleep(Duration::from_millis(100));
     NamedProcess { child, directory }
-}
-
-fn which(command: &str) -> std::path::PathBuf {
-    std::env::split_paths(&std::env::var_os("PATH").unwrap())
-        .map(|directory| directory.join(command))
-        .find(|candidate| candidate.is_file())
-        .unwrap()
 }
 
 #[test]

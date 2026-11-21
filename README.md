@@ -2,7 +2,7 @@
 
 Rust port of [Stem](https://stem.torproject.org/), the Python library for Tor. Async (tokio), strict parsing, no panics on untrusted input.
 
-Targets tor 0.4.9 (Tor Expert Bundle 15.0.24) and python stem `7d420c20`.
+Targets tor 0.4.9 (Tor Expert Bundle 16.0.1) and python stem `7d420c20`.
 
 ## Install
 
@@ -118,7 +118,7 @@ STEM_PYTHON_PATH=/path/to/python-stem cargo test --release \
 
 - `tests/golden/*.py` regenerate the JSON in `tests/golden` from python stem; `descriptor_golden`, `descriptor_mutations`, `helpers_golden`, `events_golden` and `directories_golden` compare against it (descriptors, 5300 mutated inputs, events, helpers, exit policies, directories).
 - Live differential tests compare 1500 server and extra-info descriptors, microdescriptors and a full consensus with python stem, and check that python accepts what this crate generates.
-- Integration tests run tor 0.4.9.12 and 0.4.9.13: authentication methods, configuration, events, hidden services (including client authorization), process launch, circuits, stream attach, directory downloads over DirPort and ORPort, signature validation, CollecTor.
+- Integration tests run tor 0.4.9.12 and 0.4.9.16: authentication methods, configuration, events, hidden services (including client authorization), process launch, circuits, stream attach, directory downloads over DirPort and ORPort, signature validation, CollecTor.
 - `relay_authentication` connects to a local relay and checks the authenticated RSA and Ed25519 identity against tor's own files; `remote_sources` serves authorities, fallbacks and a markdown manual from a local HTTP server (the pandoc test skips without pandoc, CI installs it); `resolver_output` parses sample output of every connection resolver (netstat, ss, lsof, sockstat, procstat, fstat, Windows netstat) on any platform.
 - `robustness` fuzzes every parser (`STEM_FUZZ_ROUNDS` raises the rounds); `injection` and `logging` cover command smuggling and secret redaction.
 

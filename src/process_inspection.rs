@@ -15,6 +15,7 @@ use crate::formatting::parse_short_time_label;
 const CLOCK_TICKS: f64 = 100.0;
 const TAIL_BLOCK_SIZE: u64 = 1024;
 const COMMON_NAME_LENGTH: usize = 15;
+const NETSTAT_NAME_LENGTH: usize = 11;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Protocol {
@@ -73,7 +74,7 @@ impl Resolver {
         match self {
             Resolver::Proc => "",
             Resolver::Netstat => {
-                r"^{protocol}\s+.*\s+{local}\s+{remote}\s+ESTABLISHED\s+{pid}/{name}\s*$"
+                r"^{protocol}\s+.*\s+{local}\s+{remote}\s+ESTABLISHED\s+{pid}/{name}\S*\s*$"
             }
             Resolver::NetstatWindows => {
                 r"^\s*{protocol}\s+{local}\s+{remote}\s+ESTABLISHED\s+{pid}\s*$"
@@ -81,7 +82,7 @@ impl Resolver {
             Resolver::Ss => {
                 concat!(
                     r#"^{protocol}\s+ESTAB\s+.*\s+{local}\s+{remote}\s+"#,
-                    r#"users:\(\("{name}",(?:pid=)?{pid},(?:fd=)?[0-9]+\)\)$"#
+                    r#"users:\(.*\("{name}",(?:pid=)?{pid},(?:fd=)?[0-9]+\).*\)\s*$"#
                 )
             }
             Resolver::Lsof => {
@@ -1042,6 +1043,13 @@ fn parse_resolver_address(entry: &str) -> Option<(IpAddr, u16)> {
     ))
 }
 
+fn displayed_name(resolver: Resolver, name: &str) -> String {
+    match resolver {
+        Resolver::Netstat => name.chars().take(NETSTAT_NAME_LENGTH).collect(),
+        _ => name.to_string(),
+    }
+}
+
 pub fn parse_connections(
     resolver: Resolver,
     lines: &[String],
@@ -1060,7 +1068,9 @@ pub fn parse_connections(
         )
         .replace(
             "{name}",
-            &process_name.map_or(r"\S*".to_string(), regex::escape),
+            &process_name.map_or(r"\S*".to_string(), |name| {
+                regex::escape(&displayed_name(resolver, name))
+            }),
         );
     let matcher = Regex::new(&pattern)
         .map_err(|error| Error::parse(format!("invalid resolver pattern: {error}")))?;
