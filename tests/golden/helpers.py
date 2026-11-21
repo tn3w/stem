@@ -200,7 +200,7 @@ CONFIG_POLICIES = [
     ("accept *:80, reject *:*", None), ("reject *:25", None), ("accept *:80,accept *:443,reject *:*", "1.2.3.4"),
     ("reject private:*, accept *:*", "10.0.0.5"), ("accept *:*", None), ("reject *:*", "bad"),
     ("accept 1.2.3.4:80", None), ("", None), ("accept6 *:*", None), ("accept *:80-", None),
-    ("reject private:25", None), ("accept *:80, , reject *:*", None), ("accept *:80,reject *:*,", None),
+    ("reject private:25", "198.51.100.7"), ("accept *:80, , reject *:*", None), ("accept *:80,reject *:*,", None),
     ("accept *:*,reject *:*", "1.2.3.4"),
 ]
 
