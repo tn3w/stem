@@ -63,19 +63,26 @@ async fn reads_consensus_and_descriptor_information() {
     controller.close().await;
 }
 
+async fn build_circuit(controller: &Controller) -> String {
+    let mut last_error = None;
+    for _ in 0..3 {
+        let timeout = Some(Duration::from_secs(60));
+        match controller
+            .new_circuit(None, Some(&CircPurpose::General), true, timeout)
+            .await
+        {
+            Ok(circuit_id) => return circuit_id,
+            Err(error) => last_error = Some(error),
+        }
+    }
+    panic!("no circuit built in three attempts: {last_error:?}");
+}
+
 #[tokio::test]
 async fn builds_circuits_and_closes_them() {
     let controller = online_controller().await;
 
-    let circuit_id = controller
-        .new_circuit(
-            None,
-            Some(&CircPurpose::General),
-            true,
-            Some(Duration::from_secs(60)),
-        )
-        .await
-        .unwrap();
+    let circuit_id = build_circuit(&controller).await;
     let circuit = controller.get_circuit(&circuit_id).await.unwrap();
     assert_eq!(circuit.id, circuit_id);
     assert!(circuit.path.len() >= 3);
