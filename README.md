@@ -122,4 +122,8 @@ STEM_PYTHON_PATH=/path/to/python-stem cargo test --release \
 - `relay_authentication` connects to a local relay and checks the authenticated RSA and Ed25519 identity against tor's own files; `remote_sources` serves authorities, fallbacks and a markdown manual from a local HTTP server (the pandoc test skips without pandoc, CI installs it); `resolver_output` parses sample output of every connection resolver (netstat, ss, lsof, sockstat, procstat, fstat, Windows netstat) on any platform.
 - `robustness` fuzzes every parser (`STEM_FUZZ_ROUNDS` raises the rounds); `injection` and `logging` cover command smuggling and secret redaction.
 
-`tests/data` is copied from python stem (Damian Johnson and The Tor Project, LGPL-3.0, license text in `tests/data/LICENSE-LGPL-3.0`, see `tests/data/NOTICE`); the crate itself is Apache-2.0. The crate is a port of python stem, so whether Apache-2.0 is appropriate for the code is the maintainer's decision.
+`tests/data` is copied from python stem, see `tests/data/NOTICE`.
+
+## License
+
+stem is a port of [python stem](https://stem.torproject.org) (Copyright Damian Johnson and The Tor Project) and, like it, is licensed under the GNU Lesser General Public License v3.0 ([LICENSE](LICENSE)), which supplements the GNU General Public License v3.0 ([COPYING](COPYING)).
