@@ -8,21 +8,26 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  TOR_VERSION: "14.0.4"
   RUST_BACKTRACE: 1
+  TOR_BUNDLE_VERSION: "15.0.24"
+  TOR_BUNDLE_SHA256: "8e012ec6815d7899cb64011582e2dade88e74119c6661068a2a3252de0ccd7f2"
+  PYTHON_STEM_COMMIT: "7d420c20"
 
 jobs:
   unit-tests:
-    name: Unit Tests
+    name: Lint and Unit Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy, rustfmt
-      
+
+      - name: Install man, lsof and pandoc
+        run: sudo apt-get update && sudo apt-get install -y man-db lsof pandoc
+
       - name: Cache cargo registry
         uses: actions/cache@v4
         with:
@@ -33,18 +38,15 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-
-      
+
       - name: Check formatting
         run: cargo fmt --all -- --check
-      
+
       - name: Run clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
-      
-      - name: Run unit tests
-        run: cargo test --lib --verbose
-      
-      - name: Run doc tests
-        run: cargo test --doc --verbose
+
+      - name: Run tests
+        run: cargo test --verbose
 
   integration-tests:
     name: Integration Tests
@@ -52,13 +54,13 @@ jobs:
     needs: unit-tests
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y libevent-2.1-7
-      
+        run: sudo apt-get update && sudo apt-get install -y libevent-2.1-7 lsof
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
-      
+
       - name: Cache cargo registry
         uses: actions/cache@v4
         with:
@@ -69,79 +71,66 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-
-      
-      - name: Download and extract Tor Expert Bundle
+
+      - name: Download and verify the Tor Expert Bundle
         run: |
           mkdir -p tor-bundle
           cd tor-bundle
           curl -fsSL -o tor-expert-bundle.tar.gz \
-            "https://archive.torproject.org/tor-package-archive/torbrowser/${{ env.TOR_VERSION }}/tor-expert-bundle-linux-x86_64-${{ env.TOR_VERSION }}.tar.gz"
+            "https://dist.torproject.org/torbrowser/${TOR_BUNDLE_VERSION}/tor-expert-bundle-linux-x86_64-${TOR_BUNDLE_VERSION}.tar.gz"
+          echo "${TOR_BUNDLE_SHA256}  tor-expert-bundle.tar.gz" | sha256sum --check
           tar -xzf tor-expert-bundle.tar.gz
           chmod +x tor/tor
-          mkdir -p tor/data
-      
-      - name: Create Tor configuration
-        run: |
-          cat > tor-bundle/torrc << 'EOF'
-          ControlPort 9051
-          CookieAuthentication 1
-          CookieAuthFile ${{ github.workspace }}/tor-bundle/tor/control_auth_cookie
-          DataDirectory ${{ github.workspace }}/tor-bundle/tor/data
-          Log notice file ${{ github.workspace }}/tor-bundle/tor/tor.log
-          SocksPort 9050
-          DisableNetwork 0
-          EOF
-      
-      - name: Start Tor in background
-        run: |
-          ./tor-bundle/tor/tor -f tor-bundle/torrc &
-          echo $! > tor.pid
-          echo "Tor PID: $(cat tor.pid)"
-      
-      - name: Wait for Tor bootstrap
-        run: |
-          echo "Waiting for Tor to bootstrap..."
-          for i in {1..60}; do
-            if [ -f tor-bundle/tor/control_auth_cookie ]; then
-              echo "Cookie file found after ${i} seconds"
-              break
-            fi
-            sleep 1
-          done
-          
-          for i in {1..360}; do
-            if grep -q "Bootstrapped 100%" tor-bundle/tor/tor.log 2>/dev/null; then
-              echo "Tor bootstrapped successfully after ${i} seconds"
-              break
-            fi
-            if [ $i -eq 120 ]; then
-              echo "Tor bootstrap timeout"
-              cat tor-bundle/tor/tor.log || true
-              exit 1
-            fi
-            sleep 1
-          done
-      
+
       - name: Run integration tests
         env:
-          TOR_CONTROL_PORT: 9051
-          TOR_COOKIE_PATH: ${{ github.workspace }}/tor-bundle/tor/control_auth_cookie
-          TOR_SOCKS_PORT: 9050
-        run: cargo test --features integration --verbose -- --test-threads=1
-      
-      - name: Stop Tor
-        if: always()
-        run: |
-          if [ -f tor.pid ]; then
-            kill $(cat tor.pid) 2>/dev/null || true
-            rm tor.pid
-          fi
-      
-      - name: Upload Tor logs on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
+          TOR_BINARY: ${{ github.workspace }}/tor-bundle/tor/tor
+          LD_LIBRARY_PATH: ${{ github.workspace }}/tor-bundle/tor
+        run: cargo test --features integration --verbose
+
+  python-differential:
+    name: Differential Tests Against Python Stem
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
         with:
-          name: tor-logs
           path: |
-            tor-bundle/tor/tor.log
-            tor-bundle/tor/data/
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Check out Python Stem
+        run: |
+          git clone https://gitlab.torproject.org/tpo/network-health/stem.git python-stem
+          git -C python-stem checkout "${PYTHON_STEM_COMMIT}"
+          pip install cryptography
+
+      - name: Verify the committed golden files are reproducible
+        env:
+          PYTHONPATH: ${{ github.workspace }}/python-stem
+        run: |
+          python3 tests/golden/generate.py > /tmp/descriptors.json
+          python3 tests/golden/directories.py > /tmp/directories.json
+          python3 tests/golden/helpers.py > /tmp/helpers.json
+          python3 tests/golden/mutations.py > /tmp/mutations.json
+          python3 tests/golden/events.py python-stem/test/unit/response/events.py > /tmp/events.json
+          cmp /tmp/descriptors.json tests/golden/descriptors.json
+          cmp /tmp/directories.json tests/golden/directories.json
+          cmp /tmp/helpers.json tests/golden/helpers.json
+          cmp /tmp/mutations.json tests/golden/mutations.json
+          cmp /tmp/events.json tests/golden/events.json
+
+      - name: Run live differential tests
+        env:
+          STEM_PYTHON_PATH: ${{ github.workspace }}/python-stem
+        run: cargo test --release --test descriptor_network --test descriptor_generated

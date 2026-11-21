@@ -1,579 +1,125 @@
-<h1 align="center">stem</h1>
+# stem
 
-<h3 align="center">A complete Rust library for Tor control protocol</h3>
-<p align="center">
-  Build privacy-focused applications with type-safe, async-first APIs
-</p>
+Rust port of [Stem](https://stem.torproject.org/), the Python library for Tor. Async (tokio), strict parsing, no panics on untrusted input.
 
-<p align="center">
-  <a href="https://crates.io/crates/stem">
-    <img src="https://img.shields.io/crates/v/stem?style=for-the-badge&logo=rust&logoColor=white&color=f74c00" alt="Crates.io">
-  </a>
-  <a href="https://stem.tn3w.dev/docs/">
-    <img src="https://img.shields.io/docsrs/stem?style=for-the-badge&logo=docs.rs&logoColor=white" alt="docs.rs">
-  </a>
-  <a href="https://github.com/tn3w/stem/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/license-Apache--2.0-blue?style=for-the-badge" alt="License">
-  </a>
-</p>
+Targets tor 0.4.9 (Tor Expert Bundle 15.0.24) and python stem `7d420c20`.
 
-<p align="center">
-  <a href="https://github.com/tn3w/stem/actions">
-    <img src="https://img.shields.io/github/actions/workflow/status/tn3w/stem/tests.yml?style=for-the-badge&logo=github&logoColor=white&label=CI" alt="CI">
-  </a>
-  <a href="https://github.com/tn3w/stem">
-    <img src="https://img.shields.io/github/stars/tn3w/stem?style=for-the-badge&logo=github&logoColor=white" alt="Stars">
-  </a>
-</p>
+## Install
 
-<p align="center">
-  <a href="https://stem.tn3w.dev">🌐 Website</a> •
-  <a href="https://stem.tn3w.dev/docs/">📚 Documentation</a> •
-  <a href="https://stem.tn3w.dev/tutorials">📖 Tutorials</a> •
-  <a href="#-quick-start">🚀 Quick Start</a> •
-  <a href="#-examples">💡 Examples</a>
-</p>
+```toml
+stem = "2"
+```
 
-## Overview
+Rust 1.88+, edition 2024. Feature `integration` enables the tests that need a tor binary.
 
-**stem** is a Rust implementation of [Stem](https://stem.torproject.org/), the Python library for interacting with Tor's control protocol. It provides idiomatic, type-safe Rust APIs while maintaining complete functional parity with Python Stem.
+## Examples
 
-Whether you're building privacy tools, monitoring Tor relays, managing circuits, or creating onion services — stem gives you the building blocks you need with the safety guarantees Rust provides.
+Control port:
 
 ```rust
-use stem::{Controller, Error};
+use stem::descriptor::collector::{CollecTor, CollectorRequest};
+use stem::enumerations::Signal;
+use stem::events::EventType;
+use stem::onion_services::{EphemeralServiceOptions, OnionPorts};
+use stem::{ConnectOptions, connect};
 
 #[tokio::main]
-async fn main() -> Result<(), Error> {
-    // Connect to Tor's control port
-    let mut ctrl = Controller::from_port("127.0.0.1:9051".parse()?).await?;
+async fn main() -> stem::Result<()> {
+    let controller = connect(ConnectOptions::default()).await?;
+    println!("tor {}", controller.get_version().await?);
+    println!("{}", controller.get_info("traffic/read").await?);
 
-    // Authenticate (auto-detects method)
-    ctrl.authenticate(None).await?;
+    controller.set_conf("ContactInfo", "me@example.com").await?;
+    controller.signal(&Signal::Newnym).await?;
 
-    // Query Tor version
-    let version = ctrl.get_version().await?;
-    println!("Connected to Tor {}", version);
+    let (_, mut events) = controller.subscribe(&[EventType::Bw]).await?;
+    while let Some(event) = events.recv().await {
+        println!("{}", event.message);
+    }
 
+    let service = controller
+        .create_ephemeral_hidden_service(
+            &OnionPorts::Single(80),
+            &EphemeralServiceOptions::default(),
+        )
+        .await?;
+    println!("{}.onion", service.service_id.unwrap_or_default());
     Ok(())
 }
 ```
 
-## ✨ Features
-
-<table>
-<tr>
-<td width="50%">
-
-### 🔌 Control Socket
-
-Connect to Tor via TCP or Unix domain sockets with full async I/O powered by Tokio.
-
-- TCP port connections (`127.0.0.1:9051`)
-- Unix domain sockets (`/var/run/tor/control`)
-- Non-blocking async operations
-- Automatic reconnection handling
-
-</td>
-<td width="50%">
-
-### 🔐 Authentication
-
-All authentication methods with automatic detection and secure credential handling.
-
-- **SAFECOOKIE** — Challenge-response (recommended)
-- **COOKIE** — File-based authentication
-- **PASSWORD** — HashedControlPassword
-- **NONE** — Open control port
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-### 🎛️ Controller API
-
-High-level interface for complete Tor interaction.
-
-- Query configuration and status
-- Send signals (NEWNYM, RELOAD, etc.)
-- Create, extend, and close circuits
-- Attach and manage streams
-- Create ephemeral hidden services
-- Map addresses for custom routing
-
-</td>
-<td width="50%">
-
-### 📄 Descriptor Parsing
-
-Complete parsing for all Tor descriptor types.
-
-- **Server Descriptors** — Full relay metadata
-- **Microdescriptors** — Compact client-side info
-- **Consensus Documents** — Network status
-- **Extra-Info** — Bandwidth statistics
-- **Hidden Service** — v2 and v3 descriptors
-- **Bandwidth Files** — Authority measurements
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-### 📡 Event Handling
-
-Subscribe to real-time Tor events with strongly-typed event structs.
-
-- Bandwidth monitoring (`BW`, `CIRC_BW`)
-- Circuit lifecycle (`CIRC`, `CIRC_MINOR`)
-- Stream tracking (`STREAM`, `STREAM_BW`)
-- Log messages (`DEBUG` → `ERR`)
-- Status updates (`STATUS_*`)
-- Hidden service events (`HS_DESC`)
-
-</td>
-<td width="50%">
-
-### 🚪 Exit Policy
-
-Parse and evaluate relay exit policies.
-
-- Full exit policy parsing
-- IPv4 and IPv6 support
-- CIDR notation for address ranges
-- Port range evaluation
-- Policy summarization
-
-</td>
-</tr>
-</table>
-
-## 🚀 Quick Start
-
-Add stem to your `Cargo.toml`:
-
-```toml
-[dependencies]
-stem = "1.2"
-tokio = { version = "1", features = ["full"] }
-```
-
-Or install via cargo:
-
-```bash
-cargo add stem tokio --features tokio/full
-```
-
-### Enable Tor's Control Port
-
-Add to your `torrc`:
-
-```
-ControlPort 9051
-CookieAuthentication 1
-```
-
-Or for password authentication:
-
-```
-ControlPort 9051
-HashedControlPassword 16:872860B76453A77D60CA2BB8C1A7042072093276A3D701AD684053EC4C
-```
-
-Generate a hashed password:
-
-```bash
-tor --hash-password "your-password"
-```
-
-## 🎛️ Feature Flags
-
-stem uses feature flags to allow you to compile only what you need, reducing compile time and binary size.
-
-### Default Features
-
-By default, all features are enabled:
-
-```toml
-[dependencies]
-stem = "1.2"  # Includes all features
-```
-
-### Minimal Build
-
-For a minimal build with just the core functionality:
-
-```toml
-[dependencies]
-stem = { version = "1.2", default-features = false }
-```
-
-This includes: socket communication, authentication, protocol parsing, utilities, and version handling.
-
-### Available Features
-
-| Feature | Description | Dependencies |
-|---------|-------------|--------------|
-| `full` | All features (default) | All features below |
-| `controller` | High-level Controller API | `events` |
-| `descriptors` | Tor descriptor parsing | `client`, `exit-policy` |
-| `events` | Event subscription and handling | None |
-| `exit-policy` | Exit policy parsing and evaluation | None |
-| `client` | ORPort relay communication | None |
-| `interpreter` | Interactive Tor control interpreter | `controller`, `events` |
-| `compression` | Gzip decompression for descriptors | None |
-
-### Custom Feature Combinations
-
-**Controller only** (no descriptor parsing):
-```toml
-[dependencies]
-stem = { version = "1.2", default-features = false, features = ["controller"] }
-```
-
-**Descriptors only** (offline analysis):
-```toml
-[dependencies]
-stem = { version = "1.2", default-features = false, features = ["descriptors"] }
-```
-
-**Controller + Descriptors** (most common):
-```toml
-[dependencies]
-stem = { version = "1.2", default-features = false, features = ["controller", "descriptors"] }
-```
-
-### Compile Time Improvements
-
-Approximate compile time reductions with feature flags:
-
-- **Minimal build**: ~40% faster (excludes descriptors, controller, events)
-- **Controller-only**: ~30% faster (excludes descriptor parsing)
-- **Descriptors-only**: ~20% faster (excludes controller, events)
-
-Binary size reductions follow similar patterns.
-
-## 💡 Examples
-
-### Connect and Authenticate
+Launch tor:
 
 ```rust
-use stem::{Controller, Error};
+use stem::process::{LaunchOptions, launch_tor_with_config};
 
-#[tokio::main]
-async fn main() -> Result<(), Error> {
-    // Connect via TCP
-    let mut ctrl = Controller::from_port("127.0.0.1:9051".parse()?).await?;
+let config = [("SocksPort", "auto"), ("ControlPort", "auto")];
+let options = LaunchOptions { take_ownership: true, ..LaunchOptions::default() };
+let tor = launch_tor_with_config(&config, options, None).await?;
+```
 
-    // Or via Unix socket
-    // let mut ctrl = Controller::from_socket_file(Path::new("/var/run/tor/control")).await?;
+Descriptors:
 
-    // Auto-detect authentication method
-    ctrl.authenticate(None).await?;
+```rust
+use stem::descriptor::remote::DescriptorDownloader;
+use stem::descriptor::{DocumentHandler, parse_path};
 
-    // Or use password
-    // ctrl.authenticate(Some("my_password")).await?;
-
-    println!("Connected!");
-    Ok(())
+for file in parse_path("cached-consensus".as_ref(), None, true, DocumentHandler::Entries)? {
+    println!("{:?}", file.descriptor.published());
 }
+let consensus = DescriptorDownloader::new().get_consensus_validated(None, true).await?;
+let exit_lists = CollecTor::shared().get_exit_lists(&CollectorRequest::default()).await?;
 ```
 
-### Query Information
+Interpreter: `cargo run --bin tor-prompt -- -i 9051` (`--help` for options).
 
-```rust
-// Get Tor version
-let version = ctrl.get_version().await?;
-println!("Tor {}", version);
+## Modules
 
-// Get process ID
-let pid = ctrl.get_pid().await?;
-println!("PID: {}", pid);
+| Module | Covers |
+|---|---|
+| `controller`, `onion_services` | `Controller`: GETINFO/GETCONF/SETCONF, events, circuits, streams, signals, caching, ephemeral and persistent hidden services, client authorization |
+| `authentication` | PROTOCOLINFO, none/password/cookie/SAFECOOKIE, `connect`, unix sockets, chroot paths |
+| `socket`, `response`, `events` | `ControlSocket`, message framing, response parsers, all event types |
+| `process`, `process_inspection` | `launch_tor*`, pid/cwd/user/connection lookups via `/proc` and system tools |
+| `descriptor::*` | server, extra-info, micro, router status, network status (v2/v3/bridge), key certificates, detached signatures, hidden service v2/v3, bandwidth files, tordnsel, Ed25519 certificates, `reader`, `export` |
+| `descriptor::remote`, `descriptor::collector`, `directory` | downloads over DirPort or ORPort, CollecTor with checksum verification, authorities and fallbacks |
+| `client` | link handshake with CERTS verification (`link_authentication`), CREATE_FAST circuits, directory requests with SENDME flow control |
+| `exit_policy`, `version`, `address`, `validation`, `formatting`, `configuration`, `manual`, `interpreter` | helpers and the `tor-prompt` interpreter |
 
-// Query arbitrary info
-let traffic_read = ctrl.get_info("traffic/read").await?;
-let traffic_written = ctrl.get_info("traffic/written").await?;
-println!("Traffic: {} read, {} written", traffic_read, traffic_written);
+Descriptors parse with `X::parse(bytes, validate)`; `validate = false` is lenient. Generators (`content`/`create`) produce valid, signed descriptors. Descriptor types implement `serde::Serialize`.
 
-// Get configuration
-let socks_ports = ctrl.get_conf("SocksPort").await?;
-for port in socks_ports {
-    println!("SOCKS port: {}", port);
-}
+## Security
+
+- Command arguments are validated per token, config values are quoted and escaped, data blocks are dot-stuffed; CR/LF or NUL cannot start a second command.
+- Control messages: 1 MiB per line, 512 MiB per message. Decompression is capped at 512 MiB. Downloads are capped and checksummed (CollecTor sha256 before decompression).
+- Cookies must be regular files of exactly 32 bytes, are compared in constant time and zeroized. Passwords, cookies and keys are redacted from trace logs.
+- Relay cell digests are verified. `Relay::connect` verifies the CERTS cell (RSA identity self-signature, link certificate against the TLS certificate, Ed25519 signing, link and RSA cross-certificates, validity with 24 h skew) and exposes `Relay::identity` (RSA fingerprint, Ed25519 key). Compare it with the expected relay; still verify signatures of what you download (`validate = true`, `get_consensus_validated`).
+- HS v3: `blinded_key_for_period` / `time_period_number` recompute the blinded key (default 1440 minute periods); `HiddenServiceDescriptorV3::verify_blinded_key` checks a descriptor against its address for the current, previous and next period. Checked against a real tor descriptor.
+- Downloads fail with a clear error when the host redirects to a sign-in page (gitlab.torproject.org does this for anonymous raw downloads from some networks); `Authority::from_url`, `Fallback::from_url` and `Manual::from_url` accept a mirror.
+
+## Differences from python stem
+
+- Async API; typed values (`IpAddr`, enums with an `Other` variant) instead of strings.
+- Stricter than python: trailing newlines, unicode digits, lax `int()`, prefix-only timestamps and unbounded protocol ranges are rejected. Fixed python bugs: `crop` negative slice, `size_label` returning `None`, bandwidth file blank-line hang, event log truncation, GETCONF quoted values, collector checksum, `[::1]` accepted as plain IPv6.
+- Modern `man tor` layout is parsed (python yields no options); the embedded manual is generated from tor 0.4.9. `from_remote` / `from_url` need `pandoc`.
+- `LaunchOptions::environment` sets environment variables for the tor child and its version check (for example `LD_LIBRARY_PATH` of a Tor Expert Bundle).
+- Not ported: the python interpreter's embedded Python console, `stem.util.conf` listeners and `config_dict`, `size_of`, `set_process_name`, `DaemonTask`.
+- Descriptor CSV export uses JSON for nested values.
+
+## Tests
+
+```sh
+cargo test                                   # unit, golden, differential, fuzz
+TOR_BINARY=/path/to/tor LD_LIBRARY_PATH=/path/to/tor/dir \
+  cargo test --features integration          # real tor, network
+STEM_PYTHON_PATH=/path/to/python-stem cargo test --release \
+  --test descriptor_network --test descriptor_generated
 ```
 
-### Circuit Management
+- `tests/golden/*.py` regenerate the JSON in `tests/golden` from python stem; `descriptor_golden`, `descriptor_mutations`, `helpers_golden`, `events_golden` and `directories_golden` compare against it (descriptors, 5300 mutated inputs, events, helpers, exit policies, directories).
+- Live differential tests compare 1500 server and extra-info descriptors, microdescriptors and a full consensus with python stem, and check that python accepts what this crate generates.
+- Integration tests run tor 0.4.9.12 and 0.4.9.13: authentication methods, configuration, events, hidden services (including client authorization), process launch, circuits, stream attach, directory downloads over DirPort and ORPort, signature validation, CollecTor.
+- `relay_authentication` connects to a local relay and checks the authenticated RSA and Ed25519 identity against tor's own files; `remote_sources` serves authorities, fallbacks and a markdown manual from a local HTTP server (the pandoc test skips without pandoc, CI installs it); `resolver_output` parses sample output of every connection resolver (netstat, ss, lsof, sockstat, procstat, fstat, Windows netstat) on any platform.
+- `robustness` fuzzes every parser (`STEM_FUZZ_ROUNDS` raises the rounds); `injection` and `logging` cover command smuggling and secret redaction.
 
-```rust
-use stem::CircStatus;
-
-// List all circuits
-let circuits = ctrl.get_circuits().await?;
-for circuit in circuits {
-    if circuit.status == CircStatus::Built {
-        println!("Circuit {} ({} hops):", circuit.id, circuit.path.len());
-        for relay in &circuit.path {
-            println!("  → {} ({:?})", relay.fingerprint, relay.nickname);
-        }
-    }
-}
-
-// Create a new circuit
-let circuit_id = ctrl.new_circuit(None).await?;
-println!("Created circuit: {}", circuit_id);
-
-// Close a circuit
-ctrl.close_circuit(circuit_id).await?;
-```
-
-### Stream Management
-
-```rust
-use stem::StreamStatus;
-
-// List all streams
-let streams = ctrl.get_streams().await?;
-for stream in streams {
-    println!("Stream {} → {}:{} ({:?})",
-        stream.id,
-        stream.target_host,
-        stream.target_port,
-        stream.status
-    );
-}
-```
-
-### Event Subscription
-
-```rust
-use stem::EventType;
-
-// Subscribe to events
-ctrl.set_events(&[
-    EventType::Bw,      // Bandwidth
-    EventType::Circ,    // Circuits
-    EventType::Stream,  // Streams
-    EventType::Notice,  // Log messages
-]).await?;
-
-// Process events
-loop {
-    let event = ctrl.recv_event().await?;
-    match event {
-        ParsedEvent::Bandwidth(bw) => {
-            println!("BW: {} read, {} written", bw.read, bw.written);
-        }
-        ParsedEvent::Circuit(circ) => {
-            println!("Circuit {}: {:?}", circ.id, circ.status);
-        }
-        ParsedEvent::Log(log) => {
-            println!("[{}] {}", log.runlevel, log.message);
-        }
-        _ => {}
-    }
-}
-```
-
-### Send Signals
-
-```rust
-use stem::Signal;
-
-// Request new identity (new circuits)
-ctrl.signal(Signal::Newnym).await?;
-
-// Clear DNS cache
-ctrl.signal(Signal::ClearDnsCache).await?;
-
-// Reload configuration
-ctrl.signal(Signal::Reload).await?;
-
-// Graceful shutdown
-ctrl.signal(Signal::Shutdown).await?;
-```
-
-### Hidden Services
-
-```rust
-// Create ephemeral hidden service (v3 onion)
-let response = ctrl.create_ephemeral_hidden_service(
-    &[(80, "127.0.0.1:8080")],  // Map port 80 to local 8080
-    "NEW",                       // Generate new key
-    "ED25519-V3",                // Use v3 onion (recommended)
-    &[],                         // No special flags
-).await?;
-
-println!("Hidden service: {}.onion", response.service_id);
-println!("Private key: {:?}", response.private_key);
-
-// Remove hidden service
-ctrl.remove_ephemeral_hidden_service(&response.service_id).await?;
-```
-
-### Descriptor Parsing
-
-```rust
-use stem::descriptor::{
-    ServerDescriptor, Microdescriptor, NetworkStatusDocument,
-    Descriptor, DigestHash, DigestEncoding,
-    download_consensus, download_server_descriptors,
-};
-
-// Download and parse consensus
-let consensus = download_consensus(None).await?;
-println!("Valid until: {}", consensus.valid_until);
-println!("Relays: {}", consensus.routers.len());
-
-// Parse server descriptor
-let content = std::fs::read_to_string("cached-descriptors")?;
-let descriptor = ServerDescriptor::parse(&content)?;
-println!("Relay: {} ({})", descriptor.nickname, descriptor.fingerprint);
-println!("Bandwidth: {} avg, {} burst",
-    descriptor.bandwidth_avg, descriptor.bandwidth_burst);
-
-// Compute digest
-let digest = descriptor.digest(DigestHash::Sha1, DigestEncoding::Hex)?;
-println!("Digest: {}", digest);
-```
-
-### Exit Policy Evaluation
-
-```rust
-use stem::exit_policy::ExitPolicy;
-use std::net::IpAddr;
-
-let policy = ExitPolicy::parse("accept *:80, accept *:443, reject *:*")?;
-
-// Check if traffic is allowed
-let addr: IpAddr = "93.184.216.34".parse()?;
-if policy.can_exit_to(addr, 443) {
-    println!("HTTPS traffic allowed");
-}
-
-// Get policy summary
-println!("Policy: {}", policy.summary());
-```
-
-### Version Comparison
-
-```rust
-use stem::Version;
-
-let version = ctrl.get_version().await?;
-
-// Compare versions
-let min_version = Version::parse("0.4.0.0")?;
-if version >= min_version {
-    println!("Tor {} supports required features", version);
-}
-```
-
-## 📦 Module Reference
-
-| Module                                                   | Description                                                       |
-| -------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`controller`](https://stem.tn3w.dev/docs/controller/)   | High-level Tor control interface                                  |
-| [`socket`](https://stem.tn3w.dev/docs/socket/)           | Low-level control socket communication                            |
-| [`auth`](https://stem.tn3w.dev/docs/auth/)               | Authentication methods and protocol info                          |
-| [`descriptor`](https://stem.tn3w.dev/docs/descriptor/)   | Tor descriptor parsing (server, micro, consensus, hidden service) |
-| [`events`](https://stem.tn3w.dev/docs/events/)           | Event types and real-time handling                                |
-| [`exit_policy`](https://stem.tn3w.dev/docs/exit_policy/) | Exit policy parsing and evaluation                                |
-| [`version`](https://stem.tn3w.dev/docs/version/)         | Version parsing and comparison                                    |
-| [`client`](https://stem.tn3w.dev/docs/client/)           | Direct ORPort relay communication                                 |
-| [`interpreter`](https://stem.tn3w.dev/docs/interpreter/) | Interactive Tor control interpreter                               |
-| [`util`](https://stem.tn3w.dev/docs/util/)               | Validation utilities (fingerprints, nicknames, etc.)              |
-
-## 🔒 Security
-
-stem is designed with security as a priority:
-
-- **100% Safe Rust** — No `unsafe` code
-- **Constant-time comparison** — For authentication tokens and cookies
-- **Memory clearing** — Sensitive data cleared after use
-- **Input validation** — Prevents protocol injection attacks
-- **Signature verification** — Optional cryptographic validation for descriptors
-
-## ⚡ Performance
-
-- **Async-first** — Built on Tokio for high-performance async I/O
-- **Zero-copy parsing** — Efficient descriptor parsing where possible
-- **Event streaming** — Non-blocking real-time event handling
-- **Connection pooling** — Efficient socket management
-
-## 🛠️ Requirements
-
-- **Rust** 1.70+
-- **Tokio** runtime
-- **Tor** instance with control port enabled
-
-## 🧪 Testing
-
-```bash
-# Run unit tests
-cargo test
-
-# Run with integration tests (requires running Tor)
-cargo test --features integration
-
-# Run extensive tests
-cargo test --features extensive
-```
-
-## 📊 Comparison with Python Stem
-
-stem maintains functional parity with Python Stem while providing Rust's safety guarantees:
-
-| Feature                | Python Stem | stem |
-| ---------------------- | ----------- | ------- |
-| Control Protocol       | ✅          | ✅      |
-| All Auth Methods       | ✅          | ✅      |
-| Descriptor Parsing     | ✅          | ✅      |
-| Event Handling         | ✅          | ✅      |
-| Exit Policy            | ✅          | ✅      |
-| Hidden Services        | ✅          | ✅      |
-| Type Safety            | ❌          | ✅      |
-| Memory Safety          | ❌          | ✅      |
-| Async/Await            | ❌          | ✅      |
-| Zero-cost Abstractions | ❌          | ✅      |
-
-## 📄 License
-
-Copyright 2026 stem contributors
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit issues and pull requests.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 🔗 Links
-
-<p align="center">
-  <a href="https://stem.tn3w.dev">Website</a> •
-  <a href="https://stem.tn3w.dev/docs/">Documentation</a> •
-  <a href="https://stem.tn3w.dev/tutorials">Tutorials</a> •
-  <a href="https://crates.io/crates/stem">crates.io</a> •
-  <a href="https://github.com/tn3w/stem">GitHub</a> •
-  <a href="https://stem.torproject.org/">Python Stem</a>
-</p>
-
-<p align="center">
-  <sub>Built with 🦀 by the stem contributors</sub>
-</p>
+`tests/data` is copied from python stem (Damian Johnson and The Tor Project, LGPL-3.0, license text in `tests/data/LICENSE-LGPL-3.0`, see `tests/data/NOTICE`); the crate itself is Apache-2.0. The crate is a port of python stem, so whether Apache-2.0 is appropriate for the code is the maintainer's decision.

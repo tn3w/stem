@@ -1,0 +1,7 @@
+The files in this directory (except NOTICE and LICENSE-LGPL-3.0) are test
+fixtures copied from python stem, https://gitlab.torproject.org/tpo/network-health/stem,
+commit 7d420c20.
+
+Copyright Damian Johnson and The Tor Project. Licensed under the GNU Lesser
+General Public License, version 3 (LICENSE-LGPL-3.0). The rest of this crate is
+licensed under Apache-2.0 (see ../../LICENSE).

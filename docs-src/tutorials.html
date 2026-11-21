@@ -224,7 +224,7 @@
                                                 margin: 0;
                                             "
                                         >
-                                            Rust 1.70+ with async runtime support (Tokio)
+                                            Rust 1.88+ (edition 2024) with the Tokio runtime
                                         </p>
                                     </div>
                                 </div>
@@ -312,7 +312,7 @@ CookieAuthentication 1
                                     </span>
                                 </div>
                                 <pre><code><span class="code-keyword">[dependencies]</span>
-stem = <span class="code-string">"1"</span>
+stem = <span class="code-string">"2"</span>
 tokio = { version = <span class="code-string">"1"</span>, features = [<span class="code-string">"full"</span>] }</code></pre>
                             </div>
                         </div>
@@ -353,29 +353,19 @@ tokio = { version = <span class="code-string">"1"</span>, features = [<span clas
                                         </button>
                                     </div>
                                 </div>
-                                <pre><code id="basic-connection"><span class="code-keyword">use</span> stem::{Controller, Error};
+                                <pre><code id="basic-connection"><span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-comment">// Connect to Tor's control port</span>
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Authenticate (auto-detects: cookie, safecookie, or password)</span>
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Query Tor version to verify connection</span>
-    <span class="code-keyword">let</span> version = controller.<span class="code-function">get_version</span>().<span class="code-keyword">await</span>?;
-    <span class="code-function">println!</span>(<span class="code-string">"Connected to Tor {}"</span>, version);
-    
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
+    <span class="code-function">println!</span>(<span class="code-string">"Connected to Tor {}"</span>, controller.<span class="code-function">get_version</span>().<span class="code-keyword">await</span>?);
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
                             <div class="content-block-body">
                                 <div class="output-preview">
                                     <span class="output-label">Output</span>
-                                    <pre>Connected to Tor 0.4.8.10</pre>
+                                    <pre>Connected to Tor 0.4.9.12</pre>
                                 </div>
                             </div>
                         </div>
@@ -428,17 +418,19 @@ tokio = { version = <span class="code-string">"1"</span>, features = [<span clas
                             <div class="code-block-header">
                                 <span class="code-block-filename">Password Authentication</span>
                             </div>
-                            <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
+                            <pre><code><span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Provide password explicitly</span>
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">Some</span>(<span class="code-string">"your_password"</span>)).<span class="code-keyword">await</span>?;
-    
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> options = ConnectOptions {
+        password: <span class="code-type">Some</span>(<span class="code-string">"your_password"</span>.<span class="code-function">to_string</span>()),
+        ..ConnectOptions::<span class="code-function">default</span>()
+    };
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(options).<span class="code-keyword">await</span>?;
+    <span class="code-function">println!</span>(
+        <span class="code-string">"Authenticated against tor {}"</span>,
+        controller.<span class="code-function">get_version</span>().<span class="code-keyword">await</span>?
+    );
     <span class="code-type">Ok</span>(())
 }</code></pre>
                         </div>
@@ -447,21 +439,17 @@ tokio = { version = <span class="code-string">"1"</span>, features = [<span clas
                             <div class="code-block-header">
                                 <span class="code-block-filename">Unix Socket Connection</span>
                             </div>
-                            <pre><code><span class="code-keyword">use</span> std::path::Path;
-<span class="code-keyword">use</span> stem::{Controller, Error};
+                            <pre><code><span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-comment">// Connect via Unix domain socket (enhanced security)</span>
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_socket_file</span>(
-        Path::<span class="code-function">new</span>(<span class="code-string">"/var/run/tor/control"</span>)
-    ).<span class="code-keyword">await</span>?;
-    
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-keyword">let</span> pid = controller.<span class="code-function">get_pid</span>().<span class="code-keyword">await</span>?;
-    <span class="code-function">println!</span>(<span class="code-string">"Tor process ID: {}"</span>, pid);
-    
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> options = ConnectOptions {
+        control_port: <span class="code-type">None</span>,
+        control_socket: <span class="code-type">Some</span>(<span class="code-string">"/var/run/tor/control"</span>.<span class="code-function">into</span>()),
+        ..ConnectOptions::<span class="code-function">default</span>()
+    };
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(options).<span class="code-keyword">await</span>?;
+    <span class="code-function">println!</span>(<span class="code-string">"Tor process ID: {}"</span>, controller.<span class="code-function">get_pid</span>().<span class="code-keyword">await</span>?);
     <span class="code-type">Ok</span>(())
 }</code></pre>
                         </div>
@@ -507,33 +495,26 @@ tokio = { version = <span class="code-string">"1"</span>, features = [<span clas
                                 <div class="code-block-header">
                                     <span class="code-block-filename">traffic_monitor.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
+                                <pre><code><span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Query traffic statistics</span>
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
     <span class="code-keyword">let</span> bytes_read = controller.<span class="code-function">get_info</span>(<span class="code-string">"traffic/read"</span>).<span class="code-keyword">await</span>?;
     <span class="code-keyword">let</span> bytes_written = controller.<span class="code-function">get_info</span>(<span class="code-string">"traffic/written"</span>).<span class="code-keyword">await</span>?;
-    
+
     <span class="code-function">println!</span>(<span class="code-string">"Traffic Statistics:"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"  Downloaded: {} bytes"</span>, bytes_read);
-    <span class="code-function">println!</span>(<span class="code-string">"  Uploaded:   {} bytes"</span>, bytes_written);
-    
+    <span class="code-function">println!</span>(<span class="code-string">"  Downloaded: {bytes_read} bytes"</span>);
+    <span class="code-function">println!</span>(<span class="code-string">"  Uploaded:   {bytes_written} bytes"</span>);
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
                             <div class="content-block-body">
                                 <div class="output-preview">
                                     <span class="output-label">Output</span>
-                                    <pre>
-Traffic Statistics:
-  Downloaded: 33406 bytes
-  Uploaded:   29649 bytes</pre
+                                    <pre>Traffic Statistics:
+  Downloaded: 7856100 bytes
+  Uploaded:   725006 bytes</pre
                                     >
                                 </div>
                             </div>
@@ -618,48 +599,38 @@ Traffic Statistics:
                                 <div class="code-block-header">
                                     <span class="code-block-filename">relay_dashboard.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
+                                <pre><code><span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
-<span class="code-keyword">fn</span> <span class="code-function">format_bytes</span>(bytes: <span class="code-type">u64</span>) -> <span class="code-type">String</span> {
-    <span class="code-keyword">const</span> KB: <span class="code-type">u64</span> = <span class="code-number">1024</span>;
-    <span class="code-keyword">const</span> MB: <span class="code-type">u64</span> = KB * <span class="code-number">1024</span>;
-    <span class="code-keyword">const</span> GB: <span class="code-type">u64</span> = MB * <span class="code-number">1024</span>;
-    
-    <span class="code-keyword">if</span> bytes >= GB {
-        <span class="code-function">format!</span>(<span class="code-string">"{:.2} GB"</span>, bytes <span class="code-keyword">as</span> <span class="code-type">f64</span> / GB <span class="code-keyword">as</span> <span class="code-type">f64</span>)
-    } <span class="code-keyword">else if</span> bytes >= MB {
-        <span class="code-function">format!</span>(<span class="code-string">"{:.2} MB"</span>, bytes <span class="code-keyword">as</span> <span class="code-type">f64</span> / MB <span class="code-keyword">as</span> <span class="code-type">f64</span>)
-    } <span class="code-keyword">else if</span> bytes >= KB {
-        <span class="code-function">format!</span>(<span class="code-string">"{:.2} KB"</span>, bytes <span class="code-keyword">as</span> <span class="code-type">f64</span> / KB <span class="code-keyword">as</span> <span class="code-type">f64</span>)
-    } <span class="code-keyword">else</span> {
-        <span class="code-function">format!</span>(<span class="code-string">"{} B"</span>, bytes)
+<span class="code-keyword">fn</span> <span class="code-function">format_bytes</span>(bytes: <span class="code-type">u64</span>) -&gt; <span class="code-type">String</span> {
+    <span class="code-keyword">const</span> KB: <span class="code-type">f64</span> = <span class="code-number">1024.0</span>;
+    <span class="code-keyword">const</span> MB: <span class="code-type">f64</span> = KB * <span class="code-number">1024.0</span>;
+    <span class="code-keyword">const</span> GB: <span class="code-type">f64</span> = MB * <span class="code-number">1024.0</span>;
+
+    <span class="code-keyword">match</span> bytes <span class="code-keyword">as</span> <span class="code-type">f64</span> {
+        size <span class="code-keyword">if</span> size &gt;= GB =&gt; <span class="code-function">format!</span>(<span class="code-string">"{:.2} GB"</span>, size / GB),
+        size <span class="code-keyword">if</span> size &gt;= MB =&gt; <span class="code-function">format!</span>(<span class="code-string">"{:.2} MB"</span>, size / MB),
+        size <span class="code-keyword">if</span> size &gt;= KB =&gt; <span class="code-function">format!</span>(<span class="code-string">"{:.2} KB"</span>, size / KB),
+        _ =&gt; <span class="code-function">format!</span>(<span class="code-string">"{bytes} B"</span>),
     }
 }
 
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">traffic</span>(controller: &amp;stem::Controller, direction: &amp;<span class="code-type">str</span>) -&gt; stem::<span class="code-type">Result</span>&lt;<span class="code-type">u64</span>&gt; {
+    <span class="code-keyword">let</span> total = controller.<span class="code-function">get_info</span>(&amp;<span class="code-function">format!</span>(<span class="code-string">"traffic/{direction}"</span>)).<span class="code-keyword">await</span>?;
+    <span class="code-type">Ok</span>(total.<span class="code-function">trim</span>().<span class="code-function">parse</span>().<span class="code-function">unwrap_or</span>(<span class="code-number">0</span>))
+}
+
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-keyword">let mut</span> ctrl = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    ctrl.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Gather relay information</span>
-    <span class="code-keyword">let</span> version = ctrl.<span class="code-function">get_version</span>().<span class="code-keyword">await</span>?;
-    <span class="code-keyword">let</span> pid = ctrl.<span class="code-function">get_pid</span>().<span class="code-keyword">await</span>?;
-    
-    <span class="code-keyword">let</span> read: <span class="code-type">u64</span> = ctrl.<span class="code-function">get_info</span>(<span class="code-string">"traffic/read"</span>).<span class="code-keyword">await</span>?.<span class="code-function">parse</span>().<span class="code-function">unwrap_or</span>(<span class="code-number">0</span>);
-    <span class="code-keyword">let</span> written: <span class="code-type">u64</span> = ctrl.<span class="code-function">get_info</span>(<span class="code-string">"traffic/written"</span>).<span class="code-keyword">await</span>?.<span class="code-function">parse</span>().<span class="code-function">unwrap_or</span>(<span class="code-number">0</span>);
-    
-    <span class="code-function">println!</span>(<span class="code-string">"╔══════════════════════════════════════╗"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"║       Tor Relay Dashboard            ║"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"╠══════════════════════════════════════╣"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"║ Version:    {:&lt;24} ║"</span>, version);
-    <span class="code-function">println!</span>(<span class="code-string">"║ Process ID: {:&lt;24} ║"</span>, pid);
-    <span class="code-function">println!</span>(<span class="code-string">"╠══════════════════════════════════════╣"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"║ Downloaded: {:&lt;24} ║"</span>, <span class="code-function">format_bytes</span>(read));
-    <span class="code-function">println!</span>(<span class="code-string">"║ Uploaded:   {:&lt;24} ║"</span>, <span class="code-function">format_bytes</span>(written));
-    <span class="code-function">println!</span>(<span class="code-string">"╚══════════════════════════════════════╝"</span>);
-    
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
+    <span class="code-keyword">let</span> version = controller.<span class="code-function">get_version</span>().<span class="code-keyword">await</span>?;
+    <span class="code-keyword">let</span> pid = controller.<span class="code-function">get_pid</span>().<span class="code-keyword">await</span>?;
+    <span class="code-keyword">let</span> read = <span class="code-function">traffic</span>(&amp;controller, <span class="code-string">"read"</span>).<span class="code-keyword">await</span>?;
+    <span class="code-keyword">let</span> written = <span class="code-function">traffic</span>(&amp;controller, <span class="code-string">"written"</span>).<span class="code-keyword">await</span>?;
+
+    <span class="code-function">println!</span>(<span class="code-string">"Version:    {version}"</span>);
+    <span class="code-function">println!</span>(<span class="code-string">"Process ID: {pid}"</span>);
+    <span class="code-function">println!</span>(<span class="code-string">"Downloaded: {}"</span>, <span class="code-function">format_bytes</span>(read));
+    <span class="code-function">println!</span>(<span class="code-string">"Uploaded:   {}"</span>, <span class="code-function">format_bytes</span>(written));
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
@@ -707,27 +678,18 @@ Traffic Statistics:
                                 <div class="code-block-header">
                                     <span class="code-block-filename">exit_selection.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, Signal};
+                                <pre><code><span class="code-keyword">use</span> stem::enumerations::Signal;
+<span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Configure exit through Germany</span>
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
+
     controller.<span class="code-function">set_conf</span>(<span class="code-string">"ExitNodes"</span>, <span class="code-string">"{de}"</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Request new circuits with the updated exit policy</span>
-    controller.<span class="code-function">signal</span>(Signal::Newnym).<span class="code-keyword">await</span>?;
-    
-    <span class="code-function">println!</span>(<span class="code-string">"Exit nodes configured for Germany"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"New circuits will exit through DE relays"</span>);
-    
-    <span class="code-comment">// To reset to default behavior:</span>
-    <span class="code-comment">// controller.reset_conf("ExitNodes").await?;</span>
-    
+    controller.<span class="code-function">signal</span>(&amp;Signal::Newnym).<span class="code-keyword">await</span>?;
+    <span class="code-function">println!</span>(<span class="code-string">"New circuits will exit through Germany"</span>);
+
+    controller.<span class="code-function">reset_conf</span>(&amp;[<span class="code-string">"ExitNodes"</span>]).<span class="code-keyword">await</span>?;
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
@@ -813,52 +775,36 @@ Traffic Statistics:
                                     >
                                 </div>
                                 <pre><code><span class="code-keyword">[dependencies]</span>
-reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span class="code-string">"socks"</span>] }</code></pre>
+reqwest = { version = <span class="code-string">"0.13"</span>, features = [<span class="code-string">"socks"</span>] }</code></pre>
                             </div>
                             <div class="code-block">
                                 <div class="code-block-header">
                                     <span class="code-block-filename">tor_http_client.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, Signal};
-<span class="code-keyword">use</span> std::time::Duration;
+                                <pre><code><span class="code-keyword">use</span> std::time::Duration;
 
-<span class="code-keyword">const</span> SOCKS_PORT: <span class="code-type">u16</span> = <span class="code-number">9050</span>;
+<span class="code-keyword">use</span> stem::enumerations::Signal;
+<span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
-<span class="code-keyword">async fn</span> <span class="code-function">query_through_tor</span>(url: &<span class="code-type">str</span>) -> <span class="code-type">Result</span>&lt;<span class="code-type">String</span>, Box&lt;<span class="code-keyword">dyn</span> std::error::Error&gt;&gt; {
-    <span class="code-keyword">let</span> proxy = reqwest::Proxy::<span class="code-function">all</span>(
-        <span class="code-function">format!</span>(<span class="code-string">"socks5h://127.0.0.1:{}"</span>, SOCKS_PORT)
-    )?;
-    
+<span class="code-keyword">const</span> SOCKS_PROXY: &amp;<span class="code-type">str</span> = <span class="code-string">"socks5h://127.0.0.1:9050"</span>;
+
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">query_through_tor</span>(url: &amp;<span class="code-type">str</span>) -&gt; <span class="code-type">Result</span>&lt;<span class="code-type">String</span>, reqwest::Error&gt; {
     <span class="code-keyword">let</span> client = reqwest::Client::<span class="code-function">builder</span>()
-        .<span class="code-function">proxy</span>(proxy)
+        .<span class="code-function">proxy</span>(reqwest::Proxy::<span class="code-function">all</span>(SOCKS_PROXY)?)
         .<span class="code-function">timeout</span>(Duration::<span class="code-function">from_secs</span>(<span class="code-number">30</span>))
         .<span class="code-function">build</span>()?;
-    
-    <span class="code-keyword">let</span> response = client.<span class="code-function">get</span>(url).<span class="code-function">send</span>().<span class="code-keyword">await</span>?.<span class="code-function">text</span>().<span class="code-keyword">await</span>?;
-    <span class="code-type">Ok</span>(response)
+    client.<span class="code-function">get</span>(url).<span class="code-function">send</span>().<span class="code-keyword">await</span>?.<span class="code-function">text</span>().<span class="code-keyword">await</span>
 }
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Box&lt;<span class="code-keyword">dyn</span> std::error::Error&gt;&gt; {
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Configure exit through Germany</span>
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; <span class="code-type">Result</span>&lt;(), <span class="code-type">Box</span>&lt;<span class="code-keyword">dyn</span> std::error::Error&gt;&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
     controller.<span class="code-function">set_conf</span>(<span class="code-string">"ExitNodes"</span>, <span class="code-string">"{de}"</span>).<span class="code-keyword">await</span>?;
-    controller.<span class="code-function">signal</span>(Signal::Newnym).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Wait for new circuits to be established</span>
+    controller.<span class="code-function">signal</span>(&amp;Signal::Newnym).<span class="code-keyword">await</span>?;
     tokio::time::<span class="code-function">sleep</span>(Duration::<span class="code-function">from_secs</span>(<span class="code-number">5</span>)).<span class="code-keyword">await</span>;
-    
-    <span class="code-comment">// Verify exit IP location</span>
-    <span class="code-keyword">let</span> response = <span class="code-function">query_through_tor</span>(
-        <span class="code-string">"https://check.torproject.org/api/ip"</span>
-    ).<span class="code-keyword">await</span>?;
-    
-    <span class="code-function">println!</span>(<span class="code-string">"Exit IP information: {}"</span>, response);
-    
+
+    <span class="code-keyword">let</span> response = <span class="code-function">query_through_tor</span>(<span class="code-string">"https://check.torproject.org/api/ip"</span>).<span class="code-keyword">await</span>?;
+    <span class="code-function">println!</span>(<span class="code-string">"Exit IP information: {response}"</span>);
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
@@ -881,40 +827,31 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">country_rotation.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, Signal};
-<span class="code-keyword">use</span> std::time::Duration;
+                                <pre><code><span class="code-keyword">use</span> std::time::Duration;
+
+<span class="code-keyword">use</span> stem::enumerations::Signal;
+<span class="code-keyword">use</span> stem::{ConnectOptions, connect};
+
+<span class="code-keyword">const</span> COUNTRIES: [(&amp;<span class="code-type">str</span>, &amp;<span class="code-type">str</span>); <span class="code-number">4</span>] = [
+    (<span class="code-string">"{us}"</span>, <span class="code-string">"United States"</span>),
+    (<span class="code-string">"{de}"</span>, <span class="code-string">"Germany"</span>),
+    (<span class="code-string">"{jp}"</span>, <span class="code-string">"Japan"</span>),
+    (<span class="code-string">"{nl}"</span>, <span class="code-string">"Netherlands"</span>),
+];
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Box&lt;<span class="code-keyword">dyn</span> std::error::Error&gt;&gt; {
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-keyword">let</span> countries = [
-        (<span class="code-string">"{us}"</span>, <span class="code-string">"United States"</span>),
-        (<span class="code-string">"{de}"</span>, <span class="code-string">"Germany"</span>),
-        (<span class="code-string">"{jp}"</span>, <span class="code-string">"Japan"</span>),
-        (<span class="code-string">"{nl}"</span>, <span class="code-string">"Netherlands"</span>),
-    ];
-    
-    <span class="code-keyword">for</span> (code, name) <span class="code-keyword">in</span> countries {
-        <span class="code-function">println!</span>(<span class="code-string">"\n--- Switching to {} ({}) ---"</span>, name, code);
-        
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
+
+    <span class="code-keyword">for</span> (code, name) <span class="code-keyword">in</span> COUNTRIES {
+        <span class="code-function">println!</span>(<span class="code-string">"Switching to {name} ({code})"</span>);
         controller.<span class="code-function">set_conf</span>(<span class="code-string">"ExitNodes"</span>, code).<span class="code-keyword">await</span>?;
-        controller.<span class="code-function">signal</span>(Signal::Newnym).<span class="code-keyword">await</span>?;
-        
-        <span class="code-comment">// Wait for circuit establishment</span>
+        controller.<span class="code-function">signal</span>(&amp;Signal::Newnym).<span class="code-keyword">await</span>?;
         tokio::time::<span class="code-function">sleep</span>(Duration::<span class="code-function">from_secs</span>(<span class="code-number">3</span>)).<span class="code-keyword">await</span>;
-        
-        <span class="code-comment">// Perform your operations here...</span>
-        <span class="code-function">println!</span>(<span class="code-string">"Ready to route through {}"</span>, name);
     }
-    
-    <span class="code-comment">// Reset to default exit selection</span>
-    controller.<span class="code-function">reset_conf</span>(<span class="code-string">"ExitNodes"</span>).<span class="code-keyword">await</span>?;
-    <span class="code-function">println!</span>(<span class="code-string">"\nReset to default exit node selection"</span>);
-    
+
+    controller.<span class="code-function">reset_conf</span>(&amp;[<span class="code-string">"ExitNodes"</span>]).<span class="code-keyword">await</span>?;
+    <span class="code-function">println!</span>(<span class="code-string">"Reset to the default exit selection"</span>);
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
@@ -937,40 +874,31 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">circuit_management.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, CircStatus};
-<span class="code-keyword">use</span> std::time::Duration;
+                                <pre><code><span class="code-keyword">use</span> std::time::Duration;
+
+<span class="code-keyword">use</span> stem::enumerations::CircStatus;
+<span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// List current circuits</span>
-    <span class="code-keyword">let</span> circuits = controller.<span class="code-function">get_circuits</span>().<span class="code-keyword">await</span>?;
-    
-    <span class="code-function">println!</span>(<span class="code-string">"Active Circuits:"</span>);
-    <span class="code-keyword">for</span> circuit <span class="code-keyword">in</span> &circuits {
-        <span class="code-keyword">if</span> circuit.status == CircStatus::Built {
-            <span class="code-function">println!</span>(<span class="code-string">"  Circuit {} ({} hops):"</span>, circuit.id, circuit.path.<span class="code-function">len</span>());
-            <span class="code-keyword">for</span> relay <span class="code-keyword">in</span> &circuit.path {
-                <span class="code-function">println!</span>(<span class="code-string">"    → {} ({:?})"</span>, relay.fingerprint, relay.nickname);
-            }
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
+
+    <span class="code-keyword">for</span> circuit <span class="code-keyword">in</span> controller.<span class="code-function">get_circuits</span>().<span class="code-keyword">await</span>? {
+        <span class="code-keyword">if</span> circuit.status != CircStatus::Built {
+            <span class="code-keyword">continue</span>;
+        }
+        <span class="code-function">println!</span>(<span class="code-string">"Circuit {} ({} hops):"</span>, circuit.id, circuit.path.<span class="code-function">len</span>());
+        <span class="code-keyword">for</span> (fingerprint, nickname) <span class="code-keyword">in</span> &amp;circuit.path {
+            <span class="code-function">println!</span>(<span class="code-string">"  {fingerprint:?} {nickname:?}"</span>);
         }
     }
-    
-    <span class="code-comment">// Create a new circuit (Tor selects the path)</span>
-    <span class="code-keyword">let</span> circuit_id = controller.<span class="code-function">new_circuit</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    <span class="code-function">println!</span>(<span class="code-string">"\nCreated new circuit: {}"</span>, circuit_id);
-    
-    <span class="code-comment">// Wait for circuit to be built</span>
-    tokio::time::<span class="code-function">sleep</span>(Duration::<span class="code-function">from_secs</span>(<span class="code-number">5</span>)).<span class="code-keyword">await</span>;
-    
-    <span class="code-comment">// Close the circuit when done</span>
-    controller.<span class="code-function">close_circuit</span>(&circuit_id).<span class="code-keyword">await</span>?;
-    <span class="code-function">println!</span>(<span class="code-string">"Circuit {} closed"</span>, circuit_id);
-    
+
+    <span class="code-keyword">let</span> timeout = <span class="code-type">Some</span>(Duration::<span class="code-function">from_secs</span>(<span class="code-number">30</span>));
+    <span class="code-keyword">let</span> circuit_id = controller.<span class="code-function">new_circuit</span>(<span class="code-type">None</span>, <span class="code-type">None</span>, true, timeout).<span class="code-keyword">await</span>?;
+    <span class="code-function">println!</span>(<span class="code-string">"Created circuit {circuit_id}"</span>);
+
+    controller.<span class="code-function">close_circuit</span>(&amp;circuit_id, <span class="code-string">""</span>).<span class="code-keyword">await</span>?;
+    <span class="code-function">println!</span>(<span class="code-string">"Closed circuit {circuit_id}"</span>);
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
@@ -1074,66 +1002,35 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">bandwidth_monitor.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, EventType};
-<span class="code-keyword">use</span> stem::events::ParsedEvent;
-
-<span class="code-keyword">fn</span> <span class="code-function">format_bytes</span>(bytes: <span class="code-type">u64</span>) -> <span class="code-type">String</span> {
-    <span class="code-keyword">const</span> KB: <span class="code-type">u64</span> = <span class="code-number">1024</span>;
-    <span class="code-keyword">const</span> MB: <span class="code-type">u64</span> = KB * <span class="code-number">1024</span>;
-    <span class="code-keyword">const</span> GB: <span class="code-type">u64</span> = MB * <span class="code-number">1024</span>;
-    
-    <span class="code-keyword">if</span> bytes >= GB {
-        <span class="code-function">format!</span>(<span class="code-string">"{:.2} GB"</span>, bytes <span class="code-keyword">as</span> <span class="code-type">f64</span> / GB <span class="code-keyword">as</span> <span class="code-type">f64</span>)
-    } <span class="code-keyword">else if</span> bytes >= MB {
-        <span class="code-function">format!</span>(<span class="code-string">"{:.2} MB"</span>, bytes <span class="code-keyword">as</span> <span class="code-type">f64</span> / MB <span class="code-keyword">as</span> <span class="code-type">f64</span>)
-    } <span class="code-keyword">else if</span> bytes >= KB {
-        <span class="code-function">format!</span>(<span class="code-string">"{:.2} KB"</span>, bytes <span class="code-keyword">as</span> <span class="code-type">f64</span> / KB <span class="code-keyword">as</span> <span class="code-type">f64</span>)
-    } <span class="code-keyword">else</span> {
-        <span class="code-function">format!</span>(<span class="code-string">"{} B"</span>, bytes)
-    }
-}
+                                <pre><code><span class="code-keyword">use</span> stem::events::{EventData, EventType};
+<span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Subscribe to bandwidth events</span>
-    controller.<span class="code-function">set_events</span>(&[EventType::Bw]).<span class="code-keyword">await</span>?;
-    
-    <span class="code-function">println!</span>(<span class="code-string">"Monitoring bandwidth (Ctrl+C to stop)...\n"</span>);
-    
-    <span class="code-keyword">let mut</span> total_read = <span class="code-number">0u64</span>;
-    <span class="code-keyword">let mut</span> total_written = <span class="code-number">0u64</span>;
-    
-    <span class="code-keyword">loop</span> {
-        <span class="code-keyword">match</span> controller.<span class="code-function">recv_event</span>().<span class="code-keyword">await</span>? {
-            ParsedEvent::<span class="code-function">Bandwidth</span>(bw) => {
-                total_read += bw.read;
-                total_written += bw.written;
-                
-                <span class="code-function">println!</span>(
-                    <span class="code-string">"↓ {:>8} B/s  ↑ {:>8} B/s  │  Total: ↓ {} ↑ {}"</span>,
-                    bw.read,
-                    bw.written,
-                    <span class="code-function">format_bytes</span>(total_read),
-                    <span class="code-function">format_bytes</span>(total_written)
-                );
-            }
-            _ => {}
-        }
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
+    <span class="code-keyword">let</span> (_, <span class="code-keyword">mut</span> events) = controller.<span class="code-function">subscribe</span>(&amp;[EventType::Bw]).<span class="code-keyword">await</span>?;
+
+    <span class="code-keyword">let</span> (<span class="code-keyword">mut</span> total_read, <span class="code-keyword">mut</span> total_written) = (<span class="code-number">0</span>, <span class="code-number">0</span>);
+    <span class="code-keyword">while</span> <span class="code-keyword">let</span> <span class="code-type">Some</span>(event) = events.<span class="code-function">recv</span>().<span class="code-keyword">await</span> {
+        <span class="code-keyword">let</span> EventData::<span class="code-function">Bandwidth</span>(bandwidth) = event.data <span class="code-keyword">else</span> {
+            <span class="code-keyword">continue</span>;
+        };
+        total_read += bandwidth.read;
+        total_written += bandwidth.written;
+        <span class="code-function">println!</span>(
+            <span class="code-string">"down {:&gt;8} B/s  up {:&gt;8} B/s  total: down {total_read} up {total_written}"</span>,
+            bandwidth.read, bandwidth.written
+        );
     }
+    <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
                             <div class="content-block-body">
                                 <div class="output-preview">
                                     <span class="output-label">Output</span>
-                                    <pre>
-↓     1024 B/s  ↑      512 B/s  │  Total: ↓ 1.00 KB ↑ 512 B
-↓     2048 B/s  ↑     1024 B/s  │  Total: ↓ 3.00 KB ↑ 1.50 KB
-↓      512 B/s  ↑      256 B/s  │  Total: ↓ 3.50 KB ↑ 1.75 KB</pre
+                                    <pre>down        0 B/s  up      536 B/s  total: down 0 up 536
+down     1608 B/s  up     1608 B/s  total: down 1608 up 2144
+down        0 B/s  up      536 B/s  total: down 1608 up 2680</pre
                                     >
                                 </div>
                             </div>
@@ -1156,49 +1053,34 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">circuit_monitor.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, EventType, CircStatus};
-<span class="code-keyword">use</span> stem::events::ParsedEvent;
+                                <pre><code><span class="code-keyword">use</span> stem::enumerations::CircStatus;
+<span class="code-keyword">use</span> stem::events::{EventData, EventType};
+<span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Subscribe to circuit events</span>
-    controller.<span class="code-function">set_events</span>(&[EventType::Circ]).<span class="code-keyword">await</span>?;
-    
-    <span class="code-function">println!</span>(<span class="code-string">"Monitoring circuit events...\n"</span>);
-    
-    <span class="code-keyword">loop</span> {
-        <span class="code-keyword">match</span> controller.<span class="code-function">recv_event</span>().<span class="code-keyword">await</span>? {
-            ParsedEvent::<span class="code-function">Circuit</span>(circ) => {
-                <span class="code-keyword">let</span> status_icon = <span class="code-keyword">match</span> circ.status {
-                    CircStatus::Launched => <span class="code-string">"🚀 LAUNCHED"</span>,
-                    CircStatus::Built => <span class="code-string">"✅ BUILT"</span>,
-                    CircStatus::Extended => <span class="code-string">"📡 EXTENDED"</span>,
-                    CircStatus::Failed => <span class="code-string">"❌ FAILED"</span>,
-                    CircStatus::Closed => <span class="code-string">"🔒 CLOSED"</span>,
-                    _ => <span class="code-string">"❓ UNKNOWN"</span>,
-                };
-                
-                <span class="code-function">println!</span>(
-                    <span class="code-string">"{} Circuit {} ({} hops)"</span>,
-                    status_icon,
-                    circ.id,
-                    circ.path.<span class="code-function">len</span>()
-                );
-                
-                <span class="code-keyword">if</span> !circ.path.<span class="code-function">is_empty</span>() {
-                    <span class="code-keyword">for</span> (fp, nick) <span class="code-keyword">in</span> &circ.path {
-                        <span class="code-function">println!</span>(<span class="code-string">"   → {} ({:?})"</span>, &fp[..<span class="code-number">8</span>], nick);
-                    }
-                }
-            }
-            _ => {}
-        }
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
+    <span class="code-keyword">let</span> (_, <span class="code-keyword">mut</span> events) = controller.<span class="code-function">subscribe</span>(&amp;[EventType::Circ]).<span class="code-keyword">await</span>?;
+
+    <span class="code-keyword">while</span> <span class="code-keyword">let</span> <span class="code-type">Some</span>(event) = events.<span class="code-function">recv</span>().<span class="code-keyword">await</span> {
+        <span class="code-keyword">let</span> EventData::<span class="code-function">Circuit</span>(circuit) = event.data <span class="code-keyword">else</span> {
+            <span class="code-keyword">continue</span>;
+        };
+        <span class="code-keyword">let</span> label = <span class="code-keyword">match</span> circuit.status {
+            CircStatus::Launched =&gt; <span class="code-string">"LAUNCHED"</span>,
+            CircStatus::Built =&gt; <span class="code-string">"BUILT"</span>,
+            CircStatus::Extended =&gt; <span class="code-string">"EXTENDED"</span>,
+            CircStatus::Failed =&gt; <span class="code-string">"FAILED"</span>,
+            CircStatus::Closed =&gt; <span class="code-string">"CLOSED"</span>,
+            _ =&gt; <span class="code-string">"OTHER"</span>,
+        };
+        <span class="code-function">println!</span>(
+            <span class="code-string">"{label} circuit {} ({} hops)"</span>,
+            circuit.id,
+            circuit.path.<span class="code-function">len</span>()
+        );
     }
+    <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
                         </div>
@@ -1207,84 +1089,46 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                             <div class="content-block-header">
                                 <div class="content-block-title">
                                     <span class="content-block-title-icon">4</span>
-                                    Multi-Event Handler with Channels
+                                    Multi-Event Handler
                                 </div>
                             </div>
                             <div class="content-block-body">
                                 <p>
-                                    For production applications, use async channels to handle events
-                                    without blocking other operations:
+                                    subscribe returns a channel receiver. Combine it with
+                                    tokio::select! to handle several events and shutdown signals in
+                                    one task:
                                 </p>
                             </div>
                             <div class="code-block">
                                 <div class="code-block-header">
                                     <span class="code-block-filename">multi_event_handler.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, EventType};
-<span class="code-keyword">use</span> stem::events::ParsedEvent;
-<span class="code-keyword">use</span> tokio::sync::mpsc;
-<span class="code-keyword">use</span> std::sync::Arc;
-<span class="code-keyword">use</span> tokio::sync::Mutex;
+                                <pre><code><span class="code-keyword">use</span> stem::events::{EventData, EventType};
+<span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-keyword">let</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    <span class="code-keyword">let</span> controller = Arc::<span class="code-function">new</span>(Mutex::<span class="code-function">new</span>(controller));
-    
-    <span class="code-comment">// Authenticate and subscribe to events</span>
-    {
-        <span class="code-keyword">let mut</span> ctrl = controller.<span class="code-function">lock</span>().<span class="code-keyword">await</span>;
-        ctrl.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-        ctrl.<span class="code-function">set_events</span>(&[
-            EventType::Bw,
-            EventType::Circ,
-            EventType::Notice,
-        ]).<span class="code-keyword">await</span>?;
-    }
-    
-    <span class="code-comment">// Create channel for event processing</span>
-    <span class="code-keyword">let</span> (tx, <span class="code-keyword">mut</span> rx) = mpsc::<span class="code-function">channel</span>::&lt;ParsedEvent&gt;(<span class="code-number">100</span>);
-    
-    <span class="code-comment">// Spawn event receiver task</span>
-    <span class="code-keyword">let</span> ctrl_clone = controller.<span class="code-function">clone</span>();
-    tokio::<span class="code-function">spawn</span>(<span class="code-keyword">async move</span> {
-        <span class="code-keyword">loop</span> {
-            <span class="code-keyword">let</span> event = {
-                <span class="code-keyword">let mut</span> ctrl = ctrl_clone.<span class="code-function">lock</span>().<span class="code-keyword">await</span>;
-                ctrl.<span class="code-function">recv_event</span>().<span class="code-keyword">await</span>
-            };
-            
-            <span class="code-keyword">match</span> event {
-                <span class="code-type">Ok</span>(e) => {
-                    <span class="code-keyword">if</span> tx.<span class="code-function">send</span>(e).<span class="code-keyword">await</span>.<span class="code-function">is_err</span>() {
-                        <span class="code-keyword">break</span>;
-                    }
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
+    <span class="code-keyword">let</span> (_, <span class="code-keyword">mut</span> events) = controller
+        .<span class="code-function">subscribe</span>(&amp;[EventType::Bw, EventType::Circ, EventType::Notice])
+        .<span class="code-keyword">await</span>?;
+
+    <span class="code-keyword">loop</span> {
+        tokio::select! {
+            _ = tokio::signal::<span class="code-function">ctrl_c</span>() =&gt; <span class="code-keyword">break</span>,
+            <span class="code-type">Some</span>(event) = events.<span class="code-function">recv</span>() =&gt; <span class="code-keyword">match</span> event.data {
+                EventData::<span class="code-function">Bandwidth</span>(bandwidth) <span class="code-keyword">if</span> bandwidth.read + bandwidth.written &gt; <span class="code-number">0</span> =&gt; {
+                    <span class="code-function">println!</span>(<span class="code-string">"[BW] down {} up {}"</span>, bandwidth.read, bandwidth.written);
                 }
-                <span class="code-type">Err</span>(_) => <span class="code-keyword">break</span>,
-            }
-        }
-    });
-    
-    <span class="code-comment">// Process events in main task</span>
-    <span class="code-keyword">while let</span> <span class="code-type">Some</span>(event) = rx.<span class="code-function">recv</span>().<span class="code-keyword">await</span> {
-        <span class="code-keyword">match</span> event {
-            ParsedEvent::<span class="code-function">Bandwidth</span>(bw) => {
-                <span class="code-keyword">if</span> bw.read > <span class="code-number">0</span> || bw.written > <span class="code-number">0</span> {
-                    <span class="code-function">println!</span>(<span class="code-string">"[BW] ↓{} ↑{}"</span>, bw.read, bw.written);
+                EventData::<span class="code-function">Circuit</span>(circuit) =&gt; {
+                    <span class="code-function">println!</span>(<span class="code-string">"[CIRC] {} {:?}"</span>, circuit.id, circuit.status);
                 }
-            }
-            ParsedEvent::<span class="code-function">Circuit</span>(circ) => {
-                <span class="code-function">println!</span>(<span class="code-string">"[CIRC] {} {:?}"</span>, circ.id, circ.status);
-            }
-            ParsedEvent::<span class="code-function">Log</span>(log) => {
-                <span class="code-function">println!</span>(<span class="code-string">"[{}] {}"</span>, log.runlevel, log.message);
-            }
-            _ => {}
+                EventData::<span class="code-function">Log</span>(log) =&gt; <span class="code-function">println!</span>(<span class="code-string">"[{:?}] {}"</span>, log.runlevel, log.message),
+                _ =&gt; {}
+            },
         }
     }
-    
+    controller.<span class="code-function">close</span>().<span class="code-keyword">await</span>;
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
@@ -1344,45 +1188,33 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">ephemeral_service.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
-<span class="code-keyword">use</span> std::time::Duration;
+                                <pre><code><span class="code-keyword">use</span> std::time::Duration;
+
+<span class="code-keyword">use</span> stem::onion_services::{EphemeralServiceOptions, OnionPorts};
+<span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-function">println!</span>(<span class="code-string">"Creating ephemeral hidden service..."</span>);
-    
-    <span class="code-comment">// Create a v3 hidden service</span>
-    <span class="code-comment">// Maps port 80 on the .onion address to localhost:8080</span>
-    <span class="code-keyword">let</span> response = controller.<span class="code-function">create_ephemeral_hidden_service</span>(
-        &[(<span class="code-number">80</span>, <span class="code-string">"127.0.0.1:8080"</span>)],  <span class="code-comment">// Port mappings</span>
-        <span class="code-string">"NEW"</span>,                        <span class="code-comment">// Generate new key</span>
-        <span class="code-string">"ED25519-V3"</span>,                 <span class="code-comment">// Key type (v3 onion)</span>
-        &[],                          <span class="code-comment">// No special flags</span>
-    ).<span class="code-keyword">await</span>?;
-    
-    <span class="code-function">println!</span>(<span class="code-string">"\n✅ Hidden service created!"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"   Address: {}.onion"</span>, response.service_id);
-    <span class="code-function">println!</span>(<span class="code-string">"   Key type: {:?}"</span>, response.private_key_type);
-    
-    <span class="code-comment">// The private key can be saved to recreate the same address later</span>
-    <span class="code-keyword">if let</span> <span class="code-type">Some</span>(<span class="code-keyword">ref</span> key) = response.private_key {
-        <span class="code-function">println!</span>(<span class="code-string">"   Private key: {}..."</span>, &key[..<span class="code-number">50</span>.<span class="code-function">min</span>(key.<span class="code-function">len</span>())]);
-    }
-    
-    <span class="code-function">println!</span>(<span class="code-string">"\nService running. Press Ctrl+C to stop."</span>);
-    
-    <span class="code-comment">// Keep the service running</span>
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
+
+    <span class="code-keyword">let</span> ports = OnionPorts::<span class="code-function">Map</span>(<span class="code-function">vec!</span>[(<span class="code-number">80</span>, <span class="code-string">"127.0.0.1:8080"</span>.<span class="code-function">to_string</span>())]);
+    <span class="code-keyword">let</span> options = EphemeralServiceOptions {
+        await_publication: true,
+        timeout: <span class="code-type">Some</span>(Duration::<span class="code-function">from_secs</span>(<span class="code-number">120</span>)),
+        ..EphemeralServiceOptions::<span class="code-function">default</span>()
+    };
+    <span class="code-keyword">let</span> service = controller
+        .<span class="code-function">create_ephemeral_hidden_service</span>(&amp;ports, &amp;options)
+        .<span class="code-keyword">await</span>?;
+    <span class="code-keyword">let</span> service_id = service.service_id.<span class="code-function">unwrap_or_default</span>();
+    <span class="code-function">println!</span>(<span class="code-string">"Address: {service_id}.onion"</span>);
+    <span class="code-function">println!</span>(<span class="code-string">"Key type: {:?}"</span>, service.private_key_type);
+
     tokio::time::<span class="code-function">sleep</span>(Duration::<span class="code-function">from_secs</span>(<span class="code-number">60</span>)).<span class="code-keyword">await</span>;
-    
-    <span class="code-comment">// Clean up</span>
-    controller.<span class="code-function">remove_ephemeral_hidden_service</span>(&response.service_id).<span class="code-keyword">await</span>?;
-    <span class="code-function">println!</span>(<span class="code-string">"\nHidden service removed."</span>);
-    
+    controller
+        .<span class="code-function">remove_ephemeral_hidden_service</span>(&amp;service_id)
+        .<span class="code-keyword">await</span>?;
+    <span class="code-function">println!</span>(<span class="code-string">"Hidden service removed"</span>);
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
@@ -1405,69 +1237,48 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">persistent_service.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
-<span class="code-keyword">use</span> std::path::Path;
-<span class="code-keyword">use</span> tokio::fs;
+                                <pre><code><span class="code-keyword">use</span> std::path::Path;
 
-<span class="code-keyword">const</span> KEY_FILE: &<span class="code-type">str</span> = <span class="code-string">"hidden_service.key"</span>;
+<span class="code-keyword">use</span> stem::onion_services::{EphemeralServiceOptions, OnionPorts};
+<span class="code-keyword">use</span> stem::{ConnectOptions, connect};
+
+<span class="code-keyword">const</span> KEY_FILE: &amp;<span class="code-type">str</span> = <span class="code-string">"hidden_service.key"</span>;
+
+<span class="code-keyword">fn</span> <span class="code-function">saved_options</span>() -&gt; std::io::<span class="code-type">Result</span>&lt;EphemeralServiceOptions&gt; {
+    <span class="code-keyword">let</span> <span class="code-type">Ok</span>(saved) = std::fs::<span class="code-function">read_to_string</span>(KEY_FILE) <span class="code-keyword">else</span> {
+        <span class="code-keyword">return</span> <span class="code-type">Ok</span>(EphemeralServiceOptions::<span class="code-function">default</span>());
+    };
+    <span class="code-keyword">let</span> (key_type, key_content) = saved
+        .<span class="code-function">trim</span>()
+        .<span class="code-function">split_once</span>(':')
+        .<span class="code-function">ok_or_else</span>(|| std::io::Error::<span class="code-function">other</span>(<span class="code-string">"invalid key file"</span>))?;
+    <span class="code-type">Ok</span>(EphemeralServiceOptions {
+        key_type: key_type.<span class="code-function">to_string</span>(),
+        key_content: key_content.<span class="code-function">to_string</span>(),
+        ..EphemeralServiceOptions::<span class="code-function">default</span>()
+    })
+}
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-keyword">let</span> key_path = Path::<span class="code-function">new</span>(KEY_FILE);
-    
-    <span class="code-keyword">let</span> response = <span class="code-keyword">if</span> key_path.<span class="code-function">exists</span>() {
-        <span class="code-comment">// Load existing key to restore the same .onion address</span>
-        <span class="code-keyword">let</span> key_data = fs::<span class="code-function">read_to_string</span>(key_path).<span class="code-keyword">await</span>
-            .<span class="code-function">map_err</span>(|e| Error::<span class="code-function">Protocol</span>(<span class="code-function">format!</span>(<span class="code-string">"Failed to read key: {}"</span>, e)))?;
-        
-        <span class="code-keyword">let</span> (key_type, key_content) = key_data.<span class="code-function">split_once</span>(<span class="code-string">':'</span>)
-            .<span class="code-function">ok_or_else</span>(|| Error::<span class="code-function">Protocol</span>(<span class="code-string">"Invalid key format"</span>.<span class="code-function">into</span>()))?;
-        
-        <span class="code-function">println!</span>(<span class="code-string">"Restoring hidden service from saved key..."</span>);
-        
-        controller.<span class="code-function">create_ephemeral_hidden_service</span>(
-            &[(<span class="code-number">80</span>, <span class="code-string">"127.0.0.1:8080"</span>)],
-            key_type,
-            key_content,
-            &[],
-        ).<span class="code-keyword">await</span>?
-    } <span class="code-keyword">else</span> {
-        <span class="code-comment">// Create new service and save the key</span>
-        <span class="code-function">println!</span>(<span class="code-string">"Creating new hidden service..."</span>);
-        
-        <span class="code-keyword">let</span> response = controller.<span class="code-function">create_ephemeral_hidden_service</span>(
-            &[(<span class="code-number">80</span>, <span class="code-string">"127.0.0.1:8080"</span>)],
-            <span class="code-string">"NEW"</span>,
-            <span class="code-string">"ED25519-V3"</span>,
-            &[],
-        ).<span class="code-keyword">await</span>?;
-        
-        <span class="code-comment">// Save the key for future use</span>
-        <span class="code-keyword">if let</span> (<span class="code-type">Some</span>(key_type), <span class="code-type">Some</span>(key)) = 
-            (&response.private_key_type, &response.private_key) {
-            <span class="code-keyword">let</span> key_data = <span class="code-function">format!</span>(<span class="code-string">"{}:{}"</span>, key_type, key);
-            fs::<span class="code-function">write</span>(key_path, key_data).<span class="code-keyword">await</span>
-                .<span class="code-function">map_err</span>(|e| Error::<span class="code-function">Protocol</span>(<span class="code-function">format!</span>(<span class="code-string">"Failed to save key: {}"</span>, e)))?;
-            <span class="code-function">println!</span>(<span class="code-string">"Key saved to {}"</span>, KEY_FILE);
-        }
-        
-        response
-    };
-    
-    <span class="code-function">println!</span>(<span class="code-string">"\n🧅 Hidden service: {}.onion"</span>, response.service_id);
-    <span class="code-function">println!</span>(<span class="code-string">"   Forwarding port 80 → 127.0.0.1:8080"</span>);
-    
-    <span class="code-comment">// Wait for shutdown signal</span>
-    <span class="code-function">println!</span>(<span class="code-string">"\nPress Ctrl+C to stop."</span>);
-    tokio::signal::<span class="code-function">ctrl_c</span>().<span class="code-keyword">await</span>.<span class="code-function">ok</span>();
-    
-    controller.<span class="code-function">remove_ephemeral_hidden_service</span>(&response.service_id).<span class="code-keyword">await</span>?;
-    
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; <span class="code-type">Result</span>&lt;(), <span class="code-type">Box</span>&lt;<span class="code-keyword">dyn</span> std::error::Error&gt;&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
+    <span class="code-keyword">let</span> ports = OnionPorts::<span class="code-function">Map</span>(<span class="code-function">vec!</span>[(<span class="code-number">80</span>, <span class="code-string">"127.0.0.1:8080"</span>.<span class="code-function">to_string</span>())]);
+
+    <span class="code-keyword">let</span> service = controller
+        .<span class="code-function">create_ephemeral_hidden_service</span>(&amp;ports, &amp;<span class="code-function">saved_options</span>()?)
+        .<span class="code-keyword">await</span>?;
+    <span class="code-keyword">if</span> <span class="code-keyword">let</span> (<span class="code-type">Some</span>(key_type), <span class="code-type">Some</span>(key)) = (&amp;service.private_key_type, &amp;service.private_key)
+        &amp;&amp; !Path::<span class="code-function">new</span>(KEY_FILE).<span class="code-function">exists</span>()
+    {
+        std::fs::<span class="code-function">write</span>(KEY_FILE, <span class="code-function">format!</span>(<span class="code-string">"{key_type}:{key}"</span>))?;
+    }
+
+    <span class="code-keyword">let</span> service_id = service.service_id.<span class="code-function">unwrap_or_default</span>();
+    <span class="code-function">println!</span>(<span class="code-string">"Hidden service: {service_id}.onion"</span>);
+    tokio::signal::<span class="code-function">ctrl_c</span>().<span class="code-keyword">await</span>?;
+    controller
+        .<span class="code-function">remove_ephemeral_hidden_service</span>(&amp;service_id)
+        .<span class="code-keyword">await</span>?;
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
@@ -1490,33 +1301,28 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                 <div class="code-block-header">
                                     <span class="code-block-filename">multi_port_service.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
+                                <pre><code><span class="code-keyword">use</span> stem::onion_services::{EphemeralServiceOptions, OnionPorts};
+<span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Create service with multiple port mappings</span>
-    <span class="code-keyword">let</span> response = controller.<span class="code-function">create_ephemeral_hidden_service</span>(
-        &[
-            (<span class="code-number">80</span>, <span class="code-string">"127.0.0.1:8080"</span>),    <span class="code-comment">// HTTP</span>
-            (<span class="code-number">443</span>, <span class="code-string">"127.0.0.1:8443"</span>),  <span class="code-comment">// HTTPS</span>
-            (<span class="code-number">22</span>, <span class="code-string">"127.0.0.1:2222"</span>),   <span class="code-comment">// SSH</span>
-        ],
-        <span class="code-string">"NEW"</span>,
-        <span class="code-string">"ED25519-V3"</span>,
-        &[<span class="code-string">"Detach"</span>],  <span class="code-comment">// Keep running if controller disconnects</span>
-    ).<span class="code-keyword">await</span>?;
-    
-    <span class="code-function">println!</span>(<span class="code-string">"Multi-port hidden service created:"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"  Address: {}.onion"</span>, response.service_id);
-    <span class="code-function">println!</span>(<span class="code-string">"  Port 80  → localhost:8080 (HTTP)"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"  Port 443 → localhost:8443 (HTTPS)"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"  Port 22  → localhost:2222 (SSH)"</span>);
-    
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
+
+    <span class="code-keyword">let</span> ports = OnionPorts::<span class="code-function">Map</span>(<span class="code-function">vec!</span>[
+        (<span class="code-number">80</span>, <span class="code-string">"127.0.0.1:8080"</span>.<span class="code-function">to_string</span>()),
+        (<span class="code-number">443</span>, <span class="code-string">"127.0.0.1:8443"</span>.<span class="code-function">to_string</span>()),
+        (<span class="code-number">22</span>, <span class="code-string">"127.0.0.1:2222"</span>.<span class="code-function">to_string</span>()),
+    ]);
+    <span class="code-keyword">let</span> options = EphemeralServiceOptions {
+        detached: true,
+        ..EphemeralServiceOptions::<span class="code-function">default</span>()
+    };
+    <span class="code-keyword">let</span> service = controller
+        .<span class="code-function">create_ephemeral_hidden_service</span>(&amp;ports, &amp;options)
+        .<span class="code-keyword">await</span>?;
+
+    <span class="code-function">println!</span>(<span class="code-string">"Address: {}.onion"</span>, service.service_id.<span class="code-function">unwrap_or_default</span>());
+    <span class="code-function">println!</span>(<span class="code-string">"Ports 80, 443 and 22 map to 8080, 8443 and 2222"</span>);
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
@@ -1542,64 +1348,46 @@ reqwest = { version = <span class="code-string">"0.11"</span>, features = [<span
                                     >
                                 </div>
                                 <pre><code><span class="code-keyword">[dependencies]</span>
-axum = <span class="code-string">"0.7"</span>
-tower = <span class="code-string">"0.4"</span></code></pre>
+axum = <span class="code-string">"0.8"</span></code></pre>
                             </div>
                             <div class="code-block">
                                 <div class="code-block-header">
                                     <span class="code-block-filename">onion_web_server.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
-<span class="code-keyword">use</span> axum::{routing::get, Router};
-<span class="code-keyword">use</span> std::net::SocketAddr;
+                                <pre><code><span class="code-keyword">use</span> axum::Router;
+<span class="code-keyword">use</span> axum::routing::get;
+<span class="code-keyword">use</span> stem::onion_services::{EphemeralServiceOptions, OnionPorts};
+<span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
-<span class="code-keyword">async fn</span> <span class="code-function">index</span>() -> &'<span class="code-keyword">static</span> <span class="code-type">str</span> {
-    <span class="code-string">"Welcome to the hidden service! 🧅"</span>
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">index</span>() -&gt; &amp;<span class="code-keyword">'static</span> <span class="code-type">str</span> {
+    <span class="code-string">"Welcome to the hidden service!"</span>
 }
 
-<span class="code-keyword">async fn</span> <span class="code-function">health</span>() -> &'<span class="code-keyword">static</span> <span class="code-type">str</span> {
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">health</span>() -&gt; &amp;<span class="code-keyword">'static</span> <span class="code-type">str</span> {
     <span class="code-string">"OK"</span>
 }
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Box&lt;<span class="code-keyword">dyn</span> std::error::Error&gt;&gt; {
-    <span class="code-comment">// Build the web application</span>
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; <span class="code-type">Result</span>&lt;(), <span class="code-type">Box</span>&lt;<span class="code-keyword">dyn</span> std::error::Error&gt;&gt; {
     <span class="code-keyword">let</span> app = Router::<span class="code-function">new</span>()
         .<span class="code-function">route</span>(<span class="code-string">"/"</span>, <span class="code-function">get</span>(index))
         .<span class="code-function">route</span>(<span class="code-string">"/health"</span>, <span class="code-function">get</span>(health));
-    
-    <span class="code-keyword">let</span> addr = SocketAddr::<span class="code-function">from</span>(([<span class="code-number">127</span>, <span class="code-number">0</span>, <span class="code-number">0</span>, <span class="code-number">1</span>], <span class="code-number">8080</span>));
-    
-    <span class="code-comment">// Start the web server</span>
-    <span class="code-keyword">let</span> server = tokio::<span class="code-function">spawn</span>(<span class="code-keyword">async move</span> {
-        <span class="code-keyword">let</span> listener = tokio::net::TcpListener::<span class="code-function">bind</span>(addr).<span class="code-keyword">await</span>.<span class="code-function">unwrap</span>();
-        axum::<span class="code-function">serve</span>(listener, app).<span class="code-keyword">await</span>.<span class="code-function">unwrap</span>();
-    });
-    
-    <span class="code-comment">// Create the hidden service</span>
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-keyword">let</span> response = controller.<span class="code-function">create_ephemeral_hidden_service</span>(
-        &[(<span class="code-number">80</span>, <span class="code-string">"127.0.0.1:8080"</span>)],
-        <span class="code-string">"NEW"</span>,
-        <span class="code-string">"ED25519-V3"</span>,
-        &[],
-    ).<span class="code-keyword">await</span>?;
-    
-    <span class="code-function">println!</span>(<span class="code-string">"🧅 Service available at: http://{}.onion"</span>, response.service_id);
-    <span class="code-function">println!</span>(<span class="code-string">"   Local access: http://127.0.0.1:8080"</span>);
-    
-    <span class="code-comment">// Wait for shutdown signal</span>
+    <span class="code-keyword">let</span> listener = tokio::net::TcpListener::<span class="code-function">bind</span>(<span class="code-string">"127.0.0.1:8080"</span>).<span class="code-keyword">await</span>?;
+    <span class="code-keyword">let</span> server = tokio::<span class="code-function">spawn</span>(<span class="code-keyword">async</span> <span class="code-keyword">move</span> { axum::<span class="code-function">serve</span>(listener, app).<span class="code-keyword">await</span> });
+
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
+    <span class="code-keyword">let</span> ports = OnionPorts::<span class="code-function">Map</span>(<span class="code-function">vec!</span>[(<span class="code-number">80</span>, <span class="code-string">"127.0.0.1:8080"</span>.<span class="code-function">to_string</span>())]);
+    <span class="code-keyword">let</span> service = controller
+        .<span class="code-function">create_ephemeral_hidden_service</span>(&amp;ports, &amp;EphemeralServiceOptions::<span class="code-function">default</span>())
+        .<span class="code-keyword">await</span>?;
+    <span class="code-keyword">let</span> service_id = service.service_id.<span class="code-function">unwrap_or_default</span>();
+    <span class="code-function">println!</span>(<span class="code-string">"Service available at http://{service_id}.onion"</span>);
+
     tokio::signal::<span class="code-function">ctrl_c</span>().<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Cleanup</span>
-    controller.<span class="code-function">remove_ephemeral_hidden_service</span>(&response.service_id).<span class="code-keyword">await</span>?;
+    controller
+        .<span class="code-function">remove_ephemeral_hidden_service</span>(&amp;service_id)
+        .<span class="code-keyword">await</span>?;
     server.<span class="code-function">abort</span>();
-    
-    <span class="code-function">println!</span>(<span class="code-string">"\nService stopped."</span>);
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
@@ -1710,56 +1498,44 @@ tower = <span class="code-string">"0.4"</span></code></pre>
                                 <div class="code-block-header">
                                     <span class="code-block-filename">consensus_analysis.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::descriptor::{download_consensus, NetworkStatusDocument};
-<span class="code-keyword">use</span> stem::{Error, Flag};
+                                <pre><code><span class="code-keyword">use</span> stem::descriptor::Descriptor;
+<span class="code-keyword">use</span> stem::descriptor::remote::DescriptorDownloader;
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-function">println!</span>(<span class="code-string">"Downloading consensus from directory authorities..."</span>);
-    
-    <span class="code-keyword">let</span> consensus = <span class="code-function">download_consensus</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-function">println!</span>(<span class="code-string">"\n📋 Consensus Information:"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"   Valid after: {}"</span>, consensus.valid_after);
-    <span class="code-function">println!</span>(<span class="code-string">"   Valid until: {}"</span>, consensus.valid_until);
-    <span class="code-function">println!</span>(<span class="code-string">"   Total relays: {}"</span>, consensus.routers.<span class="code-function">len</span>());
-    
-    <span class="code-comment">// Count relays by flag</span>
-    <span class="code-keyword">let mut</span> guards = <span class="code-number">0</span>;
-    <span class="code-keyword">let mut</span> exits = <span class="code-number">0</span>;
-    <span class="code-keyword">let mut</span> fast = <span class="code-number">0</span>;
-    <span class="code-keyword">let mut</span> stable = <span class="code-number">0</span>;
-    
-    <span class="code-keyword">for</span> router <span class="code-keyword">in</span> &consensus.routers {
-        <span class="code-keyword">if</span> router.flags.<span class="code-function">contains</span>(&Flag::Guard) { guards += <span class="code-number">1</span>; }
-        <span class="code-keyword">if</span> router.flags.<span class="code-function">contains</span>(&Flag::Exit) { exits += <span class="code-number">1</span>; }
-        <span class="code-keyword">if</span> router.flags.<span class="code-function">contains</span>(&Flag::Fast) { fast += <span class="code-number">1</span>; }
-        <span class="code-keyword">if</span> router.flags.<span class="code-function">contains</span>(&Flag::Stable) { stable += <span class="code-number">1</span>; }
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> downloader = DescriptorDownloader::<span class="code-function">new</span>();
+    <span class="code-keyword">let</span> documents = downloader.<span class="code-function">get_consensus_validated</span>(<span class="code-type">None</span>, false).<span class="code-keyword">await</span>?;
+
+    <span class="code-keyword">for</span> document <span class="code-keyword">in</span> documents {
+        <span class="code-keyword">let</span> Descriptor::<span class="code-function">NetworkStatusV3</span>(consensus) = document <span class="code-keyword">else</span> {
+            <span class="code-keyword">continue</span>;
+        };
+        <span class="code-function">println!</span>(<span class="code-string">"Valid after: {:?}"</span>, consensus.valid_after);
+        <span class="code-function">println!</span>(<span class="code-string">"Valid until: {:?}"</span>, consensus.valid_until);
+        <span class="code-function">println!</span>(<span class="code-string">"Total relays: {}"</span>, consensus.routers.<span class="code-function">len</span>());
+
+        <span class="code-keyword">for</span> flag <span class="code-keyword">in</span> [<span class="code-string">"Guard"</span>, <span class="code-string">"Exit"</span>, <span class="code-string">"Fast"</span>, <span class="code-string">"Stable"</span>] {
+            <span class="code-keyword">let</span> count = consensus
+                .routers
+                .<span class="code-function">values</span>()
+                .<span class="code-function">filter</span>(|router| router.<span class="code-function">common</span>().flags.<span class="code-function">iter</span>().<span class="code-function">any</span>(|name| name == flag))
+                .<span class="code-function">count</span>();
+            <span class="code-function">println!</span>(<span class="code-string">"{flag}: {count}"</span>);
+        }
     }
-    
-    <span class="code-function">println!</span>(<span class="code-string">"\n📊 Relay Statistics:"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"   Guards: {}"</span>, guards);
-    <span class="code-function">println!</span>(<span class="code-string">"   Exits:  {}"</span>, exits);
-    <span class="code-function">println!</span>(<span class="code-string">"   Fast:   {}"</span>, fast);
-    <span class="code-function">println!</span>(<span class="code-string">"   Stable: {}"</span>, stable);
-    
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
                             <div class="content-block-body">
                                 <div class="output-preview">
                                     <span class="output-label">Output</span>
-                                    <pre>
-📋 Consensus Information:
-   Valid after: 2024-01-15 12:00:00
-   Valid until: 2024-01-15 15:00:00
-   Total relays: 6847
-
-📊 Relay Statistics:
-   Guards: 2341
-   Exits:  1523
-   Fast:   5892
-   Stable: 5234</pre
+                                    <pre>Valid after: Some(2026-10-01T23:00:00)
+Valid until: Some(2026-10-02T02:00:00)
+Total relays: 9463
+Guard: 5229
+Exit: 3071
+Fast: 9104
+Stable: 8120</pre
                                     >
                                 </div>
                             </div>
@@ -1782,56 +1558,39 @@ tower = <span class="code-string">"0.4"</span></code></pre>
                                 <div class="code-block-header">
                                     <span class="code-block-filename">top_exits.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::descriptor::{download_server_descriptors, ServerDescriptor, Descriptor};
-<span class="code-keyword">use</span> stem::Error;
-<span class="code-keyword">use</span> std::collections::BinaryHeap;
-
-<span class="code-keyword">fn</span> <span class="code-function">format_bandwidth</span>(bytes: <span class="code-type">u64</span>) -> <span class="code-type">String</span> {
-    <span class="code-keyword">const</span> MB: <span class="code-type">u64</span> = <span class="code-number">1024</span> * <span class="code-number">1024</span>;
-    <span class="code-keyword">const</span> GB: <span class="code-type">u64</span> = MB * <span class="code-number">1024</span>;
-    
-    <span class="code-keyword">if</span> bytes >= GB {
-        <span class="code-function">format!</span>(<span class="code-string">"{:.2} GB/s"</span>, bytes <span class="code-keyword">as</span> <span class="code-type">f64</span> / GB <span class="code-keyword">as</span> <span class="code-type">f64</span>)
-    } <span class="code-keyword">else</span> {
-        <span class="code-function">format!</span>(<span class="code-string">"{:.2} MB/s"</span>, bytes <span class="code-keyword">as</span> <span class="code-type">f64</span> / MB <span class="code-keyword">as</span> <span class="code-type">f64</span>)
-    }
-}
+                                <pre><code><span class="code-keyword">use</span> stem::descriptor::Descriptor;
+<span class="code-keyword">use</span> stem::descriptor::remote::DescriptorDownloader;
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-function">println!</span>(<span class="code-string">"Downloading server descriptors..."</span>);
-    
-    <span class="code-keyword">let</span> descriptors = <span class="code-function">download_server_descriptors</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Collect exit relays with bandwidth</span>
-    <span class="code-keyword">let mut</span> exits: <span class="code-type">Vec</span>&lt;(&<span class="code-type">str</span>, &<span class="code-type">str</span>, <span class="code-type">u64</span>)&gt; = <span class="code-type">Vec</span>::<span class="code-function">new</span>();
-    
-    <span class="code-keyword">for</span> desc <span class="code-keyword">in</span> &descriptors {
-        <span class="code-keyword">if</span> desc.exit_policy.<span class="code-function">is_exiting_allowed</span>() {
-            <span class="code-comment">// Advertised bandwidth is min of avg, burst, and observed</span>
-            <span class="code-keyword">let</span> advertised = desc.bandwidth_avg
-                .<span class="code-function">min</span>(desc.bandwidth_burst)
-                .<span class="code-function">min</span>(desc.bandwidth_observed);
-            
-            exits.<span class="code-function">push</span>((&desc.nickname, &desc.fingerprint, advertised));
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> descriptors = DescriptorDownloader::<span class="code-function">new</span>()
+        .<span class="code-function">get_server_descriptors</span>(&amp;[])?
+        .<span class="code-function">run</span>()
+        .<span class="code-keyword">await</span>?;
+
+    <span class="code-keyword">let</span> <span class="code-keyword">mut</span> exits = <span class="code-type">Vec</span>::<span class="code-function">new</span>();
+    <span class="code-keyword">for</span> descriptor <span class="code-keyword">in</span> descriptors {
+        <span class="code-keyword">let</span> Descriptor::<span class="code-function">RelayServer</span>(relay) = descriptor <span class="code-keyword">else</span> {
+            <span class="code-keyword">continue</span>;
+        };
+        <span class="code-keyword">let</span> server = &amp;relay.common;
+        <span class="code-keyword">if</span> !server.exit_policy.<span class="code-function">is_exiting_allowed</span>() {
+            <span class="code-keyword">continue</span>;
         }
+        <span class="code-keyword">let</span> bandwidths = [
+            server.average_bandwidth,
+            server.burst_bandwidth,
+            server.observed_bandwidth,
+        ];
+        <span class="code-keyword">let</span> advertised = bandwidths.<span class="code-function">into_iter</span>().<span class="code-function">flatten</span>().<span class="code-function">min</span>().<span class="code-function">unwrap_or</span>(<span class="code-number">0</span>);
+        exits.<span class="code-function">push</span>((server.nickname.<span class="code-function">clone</span>().<span class="code-function">unwrap_or_default</span>(), advertised));
     }
-    
-    <span class="code-comment">// Sort by bandwidth (descending)</span>
-    exits.<span class="code-function">sort_by</span>(|a, b| b.<span class="code-number">2</span>.<span class="code-function">cmp</span>(&a.<span class="code-number">2</span>));
-    
-    <span class="code-function">println!</span>(<span class="code-string">"\n🏆 Top 10 Exit Relays by Bandwidth:\n"</span>);
-    
-    <span class="code-keyword">for</span> (i, (nickname, fingerprint, bandwidth)) <span class="code-keyword">in</span> exits.<span class="code-function">iter</span>().<span class="code-function">take</span>(<span class="code-number">10</span>).<span class="code-function">enumerate</span>() {
-        <span class="code-function">println!</span>(
-            <span class="code-string">"{:>2}. {} ({}) - {}"</span>,
-            i + <span class="code-number">1</span>,
-            nickname,
-            &fingerprint[..<span class="code-number">8</span>],
-            <span class="code-function">format_bandwidth</span>(*bandwidth)
-        );
+
+    exits.<span class="code-function">sort_by_key</span>(|exit| std::cmp::<span class="code-function">Reverse</span>(exit.<span class="code-number">1</span>));
+    <span class="code-keyword">for</span> (rank, (nickname, bandwidth)) <span class="code-keyword">in</span> exits.<span class="code-function">iter</span>().<span class="code-function">take</span>(<span class="code-number">10</span>).<span class="code-function">enumerate</span>() {
+        <span class="code-keyword">let</span> megabytes = *bandwidth <span class="code-keyword">as</span> <span class="code-type">f64</span> / (<span class="code-number">1024.0</span> * <span class="code-number">1024.0</span>);
+        <span class="code-function">println!</span>(<span class="code-string">"{:&gt;2}. {nickname} - {megabytes:.2} MB/s"</span>, rank + <span class="code-number">1</span>);
     }
-    
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
@@ -1853,34 +1612,28 @@ tower = <span class="code-string">"0.4"</span></code></pre>
                                 <div class="code-block-header">
                                     <span class="code-block-filename">parse_local.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::descriptor::{parse_file, ServerDescriptor, Descriptor};
-<span class="code-keyword">use</span> stem::descriptor::{DigestHash, DigestEncoding};
-<span class="code-keyword">use</span> stem::Error;
-<span class="code-keyword">use</span> std::fs;
+                                <pre><code><span class="code-keyword">use</span> stem::descriptor::{Descriptor, DigestEncoding, DigestHash, DocumentHandler, parse_path};
 
-<span class="code-keyword">fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-comment">// Read from Tor's cached descriptors</span>
-    <span class="code-keyword">let</span> content = fs::<span class="code-function">read</span>(<span class="code-string">"/var/lib/tor/cached-descriptors"</span>)
-        .<span class="code-function">map_err</span>(|e| Error::<span class="code-function">Protocol</span>(<span class="code-function">format!</span>(<span class="code-string">"Failed to read file: {}"</span>, e)))?;
-    
-    <span class="code-keyword">let</span> descriptor: ServerDescriptor = <span class="code-function">parse_file</span>(&content)?;
-    
-    <span class="code-function">println!</span>(<span class="code-string">"📄 Server Descriptor:"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"   Nickname: {}"</span>, descriptor.nickname);
-    <span class="code-function">println!</span>(<span class="code-string">"   Address: {}:{}"</span>, descriptor.address, descriptor.or_port);
-    <span class="code-function">println!</span>(<span class="code-string">"   Fingerprint: {}"</span>, descriptor.fingerprint);
-    <span class="code-function">println!</span>(<span class="code-string">"   Platform: {:?}"</span>, descriptor.platform);
-    <span class="code-function">println!</span>(<span class="code-string">"   Published: {}"</span>, descriptor.published);
-    
-    <span class="code-comment">// Compute descriptor digest</span>
-    <span class="code-keyword">let</span> digest = descriptor.<span class="code-function">digest</span>(DigestHash::Sha1, DigestEncoding::Hex)?;
-    <span class="code-function">println!</span>(<span class="code-string">"   Digest (SHA1): {}"</span>, digest);
-    
-    <span class="code-comment">// Check exit policy</span>
-    <span class="code-function">println!</span>(<span class="code-string">"\n🚪 Exit Policy:"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"   Allows exiting: {}"</span>, descriptor.exit_policy.<span class="code-function">is_exiting_allowed</span>());
-    <span class="code-function">println!</span>(<span class="code-string">"   Summary: {}"</span>, descriptor.exit_policy.<span class="code-function">summary</span>());
-    
+<span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> path = <span class="code-string">"/var/lib/tor/cached-descriptors"</span>.<span class="code-function">as_ref</span>();
+    <span class="code-keyword">for</span> file <span class="code-keyword">in</span> <span class="code-function">parse_path</span>(path, <span class="code-type">None</span>, false, DocumentHandler::Entries)? {
+        <span class="code-keyword">let</span> Descriptor::<span class="code-function">RelayServer</span>(relay) = file.descriptor <span class="code-keyword">else</span> {
+            <span class="code-keyword">continue</span>;
+        };
+        <span class="code-keyword">let</span> server = &amp;relay.common;
+        <span class="code-function">println!</span>(<span class="code-string">"Nickname: {:?}"</span>, server.nickname);
+        <span class="code-function">println!</span>(<span class="code-string">"Address: {:?}:{:?}"</span>, server.address, server.or_port);
+        <span class="code-function">println!</span>(<span class="code-string">"Published: {:?}"</span>, server.published);
+        <span class="code-function">println!</span>(
+            <span class="code-string">"Digest: {}"</span>,
+            relay.<span class="code-function">digest</span>(DigestHash::Sha1, DigestEncoding::Hex)?
+        );
+        <span class="code-function">println!</span>(
+            <span class="code-string">"Allows exiting: {}"</span>,
+            server.exit_policy.<span class="code-function">is_exiting_allowed</span>()
+        );
+        <span class="code-function">println!</span>(<span class="code-string">"Summary: {}"</span>, server.exit_policy.<span class="code-function">summary</span>());
+    }
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
@@ -1928,52 +1681,44 @@ tower = <span class="code-string">"0.4"</span></code></pre>
                                     <span class="code-block-filename">exit_policy.rs</span>
                                 </div>
                                 <pre><code><span class="code-keyword">use</span> stem::exit_policy::{ExitPolicy, ExitPolicyRule, MicroExitPolicy};
-<span class="code-keyword">use</span> std::net::IpAddr;
 
-<span class="code-keyword">fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), stem::Error&gt; {
-    <span class="code-comment">// Parse a full exit policy</span>
-    <span class="code-keyword">let</span> policy = ExitPolicy::<span class="code-function">parse</span>(
-        <span class="code-string">"accept *:80, accept *:443, accept *:8080-8090, reject *:*"</span>
-    )?;
-    
-    <span class="code-keyword">let</span> addr: IpAddr = <span class="code-string">"93.184.216.34"</span>.<span class="code-function">parse</span>().<span class="code-function">unwrap</span>();
-    
-    <span class="code-function">println!</span>(<span class="code-string">"Exit Policy Evaluation:"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"  Port 80 (HTTP):   {}"</span>, 
-        <span class="code-keyword">if</span> policy.<span class="code-function">can_exit_to</span>(addr, <span class="code-number">80</span>) { <span class="code-string">"✅ Allowed"</span> } <span class="code-keyword">else</span> { <span class="code-string">"❌ Blocked"</span> });
-    <span class="code-function">println!</span>(<span class="code-string">"  Port 443 (HTTPS): {}"</span>, 
-        <span class="code-keyword">if</span> policy.<span class="code-function">can_exit_to</span>(addr, <span class="code-number">443</span>) { <span class="code-string">"✅ Allowed"</span> } <span class="code-keyword">else</span> { <span class="code-string">"❌ Blocked"</span> });
-    <span class="code-function">println!</span>(<span class="code-string">"  Port 22 (SSH):    {}"</span>, 
-        <span class="code-keyword">if</span> policy.<span class="code-function">can_exit_to</span>(addr, <span class="code-number">22</span>) { <span class="code-string">"✅ Allowed"</span> } <span class="code-keyword">else</span> { <span class="code-string">"❌ Blocked"</span> });
-    <span class="code-function">println!</span>(<span class="code-string">"  Port 8085:        {}"</span>, 
-        <span class="code-keyword">if</span> policy.<span class="code-function">can_exit_to</span>(addr, <span class="code-number">8085</span>) { <span class="code-string">"✅ Allowed"</span> } <span class="code-keyword">else</span> { <span class="code-string">"❌ Blocked"</span> });
-    
-    <span class="code-function">println!</span>(<span class="code-string">"\nPolicy summary: {}"</span>, policy.<span class="code-function">summary</span>());
-    <span class="code-function">println!</span>(<span class="code-string">"Allows any exit: {}"</span>, policy.<span class="code-function">is_exiting_allowed</span>());
-    
-    <span class="code-comment">// Parse individual rules</span>
-    <span class="code-keyword">let</span> rule = ExitPolicyRule::<span class="code-function">parse</span>(<span class="code-string">"reject 10.0.0.0/8:*"</span>)?;
-    <span class="code-function">println!</span>(<span class="code-string">"\nRule rejects private IPs: {}"</span>, !rule.is_accept);
-    
-    <span class="code-comment">// Microdescriptor policies (port-only)</span>
-    <span class="code-keyword">let</span> micro = MicroExitPolicy::<span class="code-function">parse</span>(<span class="code-string">"accept 80,443,8080-8090"</span>)?;
-    <span class="code-function">println!</span>(<span class="code-string">"Micro policy allows port 80: {}"</span>, micro.<span class="code-function">can_exit_to</span>(<span class="code-number">80</span>));
-    
+<span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> policy = ExitPolicy::<span class="code-function">new</span>(&amp;[
+        <span class="code-string">"accept *:80"</span>,
+        <span class="code-string">"accept *:443"</span>,
+        <span class="code-string">"accept *:8080-8090"</span>,
+        <span class="code-string">"reject *:*"</span>,
+    ])?;
+
+    <span class="code-keyword">for</span> port <span class="code-keyword">in</span> [<span class="code-number">80</span>, <span class="code-number">443</span>, <span class="code-number">22</span>, <span class="code-number">8085</span>] {
+        <span class="code-keyword">let</span> allowed = policy.<span class="code-function">can_exit_to</span>(<span class="code-type">Some</span>(<span class="code-string">"93.184.216.34"</span>), <span class="code-type">Some</span>(port), false)?;
+        <span class="code-function">println!</span>(
+            <span class="code-string">"Port {port}: {}"</span>,
+            <span class="code-keyword">if</span> allowed { <span class="code-string">"allowed"</span> } <span class="code-keyword">else</span> { <span class="code-string">"blocked"</span> }
+        );
+    }
+    <span class="code-function">println!</span>(<span class="code-string">"Summary: {}"</span>, policy.<span class="code-function">summary</span>());
+    <span class="code-function">println!</span>(<span class="code-string">"Allows exiting: {}"</span>, policy.<span class="code-function">is_exiting_allowed</span>());
+
+    <span class="code-keyword">let</span> rule = ExitPolicyRule::<span class="code-function">new</span>(<span class="code-string">"reject 10.0.0.0/8:*"</span>)?;
+    <span class="code-function">println!</span>(<span class="code-string">"Rule accepts: {}"</span>, rule.is_accept);
+
+    <span class="code-keyword">let</span> micro = MicroExitPolicy::<span class="code-function">new</span>(<span class="code-string">"accept 80,443,8080-8090"</span>)?;
+    <span class="code-function">println!</span>(<span class="code-string">"Micro policy: {micro}"</span>);
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
                             <div class="content-block-body">
                                 <div class="output-preview">
                                     <span class="output-label">Output</span>
-                                    <pre>
-Exit Policy Evaluation:
-  Port 80 (HTTP):   ✅ Allowed
-  Port 443 (HTTPS): ✅ Allowed
-  Port 22 (SSH):    ❌ Blocked
-  Port 8085:        ✅ Allowed
-
-Policy summary: accept 80,443,8080-8090
-Allows any exit: true</pre
+                                    <pre>Port 80: allowed
+Port 443: allowed
+Port 22: blocked
+Port 8085: allowed
+Summary: accept 80, 443, 8080-8090
+Allows exiting: true
+Rule accepts: false
+Micro policy: accept 80,443,8080-8090</pre
                                     >
                                 </div>
                             </div>
@@ -1998,22 +1743,21 @@ Allows any exit: true</pre
                                 </div>
                                 <pre><code><span class="code-keyword">use</span> stem::Version;
 
-<span class="code-keyword">fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), stem::Error&gt; {
-    <span class="code-keyword">let</span> v1 = Version::<span class="code-function">parse</span>(<span class="code-string">"0.4.7.10"</span>)?;
-    <span class="code-keyword">let</span> v2 = Version::<span class="code-function">parse</span>(<span class="code-string">"0.4.8.0"</span>)?;
-    <span class="code-keyword">let</span> v3 = Version::<span class="code-function">parse</span>(<span class="code-string">"0.4.7.10-dev"</span>)?;
-    
-    <span class="code-function">println!</span>(<span class="code-string">"Version comparisons:"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"  {} &lt; {}: {}"</span>, v1, v2, v1 &lt; v2);
-    <span class="code-function">println!</span>(<span class="code-string">"  {} == {}: {}"</span>, v1, v3, v1 == v3);
-    <span class="code-function">println!</span>(<span class="code-string">"  {} >= 0.4.0.0: {}"</span>, v1, v1 >= Version::<span class="code-function">parse</span>(<span class="code-string">"0.4.0.0"</span>)?);
-    
-    <span class="code-comment">// Check feature availability</span>
-    <span class="code-keyword">let</span> min_v3_onion = Version::<span class="code-function">parse</span>(<span class="code-string">"0.3.2.1"</span>)?;
-    <span class="code-keyword">if</span> v1 >= min_v3_onion {
-        <span class="code-function">println!</span>(<span class="code-string">"\n✅ Tor {} supports v3 onion services"</span>, v1);
+<span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> current = Version::<span class="code-function">new</span>(<span class="code-string">"0.4.7.10"</span>)?;
+    <span class="code-keyword">let</span> newer = Version::<span class="code-function">new</span>(<span class="code-string">"0.4.8.0"</span>)?;
+    <span class="code-keyword">let</span> development = Version::<span class="code-function">new</span>(<span class="code-string">"0.4.7.10-dev"</span>)?;
+
+    <span class="code-function">println!</span>(<span class="code-string">"{current} &lt; {newer}: {}"</span>, current &lt; newer);
+    <span class="code-function">println!</span>(<span class="code-string">"{current} == {development}: {}"</span>, current == development);
+    <span class="code-function">println!</span>(
+        <span class="code-string">"{current} &gt;= 0.4.0.0: {}"</span>,
+        current &gt;= Version::<span class="code-function">new</span>(<span class="code-string">"0.4.0.0"</span>)?
+    );
+
+    <span class="code-keyword">if</span> current &gt;= Version::<span class="code-function">new</span>(<span class="code-string">"0.3.2.1"</span>)? {
+        <span class="code-function">println!</span>(<span class="code-string">"Tor {current} supports v3 onion services"</span>);
     }
-    
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
@@ -2036,28 +1780,21 @@ Allows any exit: true</pre
                                 <div class="code-block-header">
                                     <span class="code-block-filename">validation.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::util::{is_valid_fingerprint, is_valid_nickname};
+                                <pre><code><span class="code-keyword">use</span> stem::validation::{is_valid_fingerprint, is_valid_nickname};
 
 <span class="code-keyword">fn</span> <span class="code-function">main</span>() {
-    <span class="code-comment">// Fingerprint validation (40 hex characters)</span>
-    <span class="code-keyword">let</span> valid_fp = <span class="code-string">"9695DFC35FFEB861329B9F1AB04C46397020CE31"</span>;
-    <span class="code-keyword">let</span> invalid_fp = <span class="code-string">"not-a-fingerprint"</span>;
-    
-    <span class="code-function">println!</span>(<span class="code-string">"Fingerprint validation:"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"  '{}': {}"</span>, valid_fp, 
-        <span class="code-keyword">if</span> <span class="code-function">is_valid_fingerprint</span>(valid_fp) { <span class="code-string">"✅ Valid"</span> } <span class="code-keyword">else</span> { <span class="code-string">"❌ Invalid"</span> });
-    <span class="code-function">println!</span>(<span class="code-string">"  '{}': {}"</span>, invalid_fp, 
-        <span class="code-keyword">if</span> <span class="code-function">is_valid_fingerprint</span>(invalid_fp) { <span class="code-string">"✅ Valid"</span> } <span class="code-keyword">else</span> { <span class="code-string">"❌ Invalid"</span> });
-    
-    <span class="code-comment">// Nickname validation (1-19 alphanumeric characters)</span>
-    <span class="code-keyword">let</span> valid_nick = <span class="code-string">"MyRelay123"</span>;
-    <span class="code-keyword">let</span> invalid_nick = <span class="code-string">"way-too-long-nickname-for-tor"</span>;
-    
-    <span class="code-function">println!</span>(<span class="code-string">"\nNickname validation:"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"  '{}': {}"</span>, valid_nick, 
-        <span class="code-keyword">if</span> <span class="code-function">is_valid_nickname</span>(valid_nick) { <span class="code-string">"✅ Valid"</span> } <span class="code-keyword">else</span> { <span class="code-string">"❌ Invalid"</span> });
-    <span class="code-function">println!</span>(<span class="code-string">"  '{}': {}"</span>, invalid_nick, 
-        <span class="code-keyword">if</span> <span class="code-function">is_valid_nickname</span>(invalid_nick) { <span class="code-string">"✅ Valid"</span> } <span class="code-keyword">else</span> { <span class="code-string">"❌ Invalid"</span> });
+    <span class="code-keyword">for</span> fingerprint <span class="code-keyword">in</span> [
+        <span class="code-string">"9695DFC35FFEB861329B9F1AB04C46397020CE31"</span>,
+        <span class="code-string">"not-a-fingerprint"</span>,
+    ] {
+        <span class="code-function">println!</span>(
+            <span class="code-string">"{fingerprint}: {}"</span>,
+            <span class="code-function">is_valid_fingerprint</span>(fingerprint, false)
+        );
+    }
+    <span class="code-keyword">for</span> nickname <span class="code-keyword">in</span> [<span class="code-string">"MyRelay123"</span>, <span class="code-string">"way-too-long-nickname-for-tor"</span>] {
+        <span class="code-function">println!</span>(<span class="code-string">"{nickname}: {}"</span>, <span class="code-function">is_valid_nickname</span>(nickname));
+    }
 }</code></pre>
                             </div>
                         </div>
@@ -2079,24 +1816,26 @@ Allows any exit: true</pre
                                 <div class="code-block-header">
                                     <span class="code-block-filename">digests.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::descriptor::{compute_digest, DigestHash, DigestEncoding};
+                                <pre><code><span class="code-keyword">use</span> stem::descriptor::{DigestEncoding, DigestHash, encode_digest, hash_bytes};
 
 <span class="code-keyword">fn</span> <span class="code-function">main</span>() {
-    <span class="code-keyword">let</span> content = <span class="code-string">b"Example descriptor content"</span>;
-    
-    <span class="code-comment">// SHA-1 digest (used by legacy descriptors)</span>
-    <span class="code-keyword">let</span> sha1_hex = <span class="code-function">compute_digest</span>(content, DigestHash::Sha1, DigestEncoding::Hex);
-    <span class="code-keyword">let</span> sha1_b64 = <span class="code-function">compute_digest</span>(content, DigestHash::Sha1, DigestEncoding::Base64);
-    
-    <span class="code-function">println!</span>(<span class="code-string">"SHA-1 digests:"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"  Hex:    {}"</span>, sha1_hex);
-    <span class="code-function">println!</span>(<span class="code-string">"  Base64: {}"</span>, sha1_b64);
-    
-    <span class="code-comment">// SHA-256 digest (used by modern descriptors)</span>
-    <span class="code-keyword">let</span> sha256_hex = <span class="code-function">compute_digest</span>(content, DigestHash::Sha256, DigestEncoding::Hex);
-    
-    <span class="code-function">println!</span>(<span class="code-string">"\nSHA-256 digest:"</span>);
-    <span class="code-function">println!</span>(<span class="code-string">"  Hex: {}"</span>, sha256_hex);
+    <span class="code-keyword">let</span> content = b<span class="code-string">"Example descriptor content"</span>;
+
+    <span class="code-keyword">let</span> sha1 = <span class="code-function">hash_bytes</span>(DigestHash::Sha1, content);
+    <span class="code-function">println!</span>(
+        <span class="code-string">"SHA-1 hex:    {}"</span>,
+        <span class="code-function">encode_digest</span>(&amp;sha1, DigestEncoding::Hex)
+    );
+    <span class="code-function">println!</span>(
+        <span class="code-string">"SHA-1 base64: {}"</span>,
+        <span class="code-function">encode_digest</span>(&amp;sha1, DigestEncoding::Base64)
+    );
+
+    <span class="code-keyword">let</span> sha256 = <span class="code-function">hash_bytes</span>(DigestHash::Sha256, content);
+    <span class="code-function">println!</span>(
+        <span class="code-string">"SHA-256 hex:  {}"</span>,
+        <span class="code-function">encode_digest</span>(&amp;sha256, DigestEncoding::Hex)
+    );
 }</code></pre>
                             </div>
                         </div>
@@ -2115,33 +1854,17 @@ Allows any exit: true</pre
                                 <div class="code-block-header">
                                     <span class="code-block-filename">config_management.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
+                                <pre><code><span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// Read current configuration</span>
-    <span class="code-keyword">let</span> socks_ports = controller.<span class="code-function">get_conf</span>(<span class="code-string">"SocksPort"</span>).<span class="code-keyword">await</span>?;
-    <span class="code-function">println!</span>(<span class="code-string">"Current SOCKS ports: {:?}"</span>, socks_ports);
-    
-    <span class="code-comment">// Modify configuration (temporary, not saved to torrc)</span>
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
+
+    <span class="code-keyword">let</span> socks_port = controller.<span class="code-function">get_conf</span>(<span class="code-string">"SocksPort"</span>).<span class="code-keyword">await</span>?;
+    <span class="code-function">println!</span>(<span class="code-string">"Current SOCKS port: {socks_port:?}"</span>);
+
     controller.<span class="code-function">set_conf</span>(<span class="code-string">"MaxCircuitDirtiness"</span>, <span class="code-string">"600"</span>).<span class="code-keyword">await</span>?;
-    <span class="code-function">println!</span>(<span class="code-string">"Set MaxCircuitDirtiness to 600 seconds"</span>);
-    
-    <span class="code-comment">// Reset to default value</span>
-    controller.<span class="code-function">reset_conf</span>(<span class="code-string">"MaxCircuitDirtiness"</span>).<span class="code-keyword">await</span>?;
-    <span class="code-function">println!</span>(<span class="code-string">"Reset MaxCircuitDirtiness to default"</span>);
-    
-    <span class="code-comment">// Load configuration from text</span>
-    controller.<span class="code-function">load_conf</span>(<span class="code-string">"
-        # Temporary configuration
-        MaxCircuitDirtiness 300
-    "</span>).<span class="code-keyword">await</span>?;
-    
+    controller.<span class="code-function">reset_conf</span>(&amp;[<span class="code-string">"MaxCircuitDirtiness"</span>]).<span class="code-keyword">await</span>?;
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>
@@ -2161,48 +1884,31 @@ Allows any exit: true</pre
                                 <div class="code-block-header">
                                     <span class="code-block-filename">inspect_connections.rs</span>
                                 </div>
-                                <pre><code><span class="code-keyword">use</span> stem::{Controller, Error, StreamStatus, CircStatus};
+                                <pre><code><span class="code-keyword">use</span> stem::enumerations::{CircStatus, StreamStatus};
+<span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-keyword">let mut</span> controller = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-    controller.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-    
-    <span class="code-comment">// List all streams</span>
-    <span class="code-function">println!</span>(<span class="code-string">"📡 Active Streams:"</span>);
-    <span class="code-keyword">let</span> streams = controller.<span class="code-function">get_streams</span>().<span class="code-keyword">await</span>?;
-    <span class="code-keyword">for</span> stream <span class="code-keyword">in</span> &streams {
-        <span class="code-keyword">let</span> status = <span class="code-keyword">match</span> stream.status {
-            StreamStatus::New => <span class="code-string">"🆕"</span>,
-            StreamStatus::Succeeded => <span class="code-string">"✅"</span>,
-            StreamStatus::Failed => <span class="code-string">"❌"</span>,
-            StreamStatus::Closed => <span class="code-string">"🔒"</span>,
-            _ => <span class="code-string">"❓"</span>,
-        };
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
+
+    <span class="code-function">println!</span>(<span class="code-string">"Streams:"</span>);
+    <span class="code-keyword">for</span> stream <span class="code-keyword">in</span> controller.<span class="code-function">get_streams</span>().<span class="code-keyword">await</span>? {
+        <span class="code-keyword">let</span> succeeded = stream.status == StreamStatus::Succeeded;
         <span class="code-function">println!</span>(
-            <span class="code-string">"  {} Stream {} → {}:{} (circuit: {:?})"</span>,
-            status, stream.id, stream.target_host, stream.target_port, stream.circuit_id
+            <span class="code-string">"  {} {} -&gt; {}:{} (circuit {:?}, succeeded: {succeeded})"</span>,
+            stream.id, stream.target, stream.target_address, stream.target_port, stream.circ_id
         );
     }
-    
-    <span class="code-comment">// List all circuits</span>
-    <span class="code-function">println!</span>(<span class="code-string">"\n🔄 Active Circuits:"</span>);
-    <span class="code-keyword">let</span> circuits = controller.<span class="code-function">get_circuits</span>().<span class="code-keyword">await</span>?;
-    <span class="code-keyword">for</span> circuit <span class="code-keyword">in</span> &circuits {
-        <span class="code-keyword">let</span> status = <span class="code-keyword">match</span> circuit.status {
-            CircStatus::Built => <span class="code-string">"✅"</span>,
-            CircStatus::Extended => <span class="code-string">"📡"</span>,
-            CircStatus::Failed => <span class="code-string">"❌"</span>,
-            _ => <span class="code-string">"❓"</span>,
-        };
+
+    <span class="code-function">println!</span>(<span class="code-string">"Circuits:"</span>);
+    <span class="code-keyword">for</span> circuit <span class="code-keyword">in</span> controller.<span class="code-function">get_circuits</span>().<span class="code-keyword">await</span>? {
+        <span class="code-keyword">let</span> built = circuit.status == CircStatus::Built;
         <span class="code-function">println!</span>(
-            <span class="code-string">"  {} Circuit {} ({} hops)"</span>,
-            status, circuit.id, circuit.path.<span class="code-function">len</span>()
+            <span class="code-string">"  {} ({} hops, built: {built})"</span>,
+            circuit.id,
+            circuit.path.<span class="code-function">len</span>()
         );
     }
-    
     <span class="code-type">Ok</span>(())
 }</code></pre>
                             </div>

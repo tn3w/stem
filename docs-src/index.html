@@ -291,18 +291,11 @@
                                 </div>
                                 <span class="example-lang">Rust</span>
                             </div>
-                            <pre><code><span class="code-keyword">use</span> stem::{Controller, Error};
+                            <pre><code><span class="code-keyword">use</span> stem::{ConnectOptions, connect};
 
 <span class="code-macro">#[tokio::main]</span>
-<span class="code-keyword">async fn</span> <span class="code-function">main</span>() -> <span class="code-type">Result</span>&lt;(), Error&gt; {
-    <span class="code-comment">// Connect to control port</span>
-    <span class="code-keyword">let mut</span> ctrl = Controller::<span class="code-function">from_port</span>(
-        <span class="code-string">"127.0.0.1:9051"</span>.<span class="code-function">parse</span>()?
-    ).<span class="code-keyword">await</span>?;
-
-    <span class="code-comment">// Auto-detect authentication method</span>
-    ctrl.<span class="code-function">authenticate</span>(<span class="code-type">None</span>).<span class="code-keyword">await</span>?;
-
+<span class="code-keyword">async</span> <span class="code-keyword">fn</span> <span class="code-function">main</span>() -&gt; stem::<span class="code-type">Result</span>&lt;()&gt; {
+    <span class="code-keyword">let</span> controller = <span class="code-function">connect</span>(ConnectOptions::<span class="code-function">default</span>()).<span class="code-keyword">await</span>?;
     <span class="code-function">println!</span>(<span class="code-string">"Connected to Tor!"</span>);
     <span class="code-type">Ok</span>(())
 }</code></pre>
@@ -316,16 +309,13 @@
                                 </div>
                                 <span class="example-lang">Rust</span>
                             </div>
-                            <pre><code><span class="code-comment">// Get Tor version</span>
-<span class="code-keyword">let</span> version = ctrl.<span class="code-function">get_version</span>().<span class="code-keyword">await</span>?;
-<span class="code-function">println!</span>(<span class="code-string">"Tor version: {}"</span>, version);
+                            <pre><code><span class="code-keyword">let</span> version = controller.<span class="code-function">get_version</span>().<span class="code-keyword">await</span>?;
+<span class="code-function">println!</span>(<span class="code-string">"Tor version: {version}"</span>);
 
-<span class="code-comment">// Query traffic statistics</span>
-<span class="code-keyword">let</span> bytes_read = ctrl.<span class="code-function">get_info</span>(<span class="code-string">"traffic/read"</span>).<span class="code-keyword">await</span>?;
-<span class="code-keyword">let</span> bytes_written = ctrl.<span class="code-function">get_info</span>(<span class="code-string">"traffic/written"</span>).<span class="code-keyword">await</span>?;
+<span class="code-keyword">let</span> bytes_read = controller.<span class="code-function">get_info</span>(<span class="code-string">"traffic/read"</span>).<span class="code-keyword">await</span>?;
+<span class="code-keyword">let</span> bytes_written = controller.<span class="code-function">get_info</span>(<span class="code-string">"traffic/written"</span>).<span class="code-keyword">await</span>?;
 
-<span class="code-comment">// Get active circuit status</span>
-<span class="code-keyword">let</span> circuits = ctrl.<span class="code-function">get_info</span>(<span class="code-string">"circuit-status"</span>).<span class="code-keyword">await</span>?;</code></pre>
+<span class="code-keyword">let</span> circuits = controller.<span class="code-function">get_circuits</span>().<span class="code-keyword">await</span>?;</code></pre>
                         </div>
                         <div class="example-card">
                             <div class="example-header">
@@ -336,18 +326,14 @@
                                 </div>
                                 <span class="example-lang">Rust</span>
                             </div>
-                            <pre><code><span class="code-keyword">use</span> stem::EventType;
+                            <pre><code><span class="code-keyword">use</span> stem::events::EventType;
 
-<span class="code-comment">// Subscribe to bandwidth and circuit events</span>
-ctrl.<span class="code-function">set_events</span>(&amp;[
-    EventType::Bw,
-    EventType::Circ,
-]).<span class="code-keyword">await</span>?;
+<span class="code-keyword">let</span> (_, <span class="code-keyword">mut</span> events) = controller
+    .<span class="code-function">subscribe</span>(&amp;[EventType::Bw, EventType::Circ])
+    .<span class="code-keyword">await</span>?;
 
-<span class="code-comment">// Process events as they arrive</span>
-<span class="code-keyword">loop</span> {
-    <span class="code-keyword">let</span> event = ctrl.<span class="code-function">recv_event</span>().<span class="code-keyword">await</span>?;
-    <span class="code-function">println!</span>(<span class="code-string">"Event: {:?}"</span>, event);
+<span class="code-keyword">while</span> <span class="code-keyword">let</span> <span class="code-type">Some</span>(event) = events.<span class="code-function">recv</span>().<span class="code-keyword">await</span> {
+    <span class="code-function">println!</span>(<span class="code-string">"{} {:?}"</span>, event.event_type, event.data);
 }</code></pre>
                         </div>
                     </div>
