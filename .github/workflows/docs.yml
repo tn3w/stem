@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -31,7 +31,7 @@ jobs:
           RUSTDOCFLAGS: "--default-theme=dark"
 
       - name: Restore cached archives
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: dist-cache
           key: dist-archives-${{ github.run_id }}
@@ -51,7 +51,7 @@ jobs:
           git archive --format=zip --prefix=stem-${VERSION}/ HEAD -o "dist-cache/${ARCHIVE_NAME}.zip"
 
       - name: Save archives to cache
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: dist-cache
           key: dist-archives-${{ github.run_id }}
@@ -98,9 +98,9 @@ jobs:
           done
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Install minification tools
         run: npm install -g html-minifier-terser csso-cli terser
@@ -158,7 +158,7 @@ jobs:
           sed -i "s|>VERSION</span>|>v${VERSION}</span>|g" docs/dist/index.html
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: docs
 
@@ -171,4 +171,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
