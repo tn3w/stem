@@ -119,10 +119,7 @@ async fn attaches_streams_to_a_chosen_circuit() {
     let tor = tor_instance::TorInstance::launch(false, "__LeaveStreamsUnattached 1");
     let controller = tor.controller().await;
     let (_, mut events) = controller.subscribe(&[EventType::Stream]).await.unwrap();
-    let circuit_id = controller
-        .new_circuit(None, None, true, Some(Duration::from_secs(60)))
-        .await
-        .unwrap();
+    let circuit_id = build_circuit(&controller).await;
 
     let socks_port = controller.get_socks_listeners().await.unwrap()[0].1;
 
